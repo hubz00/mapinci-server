@@ -1,0 +1,7 @@
+---
+applications:
+- name: mapinci-server
+  memory: 256M
+  instances: 1
+  host: rest-service
+  path: build/libs/mapinci-server-0.1.0.jar
