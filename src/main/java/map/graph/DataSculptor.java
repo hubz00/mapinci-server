@@ -62,6 +62,8 @@ public class DataSculptor {
 
                 int connections = ways.size();
 
+                System.out.println("Node: " + currentNode.getId() + " connections: " + connections + " current Neighbours: " + currentNeighbours.size());
+
                 if (connections == currentNeighbours.size())
                     continue;
                 else {
@@ -74,13 +76,13 @@ public class DataSculptor {
                 }
 
                 Iterator<Segment> it = segments.iterator();
+                Iterator<Segment> it2 = segments.iterator();
                 Segment tmpSegment;
                 Node tmpNode;
 
                 for (Way way : ways) {
                     if ((way.getNodes().indexOf(tmp)) + 1 < way.getNodes().size()) {
                         tmpNode = way.getNodes().get(way.getNodes().indexOf(tmp) + 1);
-
 
                         map.graph.graphElements.Node n;
                         map.graph.graphElements.Node nn = graph.getNodeById(tmpNode.getId());
@@ -89,18 +91,26 @@ public class DataSculptor {
                         else
                             n = nf.newNodeFromLibNode(tmpNode);
 
-                        if (currentNeighbours.contains(n)) {
-                            currentNeighbours.remove(n);
-                        } else {
-                            if (it.hasNext()) {
-                                tmpSegment = it.next();
-                                tmpSegment.setNode2(n);
-                                graph.addSegment(tmpSegment);
+                        System.out.println("\tNeighbour: " + n.getId());
+
+                        if (it.hasNext()) {
+                            it2 = it;
+                            tmpSegment = it.next();
+                            tmpSegment.setNode2(n);
+                            System.out.print("\t\tChecking segment:  " + tmpSegment);
+                            if(graph.hasSegment(tmpSegment)) {
+                                tmpSegment.setNode2(null);
+                                it = it2;
+                                System.out.print("  Existed\n");
                             } else {
-                                // todo: throw error
-                                System.out.println("no more segments without pairs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                System.out.print("  New one\n");
+                                graph.addSegment(tmpSegment);
                             }
+                        } else {
+                            // todo: throw error
+                            System.out.println("no more segments without pairs for node: " + currentNode.getId());
                         }
+
                     }
 
                 }

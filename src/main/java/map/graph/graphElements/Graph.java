@@ -1,10 +1,6 @@
 package map.graph.graphElements;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Graph {
@@ -43,6 +39,11 @@ public class Graph {
                 return s.getNode2();
         }
         return null;
+    }
+
+    public boolean hasSegment(Segment s){
+        Collection<Segment> segList =  segments.values(); //todo impement custom
+        return segList.contains(s);
     }
 
 

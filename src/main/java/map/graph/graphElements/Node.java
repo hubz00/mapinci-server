@@ -50,4 +50,14 @@ public class Node implements Comparable<Node>{
         else
             return id > n.getId() ? 1 : -1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Node){
+            Node n = (Node) obj;
+            return id == n.getId();
+        }
+        else
+            return super.equals(obj);
+    }
 }
