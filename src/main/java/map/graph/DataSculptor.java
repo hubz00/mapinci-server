@@ -46,8 +46,14 @@ public class DataSculptor {
 
         for (OsmObject entry : map.keySet()){
             se.kodapan.osm.domain.Node tmp = index.getNode(entry.getId());
-            //if(graph.ge)
-            map.graph.graphElements.Node currentNode = nf.newNodeFromLibNode(tmp);
+            map.graph.graphElements.Node currentNode;
+            map.graph.graphElements.Node nodeById = graph.getNodeById(tmp.getId());
+            
+            if(nodeById != null)
+                currentNode = nodeById;
+            else
+                currentNode = nf.newNodeFromLibNode(tmp);
+
             List<Way> ways = tmp.getWaysMemberships();
             List<Segment> segments = new LinkedList<Segment>();
 

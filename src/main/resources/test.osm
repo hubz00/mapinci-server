@@ -44,7 +44,7 @@
 		<way id="4" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
 		<nd ref="2"/>
 		<nd ref="4"/>
-		<nd ref="5"/>
+		<nd ref="1"/>
 		<tag k="ref" v="CG-2"/>
 		<tag k="name" v="Avinguda del Consell General"/>
 		<tag k="oneway" v="yes"/>
@@ -53,7 +53,7 @@
 	</way>
 		<way id="5" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
 		<nd ref="1"/>
-		<nd ref="2"/>
+		<nd ref="3"/>
 		<tag k="ref" v="CG-2"/>
 		<tag k="name" v="Avinguda del Consell General"/>
 		<tag k="oneway" v="yes"/>
