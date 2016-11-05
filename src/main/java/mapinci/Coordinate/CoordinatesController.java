@@ -19,7 +19,7 @@ public class CoordinatesController {
     public ArrayList<Coordinate> coordinate(@RequestParam(value="shapeId", defaultValue="1") int shapeId, @RequestParam(value="startingLat", defaultValue = "0") String startingLat,
                                             @RequestParam(value="startingLong", defaultValue = "0") String startingLong) throws IOException, OsmXmlParserException {
 
-        Coordinates c = new Coordinates(App.runApp());
+        Coordinates c = new Coordinates();
         return c.getCoordinates();
     }
 }

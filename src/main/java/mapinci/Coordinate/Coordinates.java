@@ -14,6 +14,7 @@ public class Coordinates {
     public Coordinates(Collection<Segment> segments) {
         this.segments = segments;
     }
+    public Coordinates(){};
 
     private void createCoordinates() {
         for (Segment s: segments
