@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version="0.6" generator="osmconvert 0.8.5" timestamp="2016-10-30T20:28:02Z">
+	<bounds minlat="42.4276" minlon="1.412368" maxlat="42.65717" maxlon="1.787481"/>
+	<node id="1" lat="1.1" lon="1.1" version="1" timestamp="2016-10-29T21:30:03Z" changeset="43273556" uid="3151684" user="ja"/>
+	<node id="2" lat="2.2" lon="2.2" version="1" timestamp="2016-10-29T21:30:03Z" changeset="43273556" uid="3151684" user="ja"/>
+	<node id="3" lat="3.3" lon="3.3" version="1" timestamp="2016-10-30T09:32:42Z" changeset="43279904" uid="3098937" user="ja">
+		<tag k="name" v="Motocard"/>
+		<tag k="shop" v="sports"/>
+	</node>
+	<node id="4" lat="4.4" lon="4.4" version="1" timestamp="2016-10-29T21:30:03Z" changeset="43273556" uid="3151684" user="ja"/>
+	<node id="5" lat="5.5" lon="5.5" version="1" timestamp="2016-10-29T21:30:03Z" changeset="43273556" uid="3151684" user="ja"/>
+
+	<way id="1" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
+		<nd ref="1"/>
+		<nd ref="2"/>
+		<nd ref="3"/>
+		<nd ref="4"/>
+		<nd ref="5"/>
+		<tag k="ref" v="CG-2"/>
+		<tag k="name" v="Avinguda del Consell General"/>
+		<tag k="oneway" v="yes"/>
+		<tag k="highway" v="primary"/>
+		<tag k="maxspeed" v="30"/>
+	</way>
+		<way id="2" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
+		<nd ref="3"/>
+		<nd ref="4"/>
+		<nd ref="2"/>
+		<nd ref="1"/>
+		<tag k="ref" v="CG-2"/>
+		<tag k="name" v="Avinguda del Consell General"/>
+		<tag k="oneway" v="yes"/>
+		<tag k="highway" v="primary"/>
+		<tag k="maxspeed" v="30"/>
+	</way>
+		<way id="3" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
+		<nd ref="5"/>
+		<tag k="ref" v="CG-2"/>
+		<tag k="name" v="Avinguda del Consell General"/>
+		<tag k="oneway" v="yes"/>
+		<tag k="highway" v="primary"/>
+		<tag k="maxspeed" v="30"/>
+	</way>
+		<way id="4" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
+		<nd ref="2"/>
+		<nd ref="4"/>
+		<nd ref="5"/>
+		<tag k="ref" v="CG-2"/>
+		<tag k="name" v="Avinguda del Consell General"/>
+		<tag k="oneway" v="yes"/>
+		<tag k="highway" v="primary"/>
+		<tag k="maxspeed" v="30"/>
+	</way>
+		<way id="5" version="10" timestamp="2015-07-17T08:07:27Z" changeset="32690543" uid="2778590" user="Juanmar Alaia">
+		<nd ref="1"/>
+		<nd ref="2"/>
+		<tag k="ref" v="CG-2"/>
+		<tag k="name" v="Avinguda del Consell General"/>
+		<tag k="oneway" v="yes"/>
+		<tag k="highway" v="primary"/>
+		<tag k="maxspeed" v="30"/>
+	</way>
+<!-- 	<relation id="7439" version="198" timestamp="2016-10-24T22:27:33Z" changeset="43144923" uid="4250990" user="jgirault">
+		<member type="node" ref="26691393" role="admin_centre"/>
+		<member type="way" ref="23305160" role="outer"/>
+		<tag k="admin_level" v="6"/>
+		<tag k="border_type" v="departement"/>
+		<tag k="boundary" v="administrative"/>
+		<tag k="ISO3166-2" v="FR-09"/>
+		<tag k="name" v="Ariège"/>
+		<tag k="name:ca" v="Arieja"/>
+		<tag k="name:fr" v="Ariège"/>
+		<tag k="name:ru" v="Арьеж"/>
+		<tag k="ref" v="09"/>
+		<tag k="ref:INSEE" v="09"/>
+		<tag k="ref:NUTS" v="FR621"/>
+		<tag k="type" v="boundary"/>
+		<tag k="wikidata" v="Q3184"/>
+		<tag k="wikipedia" v="fr:Ariège (département)"/>
+	</relation>  -->
+
+</osm>

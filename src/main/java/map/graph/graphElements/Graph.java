@@ -30,6 +30,11 @@ public class Graph {
                 .collect(Collectors.toList());
     }
 
+    public Node getNode(Long id){
+        return segments.values().stream()
+                .filter(s -> s.getNode1().getId() == id || s.getNode2().getId() == id)
+    }
+
 
     public HashMap<Long, Segment> getSegments() {
         return segments;
