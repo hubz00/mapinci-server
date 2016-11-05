@@ -24,7 +24,7 @@ public class DataSculptor {
 
         BooleanQuery bq = new BooleanQuery();
 
-        bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
+ //       bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
         bq.add(index.getQueryFactories().nodeEnvelopeQueryFactory()
                 .setSouthLatitude(south).setWestLongitude(west)
                 .setNorthLatitude(north).setEastLongitude(east)

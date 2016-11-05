@@ -5,7 +5,7 @@ public final class SegmentFactory {
     private static long id;
 
     public SegmentFactory(){
-        SegmentFactory.id = 0;
+        SegmentFactory.id = 1;
     }
 
     public Segment newFullSegment(Node n1, Node n2){
