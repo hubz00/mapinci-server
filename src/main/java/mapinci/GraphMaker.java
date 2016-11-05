@@ -1,22 +1,27 @@
-package map.graph;
+package mapinci;
 
-import map.graph.graphElements.*;
+import map.graph.DataSculptor;
+import map.graph.graphElements.Graph;
+import map.graph.graphElements.Node;
+import map.graph.graphElements.Segment;
 import org.apache.lucene.search.Query;
 import se.kodapan.osm.domain.OsmObject;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Hubert on 01.11.2016.
+ * Created by m on 05.11.16.
  */
-public class App {
+public class GraphMaker {
 
-    public static void main(String[] args) throws IOException, OsmXmlParserException {
+    public GraphMaker(){};
+
+    public ArrayList<Node> runApp() throws IOException, OsmXmlParserException {
         map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
         DataSculptor ds = new DataSculptor();
         IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
@@ -27,6 +32,13 @@ public class App {
 
         Collection<Segment> segments = g.getSegments().values();
 
-        segments.forEach(System.out::println);
+        ArrayList<Node> nodes = new ArrayList<>();
+
+        for(Segment s: g.getSegments().values()) {
+            nodes.add(s.getNode1());
+            nodes.add(s.getNode2());
+        }
+
+        return nodes;
     }
 }

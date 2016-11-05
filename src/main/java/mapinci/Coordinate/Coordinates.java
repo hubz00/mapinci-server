@@ -1,11 +1,11 @@
 package mapinci.Coordinate;
 
 import map.graph.graphElements.Segment;
-import se.kodapan.osm.util.Coordinate;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+//TODO decide if Coordinates are valid or Node is enough
 public class Coordinates {
 
     private Collection<Segment> segments;
@@ -13,8 +13,8 @@ public class Coordinates {
 
     public Coordinates(Collection<Segment> segments) {
         this.segments = segments;
+        this.createCoordinates();
     }
-    public Coordinates(){};
 
     private void createCoordinates() {
         for (Segment s: segments
@@ -25,6 +25,6 @@ public class Coordinates {
     }
 
     public ArrayList<Coordinate> getCoordinates() {
-        return coordinates;
+        return this.coordinates;
     }
 }
