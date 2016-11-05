@@ -1,6 +1,8 @@
 package map.graph.graphElements;
 
-public class Node{
+import java.util.Comparator;
+
+public class Node implements Comparable<Node>{
 
     private final long id;
     private Double longitude;
@@ -39,5 +41,13 @@ public class Node{
     @Override
     public String toString() {
         return String.valueOf(id);
+    }
+
+    @Override
+    public int compareTo(Node n) {
+        if(id == n.getId())
+            return 0;
+        else
+            return id > n.getId() ? 1 : -1;
     }
 }

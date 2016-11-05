@@ -42,8 +42,6 @@ public class DataSculptorTest {
 
         Collection<Segment> segments = graph.getSegments().values();
 
-        System.out.println(segments.size());
-
         segments.forEach(System.out::println);
     }
 

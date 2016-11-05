@@ -46,52 +46,68 @@ public class DataSculptor {
 
         for (OsmObject entry : map.keySet()){
             se.kodapan.osm.domain.Node tmp = index.getNode(entry.getId());
-            map.graph.graphElements.Node currentNode = nf.newNodeFromLibNode(tmp);
+            map.graph.graphElements.Node currentNode;
+            map.graph.graphElements.Node nodeById = graph.getNodeById(tmp.getId());
+
+            if(nodeById != null)
+                currentNode = nodeById;
+            else
+                currentNode = nf.newNodeFromLibNode(tmp);
+
             List<Way> ways = tmp.getWaysMemberships();
-            List<Segment> segments = new LinkedList<Segment>();
+            if(ways != null) {
+                List<Segment> segments = new LinkedList<>();
 
-            List<map.graph.graphElements.Node> currentNeighbours = graph.getNeighbours(currentNode);
+                List<map.graph.graphElements.Node> currentNeighbours = graph.getNeighbours(currentNode);
 
-            int connections = ways.size();
+                int connections = ways.size();
 
-            if(connections == currentNeighbours.size())
-                continue;
-            else {
-                connections -= currentNeighbours.size();
-            }
+                if (connections == currentNeighbours.size())
+                    continue;
+                else {
+                    connections -= currentNeighbours.size();
+                }
 
-            for (int i = 0; i < connections; i++){
-                Segment segment = segmentFactory.newHalfSegment(currentNode);
-                segments.add(segment);
-            }
+                for (int i = 0; i < connections; i++) {
+                    Segment segment = segmentFactory.newHalfSegment(currentNode);
+                    segments.add(segment);
+                }
 
-            Iterator<Segment> it = segments.iterator();
-            Segment tmpSegment;
-            Node tmpNode;
+                Iterator<Segment> it = segments.iterator();
+                Segment tmpSegment;
+                Node tmpNode;
 
-            for(Way way: ways){
-                if ((way.getNodes().indexOf(tmp)) + 1 <  way.getNodes().size()){
-                    tmpNode = way.getNodes().get(way.getNodes().indexOf(tmp) + 1);
-                    map.graph.graphElements.Node n = nf.newNodeFromLibNode(tmpNode);
+                for (Way way : ways) {
+                    if ((way.getNodes().indexOf(tmp)) + 1 < way.getNodes().size()) {
+                        tmpNode = way.getNodes().get(way.getNodes().indexOf(tmp) + 1);
 
-                    if(currentNeighbours.contains(n)){
-                        currentNeighbours.remove(n);
-                    }
-                    else {
-                        if (it.hasNext()) {
-                            tmpSegment = it.next();
-                            tmpSegment.setNode2(n);
-                            graph.addSegment(tmpSegment);
+
+                        map.graph.graphElements.Node n;
+                        map.graph.graphElements.Node nn = graph.getNodeById(tmpNode.getId());
+                        if (nn != null)
+                            n = nn;
+                        else
+                            n = nf.newNodeFromLibNode(tmpNode);
+
+                        if (currentNeighbours.contains(n)) {
+                            currentNeighbours.remove(n);
                         } else {
-                            // todo: throw error
-                            System.out.println("no more segments without pairs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            if (it.hasNext()) {
+                                tmpSegment = it.next();
+                                tmpSegment.setNode2(n);
+                                graph.addSegment(tmpSegment);
+                            } else {
+                                // todo: throw error
+                                System.out.println("no more segments without pairs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            }
                         }
                     }
+
                 }
-            }
-            if(it.hasNext()){
-                // todo: throw error
-                System.out.println("Not all neighbours assigned for node: " + currentNode);
+                if (it.hasNext()) {
+                    // todo: throw error
+                    System.out.println("Not all neighbours assigned for node: " + currentNode);
+                }
             }
         }
 

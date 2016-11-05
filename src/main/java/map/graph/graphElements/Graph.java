@@ -3,6 +3,7 @@ package map.graph.graphElements;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,20 @@ public class Graph {
                 .filter(s -> s.contains(n))
                 .map(s -> s.getNeighbour(n))
                 .collect(Collectors.toList());
+    }
+
+    public Node getNodeById(Long id){
+        Optional<Segment> segment =  segments.values().stream()
+                .filter(s -> s.getNode1().getId() == id || s.getNode2().getId() == id)
+                .findFirst();
+        if(segment.isPresent()){
+            Segment s = segment.get();
+            if(segment.get().getNode1().getId() == id)
+                return s.getNode1();
+            else if(segment.get().getNode2().getId() == id)
+                return s.getNode2();
+        }
+        return null;
     }
 
 
