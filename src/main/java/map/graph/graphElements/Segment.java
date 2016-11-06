@@ -2,7 +2,7 @@ package map.graph.graphElements;
 
 public class Segment implements Comparable<Segment> {
 
-    private final long id;
+    private long id;
     private Node n1;
     private Node n2;
     private Double length;
@@ -20,6 +20,8 @@ public class Segment implements Comparable<Segment> {
         this.n2 = n2;
         calculateLength();
     }
+
+    protected Segment() {}
 
     private void calculateLength() {
     }

@@ -1,11 +1,13 @@
 package map.graph;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import map.graph.graphElements.*;
 import org.apache.lucene.search.Query;
 import se.kodapan.osm.domain.OsmObject;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -25,8 +27,16 @@ public class App {
 
         Graph g = ds.rebuildGraph(index,hits);
 
+//        Graph g = getGraph();
+
         Collection<Segment> segments = g.getSegments().values();
 
         segments.forEach(System.out::println);
     }
+
+    private static Graph getGraph() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(new File("./src/main/resources/graph.json"), Graph.class);
+    }
+
 }

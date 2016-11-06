@@ -1,5 +1,6 @@
 package mapinci;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import map.graph.DataSculptor;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
@@ -9,6 +10,7 @@ import se.kodapan.osm.domain.OsmObject;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +34,10 @@ public class GraphMaker {
 
         Collection<Segment> segments = g.getSegments().values();
 
+        // created graph written to file
+
+        //saveGraph(g);
+
         ArrayList<Node> nodes = new ArrayList<>();
 
         for(Segment s: g.getSegments().values()) {
@@ -39,6 +45,13 @@ public class GraphMaker {
             nodes.add(s.getNode2());
         }
 
+
         return nodes;
     }
+
+    private void saveGraph(Graph g) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(new File("./src/main/resources/graph.json"), g);
+    }
+
 }

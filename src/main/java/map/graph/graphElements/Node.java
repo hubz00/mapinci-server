@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public class Node implements Comparable<Node>{
 
-    private final long id;
+    private long id;
     private Double longitude;
     private Double latitude;
 
@@ -12,6 +12,8 @@ public class Node implements Comparable<Node>{
         this.id = id;
         initiateWithNode(n);
     }
+
+    protected Node() {}
 
     private void initiateWithNode(se.kodapan.osm.domain.Node n) {
         this.longitude = n.getLongitude();
