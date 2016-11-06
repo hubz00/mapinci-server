@@ -1,14 +1,15 @@
 package map.graph.graphElements;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Graph {
-
     private HashMap<Long, Segment> segments;
 
     public Graph(){
-        this.segments = new HashMap<Long, Segment>();
+        this.segments = new HashMap<>();
     }
 
     public void addSegment(Segment s){
@@ -20,7 +21,6 @@ public class Graph {
     }
 
     public List<Node> getNeighbours(Node n){
-
         return segments.values().stream()
                 .filter(s -> s.contains(n))
                 .map(s -> s.getNeighbour(n))
@@ -42,8 +42,11 @@ public class Graph {
     }
 
     public boolean hasSegment(Segment s){
-        Collection<Segment> segList =  segments.values(); //todo impement custom
-        return segList.contains(s);
+        for (Segment segment: segments.values()){
+            if(segment.compareTo(s) == 0)
+                return true;
+        }
+        return false;
     }
 
 

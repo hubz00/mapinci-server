@@ -26,7 +26,7 @@ public class Segment implements Comparable<Segment> {
 
     public int compareTo(Segment o) {
         if((n1.getId() == o.getNode1().getId() && n2.getId() == o.getNode2().getId())
-                || (n2.getId() == o.getNode1().getId() && n1.getId() == o.getNode1().getId()))
+                || (n2.getId() == o.getNode1().getId() && n1.getId() == o.getNode2().getId()))
             return 0;
         else if (length >= o.getLength())
             return 1;
