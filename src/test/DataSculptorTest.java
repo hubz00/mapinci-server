@@ -18,7 +18,7 @@ import java.util.Map;
 public class DataSculptorTest {
 
     @Test
-    public void somethingTest() throws IOException, OsmXmlParserException {
+    public void graphSculpting() throws IOException, OsmXmlParserException {
 
         OsmFetcher gf = new OsmFetcher();
         DataSculptor ds = new DataSculptor();

@@ -62,8 +62,7 @@ public class DataSculptor {
                     map.graph.graphElements.Node n = getNodeOrCreate(graph, nf, way.getNodes().get(way.getNodes().indexOf(tmp) + 1));
 
                     if (!addedNodes.containsKey(n.getId())) {
-                        Segment tmpSegment = segmentFactory.newHalfSegment(currentNode);
-                        tmpSegment.setNode2(n);
+                        Segment tmpSegment = segmentFactory.newFullSegment(currentNode, n);
                         if (!graph.hasSegment(tmpSegment)) {
                             graph.addSegment(tmpSegment);
                             addedNodes.put(n.getId(), n);

@@ -22,6 +22,16 @@ public class Segment implements Comparable<Segment> {
     }
 
     private void calculateLength() {
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = Math.toRadians(n2.getLatitude() - n1.getLatitude());
+        Double lonDistance = Math.toRadians(n2.getLongitude() - n1.getLongitude());
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(n1.getLatitude())) * Math.cos(Math.toRadians(n1.getLatitude()))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        this.length = R * c * 1000; // convert to meters
+
     }
 
     public int compareTo(Segment o) {
@@ -74,8 +84,7 @@ public class Segment implements Comparable<Segment> {
         return n.equals(n1)? n2 : n1;
     }
 
-    @Override
-    public String toString() {
-        return "-- " + n1 + " ---- " + n2 + " --";
+    @Override public String toString() {
+        return "-- " + n1 + " ---- " + n2 + " --" + " length: " + length + "m";
     }
 }

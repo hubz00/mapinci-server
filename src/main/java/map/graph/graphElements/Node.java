@@ -1,6 +1,7 @@
 package map.graph.graphElements;
 
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 
 public class Node implements Comparable<Node>{
 
@@ -11,6 +12,12 @@ public class Node implements Comparable<Node>{
     protected Node (long id, se.kodapan.osm.domain.Node n){
         this.id = id;
         initiateWithNode(n);
+    }
+
+    protected Node(Long id, Double longitude, Double latitude){
+        this.id = id;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     private void initiateWithNode(se.kodapan.osm.domain.Node n) {
