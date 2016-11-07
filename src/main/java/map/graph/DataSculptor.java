@@ -4,12 +4,14 @@ import map.graph.graphElements.*;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SearcherFactory;
 import se.kodapan.osm.domain.*;
 import se.kodapan.osm.domain.Node;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataSculptor {
 
@@ -24,7 +26,7 @@ public class DataSculptor {
 
         BooleanQuery bq = new BooleanQuery();
 
- //       bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
+        //       bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
         bq.add(index.getQueryFactories().nodeEnvelopeQueryFactory()
                 .setSouthLatitude(south).setWestLongitude(west)
                 .setNorthLatitude(north).setEastLongitude(east)
@@ -46,71 +48,39 @@ public class DataSculptor {
 
         for (OsmObject entry : map.keySet()){
             se.kodapan.osm.domain.Node tmp = index.getNode(entry.getId());
-            map.graph.graphElements.Node currentNode;
-            map.graph.graphElements.Node nodeById = graph.getNodeById(tmp.getId());
-
-            if(nodeById != null)
-                currentNode = nodeById;
-            else
-                currentNode = nf.newNodeFromLibNode(tmp);
-
+            map.graph.graphElements.Node currentNode = getNodeOrCreate(graph, nf, tmp);
             List<Way> ways = tmp.getWaysMemberships();
+
             if(ways != null) {
-                List<Segment> segments = new LinkedList<>();
+                HashMap<Long, map.graph.graphElements.Node> addedNodes = new HashMap<>();
 
-                List<map.graph.graphElements.Node> currentNeighbours = graph.getNeighbours(currentNode);
+                ways.stream()
+                        .filter(w -> w.getNodes().size() > 1)
+                        .filter(way -> (way.getNodes().indexOf(tmp)) + 1 < way.getNodes().size())
+                        .forEach(way -> {
 
-                int connections = ways.size();
+                    map.graph.graphElements.Node n = getNodeOrCreate(graph, nf, way.getNodes().get(way.getNodes().indexOf(tmp) + 1));
 
-                if (connections == currentNeighbours.size())
-                    continue;
-                else {
-                    connections -= currentNeighbours.size();
-                }
-
-                for (int i = 0; i < connections; i++) {
-                    Segment segment = segmentFactory.newHalfSegment(currentNode);
-                    segments.add(segment);
-                }
-
-                Iterator<Segment> it = segments.iterator();
-                Segment tmpSegment;
-                Node tmpNode;
-
-                for (Way way : ways) {
-                    if ((way.getNodes().indexOf(tmp)) + 1 < way.getNodes().size()) {
-                        tmpNode = way.getNodes().get(way.getNodes().indexOf(tmp) + 1);
-
-
-                        map.graph.graphElements.Node n;
-                        map.graph.graphElements.Node nn = graph.getNodeById(tmpNode.getId());
-                        if (nn != null)
-                            n = nn;
-                        else
-                            n = nf.newNodeFromLibNode(tmpNode);
-
-                        if (currentNeighbours.contains(n)) {
-                            currentNeighbours.remove(n);
-                        } else {
-                            if (it.hasNext()) {
-                                tmpSegment = it.next();
-                                tmpSegment.setNode2(n);
-                                graph.addSegment(tmpSegment);
-                            } else {
-                                // todo: throw error
-                                System.out.println("no more segments without pairs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                            }
+                    if (!addedNodes.containsKey(n.getId())) {
+                        Segment tmpSegment = segmentFactory.newFullSegment(currentNode, n);
+                        if (!graph.hasSegment(tmpSegment)) {
+                            graph.addSegment(tmpSegment);
+                            addedNodes.put(n.getId(), n);
                         }
                     }
-
-                }
-                if (it.hasNext()) {
-                    // todo: throw error
-                    System.out.println("Not all neighbours assigned for node: " + currentNode);
-                }
+                });
             }
         }
-
         return graph;
+    }
+
+    private map.graph.graphElements.Node getNodeOrCreate(Graph graph, NodeFactory nf, Node tmpNode) {
+        map.graph.graphElements.Node n;
+        map.graph.graphElements.Node nn = graph.getNodeById(tmpNode.getId());
+        if (nn != null)
+            n = nn;
+        else
+            n = nf.newNodeFromLibNode(tmpNode);
+        return n;
     }
 }

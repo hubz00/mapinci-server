@@ -13,9 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Hubert on 01.11.2016.
- */
 public class App {
 
     public static void main(String[] args) throws IOException, OsmXmlParserException {

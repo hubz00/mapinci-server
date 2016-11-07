@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mapinci-server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/mapinci-server_main.iml" group="mapinci-server" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mapinci-server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/mapinci-server_test.iml" group="mapinci-server" />
+      <module fileurl="file://$PROJECT_DIR$/server.iml" filepath="$PROJECT_DIR$/server.iml" />
     </modules>
   </component>
 </project>

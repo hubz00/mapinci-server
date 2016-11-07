@@ -15,6 +15,12 @@ public class Node implements Comparable<Node>{
 
     protected Node() {}
 
+    protected Node(Long id, Double longitude, Double latitude){
+        this.id = id;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
     private void initiateWithNode(se.kodapan.osm.domain.Node n) {
         this.longitude = n.getLongitude();
         this.latitude = n.getLatitude();
