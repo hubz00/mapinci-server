@@ -1,24 +1,35 @@
 package map.graph.graphElements;
 
+import java.util.HashMap;
+
 public class Segment implements Comparable<Segment> {
 
     private final long id;
     private Node n1;
     private Node n2;
     private Double length;
+    private HashMap<Long, Vector> vectors;
 
     protected Segment(Long id, Node n1){
         this.id = id;
         this.n1 = n1;
         this.n2 = null;
         this.length = 0.0;
+        this.vectors = new HashMap<>();
     }
 
     protected Segment(Long id, Node n1, Node n2) {
         this.id = id;
         this.n1 = n1;
         this.n2 = n2;
+        this.vectors = new HashMap<>();
         calculateLength();
+        setVectors();
+    }
+
+    private void setVectors() {
+        vectors.put(n1.getId(), new Vector(n1,n2));
+        vectors.put(n2.getId(), new Vector(n2,n1));
     }
 
     private void calculateLength() {
@@ -64,8 +75,10 @@ public class Segment implements Comparable<Segment> {
 
     public void setNode2(Node n2) {
         this.n2 = n2;
-        if (this.n1 != null)
+        if (this.n1 != null && this.n2 != null) {
             calculateLength();
+            setVectors();
+        }
     }
 
     public Double getLength() {
@@ -82,6 +95,14 @@ public class Segment implements Comparable<Segment> {
 
     public Node getNeighbour(Node n){
         return n.equals(n1)? n2 : n1;
+    }
+
+    public HashMap<Long, Vector> getVectors() {
+        return vectors;
+    }
+
+    public Vector getVectorFromNode(Node n){
+        return vectors.get(n.getId());
     }
 
     @Override public String toString() {
