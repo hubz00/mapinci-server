@@ -16,15 +16,15 @@ import java.util.Map;
 public class App {
 
     public static void main(String[] args) throws IOException, OsmXmlParserException {
-        map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
-        DataSculptor ds = new DataSculptor();
-        IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
+//        map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
+//        DataSculptor ds = new DataSculptor();
+//        IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
+//
+//        Map<OsmObject, Float> hits = ds.narrowDown(42.5110129,42.5209083,1.544432,1.527749, index);
 
-        Map<OsmObject, Float> hits = ds.narrowDown(42.5110129,42.5209083,1.544432,1.527749, index);
+//        Graph g = ds.rebuildGraph(index,hits);
 
-        Graph g = ds.rebuildGraph(index,hits);
-
-//        Graph g = getGraph();
+        Graph g = getGraph();
 
         Collection<Segment> segments = g.getSegments().values();
 
