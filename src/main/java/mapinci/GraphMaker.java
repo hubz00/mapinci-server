@@ -36,7 +36,7 @@ public class GraphMaker {
 
         // created graph written to file
 
-        //saveGraph(g);
+        saveGraph(g);
 
         ArrayList<Node> nodes = new ArrayList<>();
 
