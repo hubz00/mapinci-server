@@ -42,13 +42,17 @@ public class ShapeFinderTest {
     @Test
     public void findPerfectlyFittedRoute(){
 
-        Node startNode = graph.getNodeByCoordinates(3.0,4.0);
+        Node startNode = graph.getNodeByCoordinates(2.0,1.0);
         log.info(String.format("Start node [id: %d] [long: %f] [lat: %f]", startNode.getId(), startNode.getLongitude(), startNode.getLatitude()));
 
         List<Segment> shape = createShapeSegments(0.0);
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape);
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
         foundGraph.getSegments().values().forEach(System.out::println);
+        System.out.println("----------------------------------------------------");
+        for(Segment s: foundGraph.getSegments().values()){
+            System.out.println(s);
+        }
     }
 
     /* creates shape

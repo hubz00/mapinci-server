@@ -59,6 +59,10 @@ public class Segment implements Comparable<Segment> {
             return -1;
     }
 
+    public boolean containsNode(Node n){
+        return n1.equals(n) || n2.equals(n);
+    }
+
     public long getId() {
         return id;
     }
