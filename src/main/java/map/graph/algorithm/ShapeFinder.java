@@ -2,10 +2,9 @@ package map.graph.algorithm;
 
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
-import map.graph.graphElements.Segment;
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentImpl;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,6 +42,7 @@ public class ShapeFinder {
                 shape.add(tmp);
             }
         }
+        //todo add checking from the end
         else if(findNextSegment(node,0)) {
             result.setSegments(onMapSegments);
             return result;
@@ -51,6 +51,27 @@ public class ShapeFinder {
         return result;
     }
 
+    private boolean findNextSegment(Node startNode, int position){
+        if(position == shape.size()) return true;
+
+        List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
+        Segment segmentToMap = shape.get(position);
+        log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[SegmentImpl to map: %s]",position, startNode, segmentToMap));
+
+        for (Segment s: possibleSegments){
+                if ((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0) && (Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon))
+                        || (Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon)) {
+                    onMapSegments.add(s);
+                    log.info(String.format("[Adding new segment to result: %s]",s));
+                    if (findNextSegment(s.getNeighbour(startNode), position + 1))
+                        return true;
+                    else
+                        onMapSegments.remove(s);
+                }
+        }
+
+        return false;
+    }
 
     private boolean isClosedShape() {
         if(shape.size() < 3) return false;
@@ -73,38 +94,6 @@ public class ShapeFinder {
         return false;
     }
 
-
-    private boolean findNextSegment(Node startNode, int position){
-        if(position == shape.size()) return true;
-
-        List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
-        Segment segmentToMap = shape.get(position);
-        log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[Segment to map: %s]",position, startNode, segmentToMap));
-
-        for (Segment s: possibleSegments){
-            if(position > 0) {
-                if ((s.compareTo(onMapSegments.get(position-1)) != 0) && Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon) {
-                    onMapSegments.add(s);
-                    log.info(String.format("[Adding new segment to result: %s]",s));
-                    if (findNextSegment(s.getNeighbour(startNode), position + 1))
-                        return true;
-                    else
-                        onMapSegments.remove(s);
-                }
-            } else {
-                if (Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon) {
-                    onMapSegments.add(s);
-                    log.info(String.format("[Adding new segment to result: %s]",s));
-                    if (findNextSegment(s.getNeighbour(startNode), position + 1))
-                        return true;
-                    else
-                        onMapSegments.remove(s);
-                }
-            }
-        }
-
-        return false;
-    }
 
     public Graph getGraph() {
         return graph;

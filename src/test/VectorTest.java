@@ -16,6 +16,8 @@ public class VectorTest {
         Vector v1 = new Vector(start, end1);
         Vector v2 = new Vector(start, end2);
 
+        System.out.println(v1.getAngleBetween(v2));
+
         assert (v2.getAngleBetween(v1) == Math.PI/2);
     }
 

@@ -1,17 +1,18 @@
 package map.graph;
 
 import map.graph.graphElements.*;
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentFactory;
+import map.graph.graphElements.segments.SegmentImpl;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.SearcherFactory;
 import se.kodapan.osm.domain.*;
 import se.kodapan.osm.domain.Node;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DataSculptor {
 
@@ -26,7 +27,7 @@ public class DataSculptor {
 
         BooleanQuery bq = new BooleanQuery();
 
-        //       bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
+        //bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
         bq.add(index.getQueryFactories().nodeEnvelopeQueryFactory()
                 .setSouthLatitude(south).setWestLongitude(west)
                 .setNorthLatitude(north).setEastLongitude(east)
@@ -45,13 +46,12 @@ public class DataSculptor {
     public Graph rebuildGraph(IndexedRoot<Query> index, Map<OsmObject, Float> map){
         Graph graph = new Graph();
         NodeFactory nf = new NodeFactory();
-
-        for (OsmObject entry : map.keySet()){
-            se.kodapan.osm.domain.Node tmp = index.getNode(entry.getId());
+        map.keySet().stream().filter(entry -> entry instanceof Node).forEach(entry -> {
+            Node tmp = index.getNode(entry.getId());
             map.graph.graphElements.Node currentNode = getNodeOrCreate(graph, nf, tmp);
             List<Way> ways = tmp.getWaysMemberships();
 
-            if(ways != null) {
+            if (ways != null) {
                 HashMap<Long, map.graph.graphElements.Node> addedNodes = new HashMap<>();
 
                 ways.stream()
@@ -59,18 +59,18 @@ public class DataSculptor {
                         .filter(way -> (way.getNodes().indexOf(tmp)) + 1 < way.getNodes().size())
                         .forEach(way -> {
 
-                    map.graph.graphElements.Node n = getNodeOrCreate(graph, nf, way.getNodes().get(way.getNodes().indexOf(tmp) + 1));
+                            map.graph.graphElements.Node n = getNodeOrCreate(graph, nf, way.getNodes().get(way.getNodes().indexOf(tmp) + 1));
 
-                    if (!addedNodes.containsKey(n.getId())) {
-                        Segment tmpSegment = segmentFactory.newFullSegment(currentNode, n);
-                        if (!graph.hasSegment(tmpSegment)) {
-                            graph.addSegment(tmpSegment);
-                            addedNodes.put(n.getId(), n);
-                        }
-                    }
-                });
+                            if (!addedNodes.containsKey(n.getId())) {
+                                Segment tmpSegment = segmentFactory.newFullSegment(currentNode, n);
+                                if (!graph.hasSegment(tmpSegment)) {
+                                    graph.addSegment(tmpSegment);
+                                    addedNodes.put(n.getId(), n);
+                                }
+                            }
+                        });
             }
-        }
+        });
         return graph;
     }
 

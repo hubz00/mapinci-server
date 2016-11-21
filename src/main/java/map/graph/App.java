@@ -2,16 +2,13 @@ package map.graph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import map.graph.graphElements.*;
-import org.apache.lucene.search.Query;
-import se.kodapan.osm.domain.OsmObject;
-import se.kodapan.osm.domain.root.indexed.IndexedRoot;
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentImpl;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public class App {
 

@@ -1,21 +1,18 @@
 import map.graph.DataSculptor;
 import map.graph.algorithm.ShapeFinder;
 import map.graph.graphElements.*;
-import org.apache.commons.logging.Log;
-import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
-import org.apache.lucene.index.LogMergePolicy;
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentFactory;
+import map.graph.graphElements.segments.SegmentImpl;
 import org.apache.lucene.search.Query;
 import org.junit.Before;
 import org.junit.Test;
 import se.kodapan.osm.domain.OsmObject;
-import se.kodapan.osm.domain.Way;
-import se.kodapan.osm.domain.root.PojoRoot;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ShapeFinderTest {
@@ -27,14 +24,17 @@ public class ShapeFinderTest {
     public void setup() throws IOException, OsmXmlParserException {
         OsmFetcher gf = new OsmFetcher();
         DataSculptor ds = new DataSculptor();
+        log = Logger.getLogger("ShapeFinderTest");
+
         IndexedRoot<Query> index = gf.makeGraph("test.osm");
 
         Map<OsmObject, Float> hits = ds.narrowDown(0.0,6.6, 6.6, 0.0, index);
 
+        log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        hits.keySet().forEach(System.out::println);
         graph = ds.rebuildGraph(index,hits);
 
         Collection<Segment> segments = graph.getSegments().values();
-        log = Logger.getLogger("ShapeFinderTest");
 
         segments.forEach(System.out::println);
     }
@@ -43,16 +43,13 @@ public class ShapeFinderTest {
     public void findPerfectlyFittedRoute(){
 
         Node startNode = graph.getNodeByCoordinates(2.0,1.0);
+        System.out.println(startNode == null);
         log.info(String.format("Start node [id: %d] [long: %f] [lat: %f]", startNode.getId(), startNode.getLongitude(), startNode.getLatitude()));
 
         List<Segment> shape = createShapeSegments(0.0);
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape);
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
         foundGraph.getSegments().values().forEach(System.out::println);
-        System.out.println("----------------------------------------------------");
-        for(Segment s: foundGraph.getSegments().values()){
-            System.out.println(s);
-        }
     }
 
     /* creates shape

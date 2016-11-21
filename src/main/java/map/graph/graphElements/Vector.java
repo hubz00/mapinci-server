@@ -33,6 +33,8 @@ public class Vector{
     }
 
     public Double getAngleBetween(Vector v){
-        return atan2( x*v.getY() - y*v.getX(), x*v.getX() + y*v.getY() );
+        Double otherX = v.getX();
+        Double otherY = v.getY();
+        return Math.acos((x*otherX + y*otherY)/(Math.sqrt(x*x + y*y) + Math.sqrt(otherX*otherX + otherY*otherY)));
     }
 }

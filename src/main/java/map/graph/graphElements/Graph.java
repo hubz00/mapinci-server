@@ -1,8 +1,9 @@
 package map.graph.graphElements;
 
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentImpl;
+
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Graph {
@@ -50,7 +51,7 @@ public class Graph {
                 .findFirst();
         if(segment.isPresent()){
             Segment s = segment.get();
-            System.out.println("Segment is present: " + s);
+            System.out.println("SegmentImpl is present: " + s);
             if((Math.abs(s.getNode1().getLongitude() - lon) <= epsilon) && (Math.abs(s.getNode1().getLatitude()) - lat) <= epsilon)
                 return s.getNode1();
             else
