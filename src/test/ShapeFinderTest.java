@@ -1,9 +1,10 @@
 import map.graph.DataSculptor;
 import map.graph.algorithm.ShapeFinder;
+import map.graph.algorithm.conditions.ConditionManager;
+import map.graph.algorithm.conditions.DirectionCondition;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
-import map.graph.graphElements.segments.SegmentImpl;
 import org.apache.lucene.search.Query;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,9 @@ public class ShapeFinderTest {
         log.info(String.format("Start node [id: %d] [long: %f] [lat: %f]", startNode.getId(), startNode.getLongitude(), startNode.getLatitude()));
 
         List<Segment> shape = createShapeSegments(0.0);
-        ShapeFinder shapeFinder = new ShapeFinder(graph,shape);
+        ConditionManager cm = new ConditionManager();
+        cm.addCondition(new DirectionCondition(0.0));
+        ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
         foundGraph.getSegments().values().forEach(System.out::println);
     }

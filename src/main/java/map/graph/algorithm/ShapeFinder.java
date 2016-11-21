@@ -1,9 +1,9 @@
 package map.graph.algorithm;
 
+import map.graph.algorithm.conditions.ConditionManager;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
 import map.graph.graphElements.segments.Segment;
-import map.graph.graphElements.segments.SegmentImpl;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,11 +17,13 @@ public class ShapeFinder {
     private List<Segment> onMapSegments;
     private Double epsilon;
     private Logger log = Logger.getLogger("Shape Finder");
+    private ConditionManager conditionManager;
 
-    public ShapeFinder(Graph graph, List<Segment> shape){
+    public ShapeFinder(Graph graph, List<Segment> shape, ConditionManager cm){
         this.shape = shape;
         this.graph = graph;
         this.onMapSegments = new LinkedList<>();
+        this.conditionManager = cm;
     }
 
     public Graph findShape(Node startNode, Double epsilon, Double nodeSearchEpsilon){
@@ -29,6 +31,7 @@ public class ShapeFinder {
         Node node = graph.getNodeByCoordinates(startNode.getLongitude(), startNode.getLatitude(), nodeSearchEpsilon);
         log.log(Level.ALL,"Starting node: " + node);
         Graph result = new Graph();
+        //todo rotate shape to fit in first node
         if(isClosedShape()){
             log.info("Is a closed shape");
             for(int i = 0; i < shape.size(); i++){
@@ -56,11 +59,10 @@ public class ShapeFinder {
 
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
         Segment segmentToMap = shape.get(position);
-        log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[SegmentImpl to map: %s]",position, startNode, segmentToMap));
+        log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[Segment to map: %s]",position, startNode, segmentToMap));
 
         for (Segment s: possibleSegments){
-                if ((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0) && (Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon))
-                        || (Math.abs(s.getSlope() - segmentToMap.getSlope()) <= epsilon)) {
+            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionManager.checkConditions(segmentToMap,s).areMet()){
                     onMapSegments.add(s);
                     log.info(String.format("[Adding new segment to result: %s]",s));
                     if (findNextSegment(s.getNeighbour(startNode), position + 1))

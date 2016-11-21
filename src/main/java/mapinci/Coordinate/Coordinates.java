@@ -1,6 +1,6 @@
 package mapinci.Coordinate;
 
-import map.graph.graphElements.segments.SegmentImpl;
+import map.graph.graphElements.segments.Segment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,16 +8,16 @@ import java.util.Collection;
 //TODO decide if Coordinates are valid or Node is enough
 public class Coordinates {
 
-    private Collection<SegmentImpl> segments;
+    private Collection<Segment> segments;
     private ArrayList<Coordinate> coordinates;
 
-    public Coordinates(Collection<SegmentImpl> segments) {
+    public Coordinates(Collection<Segment> segments) {
         this.segments = segments;
         this.createCoordinates();
     }
 
     private void createCoordinates() {
-        for (SegmentImpl s: segments
+        for (Segment s: segments
              ) {
             this.coordinates.add(new Coordinate(s.getNode1().getLatitude(), s.getNode1().getLongitude()));
             this.coordinates.add(new Coordinate(s.getNode2().getLatitude(), s.getNode2().getLongitude()));

@@ -3,7 +3,6 @@ package map.graph;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
-import map.graph.graphElements.segments.SegmentImpl;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.File;
