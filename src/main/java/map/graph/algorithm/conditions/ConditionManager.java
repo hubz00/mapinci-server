@@ -13,14 +13,10 @@ public class ConditionManager {
         conditions = new LinkedList<>();
     }
 
-    public ConditionsResult checkConditions(Segment graphSegment, Segment mapSegment){
-        ConditionsResult cR = new ConditionsResult();
-        cR.setBoolResult(conditions.parallelStream()
-                .allMatch(c -> c.meet(graphSegment,mapSegment)));
-
+    public boolean checkConditions(Segment graphSegment, Segment mapSegment){
+       return conditions.parallelStream()
+                .allMatch(c -> c.meet(graphSegment,mapSegment));
         //todo fix me
-
-        return cR;
     }
 
     public void addCondition(Condition c){

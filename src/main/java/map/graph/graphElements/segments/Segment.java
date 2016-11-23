@@ -5,7 +5,7 @@ import map.graph.graphElements.Vector;
 
 import java.util.HashMap;
 
-public class Segment {
+public class Segment implements SegmentSoul{
 
     private long id;
     private Node n1;
@@ -44,8 +44,18 @@ public class Segment {
         return n1.equals(n) || n2.equals(n);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
+    }
+
+    @Override
+    public Vector getVector1() {
+        return getVectorFromNode(n1);
+    }
+
+    @Override
+    public Vector getVector2() {
+        return getVectorFromNode(n2);
     }
 
     public Node getNode1() {

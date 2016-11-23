@@ -14,6 +14,11 @@ public class Vector{
         y = n2.getLatitude() - n1.getLatitude();
     }
 
+    public Vector(Double x, Double y){
+        this.x = x;
+        this.y = y;
+    }
+
     public Vector() {};
 
     @JsonIgnore

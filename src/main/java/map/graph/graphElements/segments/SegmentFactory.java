@@ -17,8 +17,8 @@ public final class SegmentFactory {
         return segment;
     }
 
-    public SegmentReflection newFullSegment(Node n1, Vector v1, Node n2, Vector v2){
-        SegmentReflection sr = new SegmentReflection(id, n1, v1, n2, v2);
+    public SegmentReflection newFullSegment(Long correspondingId, Vector v1, Vector v2){
+        SegmentReflection sr = new SegmentReflection(id, correspondingId, v1, v2);
         id++;
         return sr;
     }

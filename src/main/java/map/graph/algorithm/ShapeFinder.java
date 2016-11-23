@@ -62,16 +62,16 @@ public class ShapeFinder {
         log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[Segment to map: %s]",position, startNode, segmentToMap));
 
         for (Segment s: possibleSegments){
-            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionManager.checkConditions(segmentToMap,s).areMet()){
-                    onMapSegments.add(s);
-                    log.info(String.format("[Adding new segment to result: %s]",s));
-                    if (findNextSegment(s.getNeighbour(startNode), position + 1))
-                        return true;
-                    else
-                        onMapSegments.remove(s);
-                }
+            log.info(String.format("[Checking Segment: %s]",s));
+            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionManager.checkConditions(segmentToMap,s)){
+                onMapSegments.add(s);
+                log.info(String.format("[Adding new segment to result: %s]",s));
+                if (findNextSegment(s.getNeighbour(startNode), position + 1))
+                    return true;
+                else
+                    onMapSegments.remove(s);
+            }
         }
-
         return false;
     }
 

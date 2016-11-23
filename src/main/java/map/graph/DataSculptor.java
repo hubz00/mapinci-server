@@ -46,7 +46,7 @@ public class DataSculptor {
         Graph graph = new Graph();
         NodeFactory nf = new NodeFactory();
         map.keySet().stream().filter(entry -> entry instanceof Node).forEach(entry -> {
-            Node tmp = index.getNode(entry.getId());
+            Node tmp = (Node) entry;
             map.graph.graphElements.Node currentNode = getNodeOrCreate(graph, nf, tmp);
             List<Way> ways = tmp.getWaysMemberships();
 
