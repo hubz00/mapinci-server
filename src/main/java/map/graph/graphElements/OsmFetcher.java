@@ -1,6 +1,5 @@
 package map.graph.graphElements;
 
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import se.kodapan.osm.domain.root.PojoRoot;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
@@ -21,7 +20,10 @@ public class OsmFetcher {
         parser.parse(getClass().getResourceAsStream("/" + mapsName));
         index.commit();
 
-        System.out.print(root.getNodes().size());
+        System.out.println(root.getNodes().size());
+
+
         return index;
     }
+
 }

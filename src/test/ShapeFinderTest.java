@@ -3,11 +3,12 @@ import map.graph.algorithm.ShapeFinder;
 import map.graph.algorithm.conditions.ConditionManager;
 import map.graph.algorithm.conditions.DirectionCondition;
 import map.graph.graphElements.*;
-import map.graph.graphElements.segments.Segment;
-import map.graph.graphElements.segments.SegmentFactory;
+import mapinci.GraphMaker;
 import org.apache.lucene.search.Query;
+import org.junit.Before;
 import org.junit.Test;
 import se.kodapan.osm.domain.OsmObject;
+import se.kodapan.osm.domain.root.PojoRoot;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 

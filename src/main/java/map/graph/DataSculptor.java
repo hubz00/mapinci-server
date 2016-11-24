@@ -3,11 +3,14 @@ package map.graph;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
+import map.graph.graphElements.SegmentFactory;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import se.kodapan.osm.domain.*;
 import se.kodapan.osm.domain.Node;
+import se.kodapan.osm.domain.OsmObject;
+import se.kodapan.osm.domain.Way;
+import se.kodapan.osm.domain.root.PojoRoot;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 
 import java.io.IOException;
@@ -27,10 +30,13 @@ public class DataSculptor {
         BooleanQuery bq = new BooleanQuery();
 
         //bq.add(index.getQueryFactories().containsTagKeyQueryFactory().setKey("highway").build(), BooleanClause.Occur.MUST);
+
         bq.add(index.getQueryFactories().nodeEnvelopeQueryFactory()
                 .setSouthLatitude(south).setWestLongitude(west)
                 .setNorthLatitude(north).setEastLongitude(east)
                 .build(), BooleanClause.Occur.MUST);
+
+
 
         try {
             result = index.search(bq);
@@ -42,7 +48,27 @@ public class DataSculptor {
 
     }
 
-    public Graph rebuildGraph(IndexedRoot<Query> index, Map<OsmObject, Float> map){
+    public Map<OsmObject, Float> narrowDown(double south, double north, double east, double west, PojoRoot root){
+        Map<OsmObject, Float> result = new HashMap<OsmObject, Float>();
+
+        Map<Long, Node> nodes = root.getNodes();
+        nodes.values().stream().filter(node -> checkNodePosition(south, north, east, west, node)).forEach(node -> {
+            result.put(node, Float.valueOf(node.getId()));
+        });
+
+        return result;
+
+    }
+
+    public boolean checkNodePosition(double south, double north, double east, double west, Node node) {
+        double longitude = node.getLongitude();
+        if(longitude > north || longitude < south) return false;
+        double latitude = node.getLatitude();
+        if(latitude>east || latitude < west) return false;
+        return true;
+    }
+
+    public Graph rebuildGraph(Map<OsmObject, Float> map){
         Graph graph = new Graph();
         NodeFactory nf = new NodeFactory();
         map.keySet().stream().filter(entry -> entry instanceof Node).forEach(entry -> {
