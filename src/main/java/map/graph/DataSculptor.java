@@ -3,7 +3,6 @@ package map.graph;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
-import map.graph.graphElements.SegmentFactory;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
