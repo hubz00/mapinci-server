@@ -32,6 +32,11 @@ public class SegmentReflection implements SegmentSoul{
         return vectors.get(1);
     }
 
+    @Override
+    public Double getLength() {
+        return Math.sqrt(Math.pow(vectors.get(0).getX(),2.0) + Math.pow(vectors.get(1).getY(),2.0));
+    }
+
     public Long getId() {
         return id;
     }

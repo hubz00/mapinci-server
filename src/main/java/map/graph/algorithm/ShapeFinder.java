@@ -54,6 +54,15 @@ public class ShapeFinder {
         return result;
     }
 
+    private boolean findFirstSegment(Node startNode){
+        //todo implement
+        /* first cycle of searching for shape,
+           adjust the shape coordinates to fit first segment
+           and run recursion
+          */
+        return true;
+    }
+
     private boolean findNextSegment(Node startNode, int position){
         if(position == shape.size()) return true;
 
@@ -62,6 +71,7 @@ public class ShapeFinder {
         log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[Segment to map: %s]",position, startNode, segmentToMap));
 
         for (Segment s: possibleSegments){
+            if(position == 0) rotateShapeToFit(s);
             log.info(String.format("[Checking Segment: %s]",s));
             if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionManager.checkConditions(segmentToMap,s)){
                 onMapSegments.add(s);
@@ -73,6 +83,10 @@ public class ShapeFinder {
             }
         }
         return false;
+    }
+
+    private void rotateShapeToFit(Segment s) {
+        //todo implement shape rotation to fit first segment
     }
 
     private boolean isClosedShape() {

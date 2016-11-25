@@ -9,5 +9,5 @@ public interface SegmentSoul {
     Long getId();
     Vector getVector1();
     Vector getVector2();
-
+    Double getLength();
 }
