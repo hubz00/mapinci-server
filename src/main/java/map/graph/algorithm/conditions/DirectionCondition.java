@@ -2,7 +2,6 @@ package map.graph.algorithm.conditions;
 
 
 import map.graph.algorithm.ReferenceRotator;
-import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
@@ -19,7 +18,7 @@ public class DirectionCondition implements Condition {
     }
 
     @Override
-    public boolean meet(Segment graphSegment, Segment mapSegment) {
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment) {
         List<SegmentSoul> segments = new LinkedList<>();
         segments.add(0,graphSegment);
         segments.add(1,mapSegment);

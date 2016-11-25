@@ -1,7 +1,7 @@
 package map.graph.algorithm.conditions;
 
-import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentSoul;
 
 public interface Condition {
-    boolean meet(Segment graphSegment, Segment mapSegment);
+    boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment);
 }
