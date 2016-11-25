@@ -1,19 +1,22 @@
 package mapinci;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
 import map.graph.DataSculptor;
-import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
-import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.OsmFetcher;
 import org.apache.lucene.search.Query;
-import se.kodapan.osm.domain.OsmObject;
+import se.kodapan.osm.domain.Way;
+import se.kodapan.osm.domain.root.PojoRoot;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
+import serialized.NodeSerialized;
+import serialized.WaySerialized;
 
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,34 +27,67 @@ public class GraphMaker {
     public GraphMaker(){};
 
     public ArrayList<Node> runApp() throws IOException, OsmXmlParserException {
-        map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
+        OsmFetcher osmFetcher = new OsmFetcher();
         DataSculptor ds = new DataSculptor();
-        IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
+        IndexedRoot<Query> index = osmFetcher.makeGraph("andorra-latest.osm");
+        PojoRoot root = (PojoRoot) index.getDecorated();
+        serializeNodes(root);
+//        serializeWays(root);
 
-        Map<OsmObject, Float> hits = ds.narrowDown(42.5110129,42.5209083,1.544432,1.527749, index);
 
-        Graph g = ds.rebuildGraph(index,hits);
+        //dlaczemu niektore ways sa nullami? zle parsowanie? co z tym zrobic?
+        Map<Long, Way> ways = root.getWays();
+        Way error = ways.get(45382981);
 
-        Collection<Segment> segments = g.getSegments().values();
+        System.out.println(error);
+        System.out.println("cos");
 
-        // created graph written to file
-
-        saveGraph(g);
+//        Map<OsmObject, Float> hits = ds.narrowDown(0.0,6.6, 6.6, 0.0, root);
+//
+//        Graph g = ds.rebuildGraph(hits);
+//
+//        Collection<Segment> segments = g.getSegments().values();
 
         ArrayList<Node> nodes = new ArrayList<>();
-
-        for(Segment s: g.getSegments().values()) {
-            nodes.add(s.getNode1());
-            nodes.add(s.getNode2());
-        }
 
 
         return nodes;
     }
 
-    private void saveGraph(Graph g) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(new File("./src/main/resources/graph.json"), g);
+    public void serializeNodes(PojoRoot root) throws IOException {
+
+        Map<Long, se.kodapan.osm.domain.Node> nodes = root.getNodes();
+
+        Map<Long, NodeSerialized> serialized = new HashMap<>();
+        
+        nodes.forEach((key, value) ->
+            serialized.put(key, new NodeSerialized(value))
+        );
+
+        Kryo kryo = new Kryo();
+        Output output = new Output(new FileOutputStream("nodes.bin"));
+        kryo.writeObject(output, serialized);
+        output.close();
+
+    }
+
+    public void serializeWays(PojoRoot root) throws IOException {
+
+        Map<Long, Way> ways = root.getWays();
+
+        Map<Long, WaySerialized> serialized = new HashMap<>();
+        long c = 0;
+
+        ways.values().forEach((value) -> {
+                    serialized.put(value.getId(), new WaySerialized(value));
+                }
+        );
+
+        Kryo kryo = new Kryo();
+        Output output = new Output(new FileOutputStream("ways.bin"));
+        kryo.writeObject(output, serialized);
+        output.close();
+
     }
 
 }
