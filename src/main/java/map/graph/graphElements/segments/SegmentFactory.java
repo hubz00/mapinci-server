@@ -23,6 +23,12 @@ public final class SegmentFactory {
         return sr;
     }
 
+    public SegmentReflection newFullSegment(Vector v1, Vector v2){
+        SegmentReflection sr = new SegmentReflection(id, v1, v2);
+        id++;
+        return sr;
+    }
+
     public Segment newHalfSegment(Node n1){
         Segment segment = new Segment(id,n1);
         id++;

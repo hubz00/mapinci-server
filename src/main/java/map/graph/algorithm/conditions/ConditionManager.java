@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-/*
-   if primary conditions are applied and met
-   normal condition doesn't have to be met
-   and the node in shape shouldn't be changed
+/**
+ * if primary conditions are applied and met
+ * normal condition doesn't have to be met
+ * and the node in shape shouldn't be changed
  */
 public class ConditionManager {
 
@@ -23,13 +23,12 @@ public class ConditionManager {
     }
 
     public boolean checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
-        if(primaryConditions.parallelStream().allMatch(c -> c.apply(graphSegment,mapSegment))){
-               return primaryConditions.parallelStream().allMatch(c -> c.meet(graphSegment,mapSegment));
-        }
+//        if(primaryConditions.parallelStream().allMatch(c -> c.apply(graphSegment,mapSegment))){
+//               return primaryConditions.parallelStream().allMatch(c -> c.meet(graphSegment,mapSegment));
+//        }
 
        return conditions.parallelStream()
                 .allMatch(c -> c.meet(graphSegment,mapSegment));
-        //todo fix me
     }
 
     public void addCondition(Condition c){

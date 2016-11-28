@@ -22,11 +22,9 @@ public class DirectionCondition implements Condition {
         List<SegmentSoul> segments = new LinkedList<>();
         segments.add(0,graphSegment);
         segments.add(1,mapSegment);
-        segments.forEach(s -> System.out.println(String.format("[Segment: %d] [Slope: %f]", s.getId(), s.getSlope())));
         while (Math.abs(segments.get(0).getSlope()) == Double.POSITIVE_INFINITY
                 || Math.abs(segments.get(1).getSlope()) == Double.POSITIVE_INFINITY){
             segments = rotator.rotate(segments,(Math.PI/12) + epsilon);
-            segments.forEach(System.out::println);
         }
         return (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= epsilon)
                         || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= epsilon);

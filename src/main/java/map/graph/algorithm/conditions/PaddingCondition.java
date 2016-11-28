@@ -20,6 +20,6 @@ public class PaddingCondition implements PrimaryCondition{
 
     @Override
     public boolean apply(SegmentSoul graphSegment, SegmentSoul mapSegment) {
-        return (graphSegment.getLength() <= lengthEpsilon && mapSegment.getLength() <= lengthEpsilon);
+        return (mapSegment.getLength() <= lengthEpsilon);
     }
 }

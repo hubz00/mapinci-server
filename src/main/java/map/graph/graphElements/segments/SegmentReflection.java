@@ -1,5 +1,6 @@
 package map.graph.graphElements.segments;
 
+import com.esotericsoftware.minlog.Log;
 import map.graph.graphElements.Node;
 import map.graph.graphElements.Vector;
 
@@ -12,9 +13,18 @@ public class SegmentReflection implements SegmentSoul{
     private HashMap<Integer, Vector> vectors;
     private Double slope;
 
-    protected SegmentReflection(long id,Long correspondingSegmentId, Vector v1, Vector v2){
+    SegmentReflection(long id, Long correspondingSegmentId, Vector v1, Vector v2){
         this.id = id;
         this.correspondingSegmentId = correspondingSegmentId;
+        this.vectors = new HashMap<>();
+        vectors.put(0,v1);
+        vectors.put(1,v2);
+        this.slope = v1.getY()/v1.getX();
+    }
+
+    SegmentReflection(long id, Vector v1, Vector v2){
+        this.id = id;
+        this.correspondingSegmentId = id;
         this.vectors = new HashMap<>();
         vectors.put(0,v1);
         vectors.put(1,v2);
@@ -45,7 +55,7 @@ public class SegmentReflection implements SegmentSoul{
         return slope;
     }
 
-    public String toString(){
-        return String.format("[Corresponding id: %d] [Slope: %f]", id, slope);
+    public String toString() {
+        return String.format("[Corresponding id: %d] [Slope: %s]", id, slope.toString());
     }
 }
