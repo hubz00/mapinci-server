@@ -125,10 +125,10 @@ public class ShapeFinderTest {
 
         List<Integer> shapeNodes = new LinkedList<>();
         shapeNodes.add(0,6);
-        shapeNodes.add(1,4);
-        shapeNodes.add(2,4);
-        shapeNodes.add(3,5);
-        shapeNodes.add(4,5);
+        shapeNodes.add(1,5);
+        shapeNodes.add(2,5);
+        shapeNodes.add(3,2);
+        shapeNodes.add(4,2);
         shapeNodes.add(5,6);
         List<Segment> shape = createShapeSegments(0.0, shapeNodes);
 
@@ -154,7 +154,7 @@ public class ShapeFinderTest {
         nodes.add(3,nf.newNode(5.0 + random.nextDouble()*noiseRange,3.0 + random.nextDouble()*noiseRange));
         nodes.add(4,nf.newNode(3.0 + random.nextDouble()*noiseRange,4.0 + random.nextDouble()*noiseRange));
         nodes.add(5,nf.newNode(2.0 + random.nextDouble()*noiseRange,3.0 + random.nextDouble()*noiseRange));
-        nodes.add(6,nf.newNode(3.0 + random.nextDouble()*noiseRange,1.0 + random.nextDouble()*noiseRange));
+        nodes.add(6,nf.newNode(4.0 + random.nextDouble()*noiseRange,3.0 + random.nextDouble()*noiseRange));
 
         Iterator<Integer> i = shapeNodes.iterator();
 
