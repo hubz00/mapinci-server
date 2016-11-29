@@ -2,7 +2,7 @@
 import map.graph.DataSculptor;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.OsmFetcher;
-import map.graph.graphElements.Segment;
+import map.graph.graphElements.segments.Segment;
 import org.apache.lucene.search.Query;
 import org.junit.Test;
 import se.kodapan.osm.domain.OsmObject;
@@ -38,7 +38,7 @@ public class DataSculptorTest {
             System.out.println("");
         }
 
-        Graph graph = ds.rebuildGraph(index,hits);
+        Graph graph = ds.rebuildGraph(hits);
 
         Collection<Segment> segments = graph.getSegments().values();
 

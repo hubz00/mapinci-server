@@ -1,6 +1,6 @@
 package mapinci.Coordinate;
 
-import map.graph.graphElements.Segment;
+import map.graph.graphElements.segments.Segment;
 
 import java.util.ArrayList;
 import java.util.Collection;

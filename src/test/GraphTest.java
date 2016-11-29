@@ -1,4 +1,6 @@
 import map.graph.graphElements.*;
+import map.graph.graphElements.segments.Segment;
+import map.graph.graphElements.segments.SegmentFactory;
 import org.junit.Test;
 
 import java.util.Objects;

@@ -42,6 +42,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/jars/java.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.0</version>
+        </dependency>
     </dependencies>
 
     <properties>
