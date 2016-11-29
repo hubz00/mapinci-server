@@ -22,7 +22,6 @@ public class OsmFetcher {
 
         System.out.println(root.getNodes().size());
 
-
         return index;
     }
 

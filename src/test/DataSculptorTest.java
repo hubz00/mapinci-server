@@ -38,7 +38,7 @@ public class DataSculptorTest {
             System.out.println("");
         }
 
-        Graph graph = ds.rebuildGraph(hits);
+        Graph graph = ds.rebuildGraph(index, hits);
 
         Collection<Segment> segments = graph.getSegments().values();
 
