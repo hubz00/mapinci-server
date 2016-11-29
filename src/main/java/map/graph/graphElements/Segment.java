@@ -1,32 +1,55 @@
 package map.graph.graphElements;
 
+import java.util.HashMap;
+
 public class Segment implements Comparable<Segment> {
 
-    private final long id;
+    private long id;
     private Node n1;
     private Node n2;
     private Double length;
+    private HashMap<Long, Vector> vectors;
 
     protected Segment(Long id, Node n1){
         this.id = id;
         this.n1 = n1;
         this.n2 = null;
         this.length = 0.0;
+        this.vectors = new HashMap<>();
     }
 
     protected Segment(Long id, Node n1, Node n2) {
         this.id = id;
         this.n1 = n1;
         this.n2 = n2;
+        this.vectors = new HashMap<>();
         calculateLength();
+        setVectors();
     }
 
+    private void setVectors() {
+        vectors.put(n1.getId(), new Vector(n1,n2));
+        vectors.put(n2.getId(), new Vector(n2,n1));
+    }
+
+    protected Segment() {}
+
     private void calculateLength() {
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = Math.toRadians(n2.getLatitude() - n1.getLatitude());
+        Double lonDistance = Math.toRadians(n2.getLongitude() - n1.getLongitude());
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(n1.getLatitude())) * Math.cos(Math.toRadians(n1.getLatitude()))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        this.length = R * c * 1000; // convert to meters
+
     }
 
     public int compareTo(Segment o) {
         if((n1.getId() == o.getNode1().getId() && n2.getId() == o.getNode2().getId())
-                || (n2.getId() == o.getNode1().getId() && n1.getId() == o.getNode1().getId()))
+                || (n2.getId() == o.getNode1().getId() && n1.getId() == o.getNode2().getId()))
             return 0;
         else if (length >= o.getLength())
             return 1;
@@ -54,8 +77,10 @@ public class Segment implements Comparable<Segment> {
 
     public void setNode2(Node n2) {
         this.n2 = n2;
-        if (this.n1 != null)
+        if (this.n1 != null && this.n2 != null) {
             calculateLength();
+            setVectors();
+        }
     }
 
     public Double getLength() {
@@ -74,8 +99,15 @@ public class Segment implements Comparable<Segment> {
         return n.equals(n1)? n2 : n1;
     }
 
-    @Override
-    public String toString() {
-        return "-- " + n1 + " ---- " + n2 + " --";
+    public HashMap<Long, Vector> getVectors() {
+        return vectors;
+    }
+
+    public Vector getVectorFromNode(Node n){
+        return vectors.get(n.getId());
+    }
+
+    @Override public String toString() {
+        return "-- " + n1 + " ---- " + n2 + " --" + " length: " + length + "m";
     }
 }

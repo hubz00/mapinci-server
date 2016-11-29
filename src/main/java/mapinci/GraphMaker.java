@@ -1,7 +1,10 @@
-package map.graph;
+package mapinci;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import map.graph.graphElements.*;
+import map.graph.DataSculptor;
+import map.graph.graphElements.Graph;
+import map.graph.graphElements.Node;
+import map.graph.graphElements.Segment;
 import org.apache.lucene.search.Query;
 import se.kodapan.osm.domain.OsmObject;
 import se.kodapan.osm.domain.root.indexed.IndexedRoot;
@@ -9,13 +12,18 @@ import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-public class App {
+/**
+ * Created by m on 05.11.16.
+ */
+public class GraphMaker {
 
-    public static void main(String[] args) throws IOException, OsmXmlParserException {
+    public GraphMaker(){};
+
+    public ArrayList<Node> runApp() throws IOException, OsmXmlParserException {
         map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
         DataSculptor ds = new DataSculptor();
         IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
@@ -24,16 +32,26 @@ public class App {
 
         Graph g = ds.rebuildGraph(index,hits);
 
-//        Graph g = getGraph();
-
         Collection<Segment> segments = g.getSegments().values();
 
-        segments.forEach(System.out::println);
+        // created graph written to file
+
+        //saveGraph(g);
+
+        ArrayList<Node> nodes = new ArrayList<>();
+
+        for(Segment s: g.getSegments().values()) {
+            nodes.add(s.getNode1());
+            nodes.add(s.getNode2());
+        }
+
+
+        return nodes;
     }
 
-    private static Graph getGraph() throws IOException {
+    private void saveGraph(Graph g) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File("./src/main/resources/graph.json"), Graph.class);
+        mapper.writeValue(new File("./src/main/resources/graph.json"), g);
     }
 
 }
