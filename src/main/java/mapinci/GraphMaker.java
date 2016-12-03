@@ -1,7 +1,5 @@
 package mapinci;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Output;
 import map.graph.DataSculptor;
 import map.graph.graphElements.Node;
 import map.graph.graphElements.OsmFetcher;
@@ -31,7 +29,7 @@ public class GraphMaker {
         DataSculptor ds = new DataSculptor();
         IndexedRoot<Query> index = osmFetcher.makeGraph("andorra-latest.osm");
         PojoRoot root = (PojoRoot) index.getDecorated();
-        serializeNodes(root);
+//        serializeNodes(root);
 //        serializeWays(root);
 
 
@@ -41,53 +39,46 @@ public class GraphMaker {
 
         System.out.println(error);
         System.out.println("cos");
-
-//        Map<OsmObject, Float> hits = ds.narrowDown(0.0,6.6, 6.6, 0.0, root);
-//
-//        Graph g = ds.rebuildGraph(hits);
-//
-//        Collection<Segment> segments = g.getSegments().values();
-
         ArrayList<Node> nodes = new ArrayList<>();
 
 
         return nodes;
     }
 
-    public void serializeNodes(PojoRoot root) throws IOException {
-
-        Map<Long, se.kodapan.osm.domain.Node> nodes = root.getNodes();
-
-        Map<Long, NodeSerialized> serialized = new HashMap<>();
-        
-        nodes.forEach((key, value) ->
-            serialized.put(key, new NodeSerialized(value))
-        );
-
-        Kryo kryo = new Kryo();
-        Output output = new Output(new FileOutputStream("nodes.bin"));
-        kryo.writeObject(output, serialized);
-        output.close();
-
-    }
-
-    public void serializeWays(PojoRoot root) throws IOException {
-
-        Map<Long, Way> ways = root.getWays();
-
-        Map<Long, WaySerialized> serialized = new HashMap<>();
-        long c = 0;
-
-        ways.values().forEach((value) -> {
-                    serialized.put(value.getId(), new WaySerialized(value));
-                }
-        );
-
-        Kryo kryo = new Kryo();
-        Output output = new Output(new FileOutputStream("ways.bin"));
-        kryo.writeObject(output, serialized);
-        output.close();
-
-    }
+//    public void serializeNodes(PojoRoot root) throws IOException {
+//
+//        Map<Long, se.kodapan.osm.domain.Node> nodes = root.getNodes();
+//
+//        Map<Long, NodeSerialized> serialized = new HashMap<>();
+//
+//        nodes.forEach((key, value) ->
+//            serialized.put(key, new NodeSerialized(value))
+//        );
+//
+//        Kryo kryo = new Kryo();
+//        Output output = new Output(new FileOutputStream("nodes.bin"));
+//        kryo.writeObject(output, serialized);
+//        output.close();
+//
+//    }
+//
+//    public void serializeWays(PojoRoot root) throws IOException {
+//
+//        Map<Long, Way> ways = root.getWays();
+//
+//        Map<Long, WaySerialized> serialized = new HashMap<>();
+//        long c = 0;
+//
+//        ways.values().forEach((value) -> {
+//                    serialized.put(value.getId(), new WaySerialized(value));
+//                }
+//        );
+//
+//        Kryo kryo = new Kryo();
+//        Output output = new Output(new FileOutputStream("ways.bin"));
+//        kryo.writeObject(output, serialized);
+//        output.close();
+//
+//    }
 
 }

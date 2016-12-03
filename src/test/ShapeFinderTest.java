@@ -29,7 +29,7 @@ public class ShapeFinderTest {
         IndexedRoot<Query> index = gf.makeGraph(dataSourceName);
         Map<OsmObject, Float> hits = ds.narrowDown(0.0,6.6, 6.6, 0.0, index);
         hits.keySet().forEach(System.out::println);
-        graph = ds.rebuildGraph(hits);
+        graph = ds.rebuildGraph(index, hits);
 
     }
 

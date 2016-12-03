@@ -66,7 +66,7 @@ public class DataSculptor {
         return !(latitude > east || latitude < west);
     }
 
-    public Graph rebuildGraph(Map<OsmObject, Float> map){
+    public Graph rebuildGraph(IndexedRoot<Query> index, Map<OsmObject, Float> map){
         Graph graph = new Graph();
         NodeFactory nf = new NodeFactory();
         map.keySet().stream().filter(entry -> entry instanceof Node).forEach(entry -> {
