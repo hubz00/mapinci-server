@@ -13,7 +13,7 @@ public class PaddingCondition implements PrimaryCondition{
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment) {
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, boolean newSide) {
         //todo implement
         return false;
     }

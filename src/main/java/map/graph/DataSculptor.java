@@ -63,8 +63,7 @@ public class DataSculptor {
         double longitude = node.getLongitude();
         if(longitude > north || longitude < south) return false;
         double latitude = node.getLatitude();
-        if(latitude>east || latitude < west) return false;
-        return true;
+        return !(latitude > east || latitude < west);
     }
 
     public Graph rebuildGraph(Map<OsmObject, Float> map){
@@ -86,7 +85,7 @@ public class DataSculptor {
                             map.graph.graphElements.Node n = getNodeOrCreate(graph, nf, way.getNodes().get(way.getNodes().indexOf(tmp) + 1));
 
                             if (!addedNodes.containsKey(n.getId())) {
-                                Segment tmpSegment = segmentFactory.newFullSegment(currentNode, n);
+                                Segment tmpSegment = segmentFactory.newSegment(currentNode, n);
                                 if (!graph.hasSegment(tmpSegment)) {
                                     graph.addSegment(tmpSegment);
                                     addedNodes.put(n.getId(), n);

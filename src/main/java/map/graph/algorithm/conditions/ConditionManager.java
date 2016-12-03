@@ -1,6 +1,5 @@
 package map.graph.algorithm.conditions;
 
-import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
@@ -8,9 +7,9 @@ import java.util.List;
 
 
 /**
- * if primary conditions are applied and met
+ * If primary conditions are applied and met
  * normal condition doesn't have to be met
- * and the node in shape shouldn't be changed
+ * and the node in shape shouldn't be changed.
  */
 public class ConditionManager {
 
@@ -22,13 +21,13 @@ public class ConditionManager {
         primaryConditions = new LinkedList<>();
     }
 
-    public boolean checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
+    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
+        ConditionsResult result = new ConditionsResult();
 //        if(primaryConditions.parallelStream().allMatch(c -> c.apply(graphSegment,mapSegment))){
 //               return primaryConditions.parallelStream().allMatch(c -> c.meet(graphSegment,mapSegment));
 //        }
-
-       return conditions.parallelStream()
-                .allMatch(c -> c.meet(graphSegment,mapSegment));
+        conditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
+        return result;
     }
 
     public void addCondition(Condition c){

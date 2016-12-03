@@ -1,6 +1,7 @@
 package map.graph.algorithm;
 
 import map.graph.algorithm.conditions.ConditionManager;
+import map.graph.algorithm.conditions.ConditionsResult;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
 import map.graph.graphElements.segments.Segment;
@@ -76,10 +77,17 @@ public class ShapeFinder {
 
         for(Segment s: possibleSegments) {
             this.shape = referenceRotator.rotateShapeToFit(s, shape.get(0), shape);
-            log.info(String.format("Received slopes: %f   &    %f",s.getSlope(),shape.get(0).getSlope()));
-            if(conditionManager.checkConditions(shape.get(0),s)){
+            ConditionsResult result = conditionManager.checkConditions(shape.get(0),s,true);
+            if(result.areMet()){
+                //todo add handling condition manager
                 onMapSegments.add(s);
-                if(findNextSegment(s.getNeighbour(startNode),1)) return true;
+                if(result.isEnoughSpaceForAnotherSegment()) {
+                    if (findNextSegment(s.getNeighbour(startNode), 0, false))
+                        return true;
+                } else {
+                    if (findNextSegment(s.getNeighbour(startNode), 1, true))
+                        return true;
+                }
             }
 
             onMapSegments = new LinkedList<>();
@@ -87,7 +95,7 @@ public class ShapeFinder {
         return false;
     }
 
-    private boolean findNextSegment(Node startNode, int position){
+    private boolean findNextSegment(Node startNode, int position, boolean newSegment){
         if(position == shape.size()) return true;
 
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
@@ -96,13 +104,22 @@ public class ShapeFinder {
 
         for (Segment s: possibleSegments){
             log.info(String.format("[Checking Segment: %s]",s));
-            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionManager.checkConditions(segmentToMap,s)){
+            ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap,s,newSegment);
+            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionsResult.areMet()){
+                //todo add handling condition manager
                 onMapSegments.add(s);
-                log.info(String.format("[Adding new segment to result: %s]",s));
-                if (findNextSegment(s.getNeighbour(startNode), position + 1))
-                    return true;
-                else
-                    onMapSegments.remove(s);
+                log.info(String.format("[Adding new segment to result: %s]", s));
+                if(conditionsResult.isEnoughSpaceForAnotherSegment())
+                    if (findNextSegment(s.getNeighbour(startNode), position, false))
+                        return true;
+                    else
+                        onMapSegments.remove(s);
+                else {
+                    if (findNextSegment(s.getNeighbour(startNode), position + 1, true))
+                        return true;
+                    else
+                        onMapSegments.remove(s);
+                }
             }
         }
         return false;
@@ -134,7 +151,7 @@ public class ShapeFinder {
 
     private void migratePreShapeToShape() {
         SegmentFactory sf = new SegmentFactory();
-        preShape.forEach(segment -> shape.add(sf.newFullSegment(segment.getVector1(), segment.getVector2())));
+        preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength())));
     }
 
 

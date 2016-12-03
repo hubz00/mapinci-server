@@ -3,17 +3,20 @@ package map.graph.algorithm.conditions;
 public class ConditionsResult {
 
     private boolean boolResult;
-    private double angleToRotate;
+    private Double angleToRotate;
+    private boolean enoughSpaceForAnotherSegment;
 
     public ConditionsResult(){
-        angleToRotate = 0;
+        this.angleToRotate = 0.0;
+        this.boolResult = true;
+        this.enoughSpaceForAnotherSegment = false;
     }
 
     public double getAngleToRotate() {
         return angleToRotate;
     }
 
-    public void setAngleToRotate(double angleToRotate) {
+    public synchronized void setAngleToRotate(double angleToRotate) {
         this.angleToRotate = angleToRotate;
     }
 
@@ -21,7 +24,16 @@ public class ConditionsResult {
         return boolResult;
     }
 
-    public void setBoolResult(boolean boolResult) {
+    public synchronized void setBoolResult(boolean boolResult) {
         this.boolResult = boolResult;
     }
+
+    public boolean isEnoughSpaceForAnotherSegment() {
+        return enoughSpaceForAnotherSegment;
+    }
+
+    public synchronized void setEnoughSpaceForAnotherSegment(boolean enoughSpaceForAnotherSegment) {
+        this.enoughSpaceForAnotherSegment = enoughSpaceForAnotherSegment;
+    }
+
 }
