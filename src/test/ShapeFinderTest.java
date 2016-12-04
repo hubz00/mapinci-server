@@ -64,8 +64,7 @@ public class ShapeFinderTest {
         cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
     /* creates shape
@@ -100,8 +99,7 @@ public class ShapeFinderTest {
         cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
 
@@ -147,8 +145,7 @@ public class ShapeFinderTest {
         cm.addCondition(conditionFactory.newCondition(0.1, 750000.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
 

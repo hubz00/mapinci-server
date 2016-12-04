@@ -10,10 +10,10 @@ public class PaddingCondition implements PrimaryCondition{
     private DirectionCondition direction;
     private Logger log;
 
-    PaddingCondition(Double lengthEpsilon, Double angleEpsilon){
+    PaddingCondition(Double lengthEpsilon, Double slopeEpsilon){
         this.lengthEpsilon = lengthEpsilon;
         ConditionFactory factory = new ConditionFactory();
-        this.direction = (DirectionCondition) factory.newCondition(angleEpsilon);
+        this.direction = (DirectionCondition) factory.newCondition(slopeEpsilon);
         this.log = Logger.getLogger("PaddingCondition");
     }
 
@@ -35,6 +35,7 @@ public class PaddingCondition implements PrimaryCondition{
 
     @Override
     public boolean applicable(SegmentSoul graphSegment, SegmentSoul mapSegment) {
+        log.info(String.format("\t[Map length: %s] [length Epsilon: %s]", mapSegment.getLength(), lengthEpsilon));
         return (mapSegment.getLength() <= lengthEpsilon);
     }
 }

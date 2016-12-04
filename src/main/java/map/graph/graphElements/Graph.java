@@ -68,6 +68,10 @@ public class Graph {
         return false;
     }
 
+    public void removeSegment(Segment s){
+        segments.remove(s.getId());
+    }
+
     public List<Segment> getSegmentsForNode(Node n){
         return segments.values().stream()
                 .filter(s -> s.contains(n))

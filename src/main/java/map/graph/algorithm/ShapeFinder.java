@@ -4,6 +4,7 @@ import map.graph.algorithm.conditions.ConditionManager;
 import map.graph.algorithm.conditions.ConditionsResult;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
+import map.graph.graphElements.Vector;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
 import map.graph.graphElements.segments.SegmentSoul;
@@ -20,10 +21,10 @@ public class ShapeFinder {
     private List<Segment> preShape;
     private List<SegmentSoul> shape;
     private List<Segment> onMapSegments;
-    private Double epsilon;
     private Logger log = Logger.getLogger("Shape Finder");
     private ConditionManager conditionManager;
     private ReferenceRotator referenceRotator;
+    private SegmentSoul firstOriginalAngleSegment;
 
     public ShapeFinder(Graph graph, List<Segment> shape, ConditionManager cm){
         this.preShape = shape;
@@ -34,18 +35,15 @@ public class ShapeFinder {
         this.referenceRotator = new ReferenceRotator();
     }
 
-    public Graph findShape(Node startNode, Double epsilon, Double nodeSearchEpsilon){
-        this.epsilon = epsilon;
-        Graph result = new Graph();
+    public List<Segment> findShape(Node startNode, Double nodeSearchEpsilon){
         Node node = graph.getNodeByCoordinates(startNode.getLongitude(), startNode.getLatitude(), nodeSearchEpsilon);
-
+        log.info("Start node: " + node);
         if(isClosedShape()){
             log.info("Is a closed shape");
             for(int i = 0; i < shape.size(); i++){
-                log.info(String.format("Taking next node to check: [Node: %s]", node.toString()));
+                log.info(String.format("Taking next node to check, loop: %d, left: %d", i, shape.size() - i));
                 if(initAlgorithm(node)){
-                    result.setSegments(onMapSegments);
-                    return result;
+                    return onMapSegments;
                 }
                 SegmentSoul tmp = shape.remove(0);
                 shape.add(tmp);
@@ -53,17 +51,15 @@ public class ShapeFinder {
         }
         else {
             if(initAlgorithm(node)) {
-                result.setSegments(onMapSegments);
-                return result;
+                return onMapSegments;
             }
             Collections.reverse(shape);
             if(initAlgorithm(node)){
-                result.setSegments(onMapSegments);
-                return result;
+                return onMapSegments;
             }
         }
         log.info("Empty result graph");
-        return result;
+        return onMapSegments;
     }
 
     /**
@@ -76,9 +72,13 @@ public class ShapeFinder {
 
         for(Segment s: possibleSegments) {
             this.shape = referenceRotator.rotateShapeToFit(s, shape.get(0), shape);
+            log.info("New Shape angle --------------------------------------------");
+            shape.forEach(seg -> log.info(seg.toString()));
+            log.info("------------------------------------------------------------");
             ConditionsResult result = conditionManager.checkConditions(shape.get(0),s,true);
             if(result.areMet()){
                 //todo add handling condition manager
+                log.info(String.format("[Adding new segment to result: %s]", s));
                 onMapSegments.add(s);
                 if(result.isEnoughSpaceForAnotherSegment()) {
                     if (findNextSegment(s.getNeighbour(startNode), 0, false))
@@ -99,7 +99,7 @@ public class ShapeFinder {
 
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
         SegmentSoul segmentToMap = shape.get(position);
-        log.info(String.format("New call\n\t[Position: %s]\n\t\t[Start node: %s]\n\t\t[Segment to map: %s] [Length: %s]",position, startNode, segmentToMap, segmentToMap.getLength()));
+        log.info(String.format("New call\n\t[Position: %s]\n\t\t[Start node: %s]\n\t\t[Segment to map: %s]",position, startNode, segmentToMap));
 
         for (Segment s: possibleSegments){
             log.info(String.format("\t[Checking Segment: %s]\n\t\t[Comparing to recently added: %s]\n\t\t[Added list size: %s]",s, s.compareTo(onMapSegments.get(onMapSegments.size()-1)), onMapSegments.size()));
@@ -114,6 +114,9 @@ public class ShapeFinder {
                         else
                             onMapSegments.remove(s);
                     else {
+                        if(position == 0){
+                            checkRotation();
+                        }
                         if (findNextSegment(s.getNeighbour(startNode), position + 1, true))
                             return true;
                         else
@@ -125,7 +128,24 @@ public class ShapeFinder {
         return false;
     }
 
+    private void checkRotation() {
+
+        SegmentSoul shapeSegment = shape.get(0);
+        SegmentFactory sf = new SegmentFactory();
+
+        log.info(String.format("\t\tCurrent slope: %f real Slope: %f", shapeSegment.getSlope(), firstOriginalAngleSegment.getSlope()));
+        if(Math.abs(shapeSegment.getSlope() - firstOriginalAngleSegment.getSlope()) >= 0.1){
+            this.shape = referenceRotator.rotateShapeToFit((Segment) firstOriginalAngleSegment,shapeSegment, shape);
+            log.info("New Shape angle --------------------------------------------");
+            shape.forEach(seg -> log.info(seg.toString()));
+            log.info("------------------------------------------------------------");
+        }
+
+    }
+
     private boolean isClosedShape() {
+        migratePreShapeToShape();
+        firstOriginalAngleSegment = preShape.get(0);
         if(preShape.size() < 3) return false;
         Segment firstSegment = preShape.get(0);
         Segment lastSegment = preShape.get(preShape.size()-1);
@@ -136,7 +156,6 @@ public class ShapeFinder {
         Node firstSegmentNode2 = firstSegment.getNode2();
 
         //after checking nodes in shape, create shape without nodes for easier manipulation
-        migratePreShapeToShape();
 
         if(lastSegment.contains(firstSegmentNode1)
                 && !preLastSegment.contains(firstSegmentNode1)

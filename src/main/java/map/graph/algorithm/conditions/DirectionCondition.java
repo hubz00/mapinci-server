@@ -31,11 +31,14 @@ public class DirectionCondition implements Condition {
                 || Math.abs(segments.get(1).getSlope()) == Double.POSITIVE_INFINITY){
             segments = rotator.rotate(segments,(Math.PI/12) + epsilon);
         }
-        notMet = (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= epsilon)
-                || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= epsilon);
+        Double angleEpsilon = Math.abs(segments.get(0).getSlope())*epsilon;
+        if(angleEpsilon < 0.25)
+            angleEpsilon = epsilon;
+        notMet = (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon)
+                || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon);
 
         if(!notMet) conditionsResult.setBoolResult(false);
-        log.info(String.format("\t[Direction condition: %s]", notMet));
+        log.info(String.format("\t[Direction condition: %s]\t[Shape slope: %s] [Map slope: %s]", notMet, graphSegment.getSlope(),mapSegment.getSlope()));
         return notMet;
     }
 

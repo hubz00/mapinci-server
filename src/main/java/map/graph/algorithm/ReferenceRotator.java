@@ -43,6 +43,7 @@ public class ReferenceRotator {
             log.info("Angle too small");
             return shape;
         }
+        log.info("\tRotating. Angle: " + angle);
         return rotate(shape, angle);
     }
 
