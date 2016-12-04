@@ -28,7 +28,7 @@ public class LengthCondition implements Condition {
         if(newSide){
             lengthToFind = graphSegment.getPercentLength()*overallLength;
             epsilonLength = lengthToFind*epsilon;
-            log.info("NEW SIDE");
+            log.info(String.format("NEW SIDE [Shape Segment: %s]", graphSegment));
         }
         log.info(String.format("Length to find: %s\nChecked segment length: %s\nEpsilon: %s", lengthToFind, mapSegment.getLength(), epsilonLength));
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {

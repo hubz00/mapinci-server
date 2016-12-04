@@ -43,7 +43,7 @@ public class ShapeFinder {
         if(isClosedShape()){
             log.info("Is a closed shape");
             for(int i = 0; i < shape.size(); i++){
-                log.info(String.format("Taking next node to check: [Loop: %d]",i));
+                log.info(String.format("Taking next node to check: [Node: %s]", node.toString()));
                 if(initAlgorithm(node)){
                     result.setSegments(onMapSegments);
                     return result;

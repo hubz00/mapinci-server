@@ -116,7 +116,7 @@ public class ShapeFinderTest {
      */
 
     @Test
-    public void findShapeInDifferentAngle() throws IOException, OsmXmlParserException {
+    public void findShapeInDifferentAngleWithPadding() throws IOException, OsmXmlParserException {
         setup("test_inf.osm");
 
         Node startNode = graph.getNodeByCoordinates(2.0,1.0);

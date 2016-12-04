@@ -4,6 +4,7 @@ import map.graph.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 /**
@@ -15,17 +16,21 @@ public class ConditionManager {
 
     private List<Condition> conditions;
     private List<PrimaryCondition> primaryConditions;
+    private Logger log;
 
     public ConditionManager(){
         conditions = new LinkedList<>();
         primaryConditions = new LinkedList<>();
+        this.log = Logger.getLogger("Condition Manager");
     }
 
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
         ConditionsResult result = new ConditionsResult();
-//        if(primaryConditions.parallelStream().allMatch(c -> c.apply(graphSegment,mapSegment))){
-//               return primaryConditions.parallelStream().allMatch(c -> c.meet(graphSegment,mapSegment));
-//        }
+        if(!primaryConditions.isEmpty() && primaryConditions.parallelStream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
+            log.info("Applicable");
+               primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
+               return result;
+        }
         conditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
         return result;
     }
