@@ -27,11 +27,20 @@ public class ConditionManager {
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.parallelStream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-            log.info("Applicable");
+            log.info("\t[Primary conditions apply]");
                primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
+            if(!result.areMet()){
+                log.info("\tReverting changes in conditions");
+                primaryConditions.parallelStream().forEach(Condition::revertLastCheck);
+            }
                return result;
         }
         conditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
+        log.info(String.format("\t[Conditions: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), result.isEnoughSpaceForAnotherSegment()));
+        if(!result.areMet()){
+            log.info("\tReverting changes in conditions");
+            conditions.parallelStream().forEach(Condition::revertLastCheck);
+        }
         return result;
     }
 

@@ -4,4 +4,5 @@ import map.graph.graphElements.segments.SegmentSoul;
 
 public interface Condition {
     boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, boolean newSide);
+    void revertLastCheck();
 }

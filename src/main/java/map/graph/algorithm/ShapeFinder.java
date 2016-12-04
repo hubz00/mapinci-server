@@ -38,7 +38,6 @@ public class ShapeFinder {
         this.epsilon = epsilon;
         Graph result = new Graph();
         Node node = graph.getNodeByCoordinates(startNode.getLongitude(), startNode.getLatitude(), nodeSearchEpsilon);
-        log.log(Level.ALL,"Starting node: " + node);
 
         if(isClosedShape()){
             log.info("Is a closed shape");
@@ -100,25 +99,26 @@ public class ShapeFinder {
 
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
         SegmentSoul segmentToMap = shape.get(position);
-        log.info(String.format("New call\n[Position: %s]\n[Start node: %s]\n[Segment to map: %s]",position, startNode, segmentToMap));
+        log.info(String.format("New call\n\t[Position: %s]\n\t\t[Start node: %s]\n\t\t[Segment to map: %s] [Length: %s]",position, startNode, segmentToMap, segmentToMap.getLength()));
 
         for (Segment s: possibleSegments){
-            log.info(String.format("[Checking Segment: %s]",s));
-            ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap,s,newSegment);
-            if(((position > 0 && (s.compareTo(onMapSegments.get(position-1)) != 0)) || position == 0) && conditionsResult.areMet()){
-                //todo add handling condition manager
-                onMapSegments.add(s);
-                log.info(String.format("[Adding new segment to result: %s]", s));
-                if(conditionsResult.isEnoughSpaceForAnotherSegment())
-                    if (findNextSegment(s.getNeighbour(startNode), position, false))
-                        return true;
-                    else
-                        onMapSegments.remove(s);
-                else {
-                    if (findNextSegment(s.getNeighbour(startNode), position + 1, true))
-                        return true;
-                    else
-                        onMapSegments.remove(s);
+            log.info(String.format("\t[Checking Segment: %s]\n\t\t[Comparing to recently added: %s]\n\t\t[Added list size: %s]",s, s.compareTo(onMapSegments.get(onMapSegments.size()-1)), onMapSegments.size()));
+            if(((onMapSegments.size() == 0) || (s.compareTo(onMapSegments.get(onMapSegments.size()-1)) != 0))) {
+                ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap, s, newSegment);
+                if (conditionsResult.areMet()) {
+                    onMapSegments.add(s);
+                    log.info(String.format("[Adding new segment to result: %s]", s));
+                    if (conditionsResult.isEnoughSpaceForAnotherSegment())
+                        if (findNextSegment(s.getNeighbour(startNode), position, false))
+                            return true;
+                        else
+                            onMapSegments.remove(s);
+                    else {
+                        if (findNextSegment(s.getNeighbour(startNode), position + 1, true))
+                            return true;
+                        else
+                            onMapSegments.remove(s);
+                    }
                 }
             }
         }

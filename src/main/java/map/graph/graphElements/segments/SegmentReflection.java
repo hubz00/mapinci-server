@@ -75,6 +75,6 @@ public class SegmentReflection implements SegmentSoul{
     }
 
     public String toString() {
-        return String.format("[Corresponding id: %d] [Slope: %s]", id, slope.toString());
+        return String.format("[Slope: %s]", slope.toString());
     }
 }

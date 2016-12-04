@@ -15,12 +15,14 @@ public class LengthCondition implements Condition {
     private Double epsilon;
     private Double epsilonLength;
     private Double lengthToFind;
+    private Double lastCheckLength;
     private Logger log;
 
-    public LengthCondition(Double epsilon, Double overallLength){
+    LengthCondition(Double epsilon, Double overallLength){
         this.overallLength = overallLength;
         this.epsilon = epsilon;
         this.log = Logger.getLogger("LengthCondition");
+        this.lastCheckLength = 0.0;
     }
 
     @Override
@@ -30,16 +32,23 @@ public class LengthCondition implements Condition {
             epsilonLength = lengthToFind*epsilon;
             log.info(String.format("NEW SIDE [Shape Segment: %s]", graphSegment));
         }
-        log.info(String.format("Length to find: %s\nChecked segment length: %s\nEpsilon: %s", lengthToFind, mapSegment.getLength(), epsilonLength));
+        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
+            lastCheckLength = mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-            log.info("Length condition: " + true);
+            log.info("\t[Length condition: " + true + "]");
             return true;
         }
         //todo write tests
-        log.info("Length condition: " + false);
+        log.info("\t[Length condition: " + false + "] ");
         result.setBoolResult(false);
         return false;
+    }
+
+    @Override
+    public void revertLastCheck() {
+        lengthToFind += lastCheckLength;
+        lastCheckLength = 0.0;
     }
 }

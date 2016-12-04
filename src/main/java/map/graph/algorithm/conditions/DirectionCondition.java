@@ -15,7 +15,7 @@ public class DirectionCondition implements Condition {
     private ReferenceRotator rotator;
     private Logger log;
 
-    public DirectionCondition(double epsilon){
+    DirectionCondition(double epsilon){
         this.rotator = new ReferenceRotator();
         this.epsilon = epsilon;
         this.log = Logger.getLogger("DirectionCondition");
@@ -35,7 +35,12 @@ public class DirectionCondition implements Condition {
                 || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= epsilon);
 
         if(!notMet) conditionsResult.setBoolResult(false);
-        log.info(String.format("Direction conditon: %s", notMet));
+        log.info(String.format("\t[Direction condition: %s]", notMet));
         return notMet;
+    }
+
+    @Override
+    public void revertLastCheck() {
+
     }
 }

@@ -1,3 +1,4 @@
+import map.graph.algorithm.conditions.ConditionFactory;
 import map.graph.algorithm.conditions.ConditionsResult;
 import map.graph.algorithm.conditions.DirectionCondition;
 import map.graph.graphElements.Vector;
@@ -14,7 +15,8 @@ public class DirectionConditionTest {
     public void epsilonAndInfiniteSlopeHandling(){
         assertTrue(Math.abs(Double.NEGATIVE_INFINITY) == Double.POSITIVE_INFINITY);
 
-        DirectionCondition condition = new DirectionCondition(0.1);
+        ConditionFactory conditionFactory = new ConditionFactory();
+        DirectionCondition condition = (DirectionCondition) conditionFactory.newCondition(0.1);
 
         SegmentFactory sf = new SegmentFactory();
         SegmentSoul mapSegment = sf.newSegment(1L, new Vector(0.0, 5.0), new Vector(0.0, -5.0));

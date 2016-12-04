@@ -20,8 +20,6 @@ public class OsmFetcher {
         parser.parse(getClass().getResourceAsStream("/" + mapsName));
         index.commit();
 
-        System.out.println(root.getNodes().size());
-
         return index;
     }
 

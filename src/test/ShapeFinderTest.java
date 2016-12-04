@@ -1,8 +1,6 @@
 import map.graph.DataSculptor;
 import map.graph.algorithm.ShapeFinder;
-import map.graph.algorithm.conditions.ConditionManager;
-import map.graph.algorithm.conditions.DirectionCondition;
-import map.graph.algorithm.conditions.LengthCondition;
+import map.graph.algorithm.conditions.*;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
@@ -31,6 +29,7 @@ public class ShapeFinderTest {
         hits.keySet().forEach(System.out::println);
         graph = ds.rebuildGraph(index, hits);
 
+        graph.getSegments().values().forEach(segment -> System.out.println(String.format("%s \t\t\tLength: %s", segment,segment.getLength())));
     }
 
     /* creates shape
@@ -61,7 +60,8 @@ public class ShapeFinderTest {
         List<Segment> shape = createShapeSegments(0.0, shapeNodes, new LinkedList<>());
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.0));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
@@ -96,7 +96,8 @@ public class ShapeFinderTest {
         List<Segment> shape = createShapeSegments(0.0, shapeNodes, new LinkedList<>());
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.0));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
@@ -140,8 +141,10 @@ public class ShapeFinderTest {
         List<Segment> shape = createShapeSegments(0.0, shapeNodes, percentLengthList);
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.1));
-        cm.addCondition(new LengthCondition(0.1, 750000.0));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addPrimaryCondition(conditionFactory.newPrimaryCondition(150.0, Math.PI));
+        cm.addCondition(conditionFactory.newCondition(0.1));
+        cm.addCondition(conditionFactory.newCondition(0.1, 750000.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
         Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
