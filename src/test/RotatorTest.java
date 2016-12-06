@@ -1,5 +1,4 @@
 import map.graph.algorithm.ReferenceRotator;
-import map.graph.graphElements.Node;
 import map.graph.graphElements.NodeFactory;
 import map.graph.graphElements.Vector;
 import map.graph.graphElements.segments.Segment;
@@ -23,12 +22,12 @@ public class RotatorTest {
         SegmentFactory sf = new SegmentFactory();
         NodeFactory nf = new NodeFactory();
 
-        Segment s1 = sf.newFullSegment(nf.newNode(0.0,0.0), nf.newNode(0.0, 5.0));
-        Segment s2 = sf.newFullSegment(nf.newNode(0.0,0.0), nf.newNode(5.0, 0.0));
+        Segment s1 = sf.newSegment(nf.newNode(0.0,0.0), nf.newNode(0.0, 5.0));
+        Segment s2 = sf.newSegment(nf.newNode(0.0,0.0), nf.newNode(5.0, 0.0));
 
         list.add(s2);
-        list.add(sf.newFullSegment(new Vector(0.0,1.0), new Vector(0.0,-1.0)));
-        list.add(sf.newFullSegment(new Vector(1.0,1.0), new Vector(-1.0,-1.0)));
+        list.add(sf.newSegment(new Vector(0.0,1.0), new Vector(0.0,-1.0)));
+        list.add(sf.newSegment(new Vector(1.0,1.0), new Vector(-1.0,-1.0)));
 
         List<SegmentSoul> rotated = rotator.rotateShapeToFit(s1,s2,list);
         list.forEach(System.out::println);

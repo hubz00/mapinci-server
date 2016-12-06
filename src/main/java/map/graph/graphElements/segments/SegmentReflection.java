@@ -10,6 +10,7 @@ public class SegmentReflection implements SegmentSoul{
     private long correspondingSegmentId;
     private HashMap<Integer, Vector> vectors;
     private Double slope;
+    private Double percentLength;
 
     SegmentReflection(long id, Long correspondingSegmentId, Vector v1, Vector v2){
         this.id = id;
@@ -18,6 +19,16 @@ public class SegmentReflection implements SegmentSoul{
         vectors.put(0,v1);
         vectors.put(1,v2);
         this.slope = v1.getY()/v1.getX();
+    }
+
+    SegmentReflection(long id, Long correspondingSegmentId, Vector v1, Vector v2, Double percentLength){
+        this.id = id;
+        this.correspondingSegmentId = correspondingSegmentId;
+        this.vectors = new HashMap<>();
+        vectors.put(0,v1);
+        vectors.put(1,v2);
+        this.slope = v1.getY()/v1.getX();
+        this.percentLength = percentLength;
     }
 
     SegmentReflection(long id, Vector v1, Vector v2){
@@ -45,6 +56,14 @@ public class SegmentReflection implements SegmentSoul{
         return Math.sqrt(Math.pow(vectors.get(0).getX(),2.0) + Math.pow(vectors.get(1).getY(),2.0));
     }
 
+    public Double getPercentLength() {
+        return percentLength;
+    }
+
+    public void setPercentLength(Double percentLength) {
+        this.percentLength = percentLength;
+    }
+
     public Long getId() {
         return id;
     }
@@ -54,6 +73,6 @@ public class SegmentReflection implements SegmentSoul{
     }
 
     public String toString() {
-        return String.format("[Corresponding id: %d] [Slope: %s]", id, slope.toString());
+        return String.format("[Slope: %s]", slope.toString());
     }
 }

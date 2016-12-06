@@ -2,24 +2,40 @@ package map.graph.algorithm.conditions;
 
 import map.graph.graphElements.segments.SegmentSoul;
 
+import java.util.logging.Logger;
+
 public class PaddingCondition implements PrimaryCondition{
 
     private Double lengthEpsilon;
-    private Double angleEpsilon;
+    private DirectionCondition direction;
+    private Logger log;
 
-    PaddingCondition(Double lengthEpsilon, Double angleEpsilon){
+    PaddingCondition(Double lengthEpsilon, Double slopeEpsilon){
         this.lengthEpsilon = lengthEpsilon;
-        this.angleEpsilon = angleEpsilon;
+        ConditionFactory factory = new ConditionFactory();
+        this.direction = (DirectionCondition) factory.newCondition(slopeEpsilon);
+        this.log = Logger.getLogger("PaddingCondition");
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment) {
-        //todo implement
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, boolean newSide) {
+        if(direction.meet(graphSegment,mapSegment,result,true) && mapSegment.getLength() <= lengthEpsilon){
+            result.setEnoughSpaceForAnotherSegment(true);
+            log.info(String.format("\t[Padding condition: true]"));
+            return true;
+        }
+        log.info(String.format("\t[Padding condition: false]"));
         return false;
     }
 
     @Override
-    public boolean apply(SegmentSoul graphSegment, SegmentSoul mapSegment) {
+    public void revertLastCheck() {
+
+    }
+
+    @Override
+    public boolean applicable(SegmentSoul graphSegment, SegmentSoul mapSegment) {
+        log.info(String.format("\t[Map length: %s] [length Epsilon: %s]", mapSegment.getLength(), lengthEpsilon));
         return (mapSegment.getLength() <= lengthEpsilon);
     }
 }

@@ -42,18 +42,14 @@ public class Graph {
     }
 
     public Node getNodeByCoordinates(Double lon, Double lat, Double epsilon){
-        System.out.println(String.format("[GET_NODE_BY_COORDINATES]: Lon: %f, Lat: %f, epsilon: %f", lon, lat, epsilon));
-        segments.values().forEach(System.out::println);
         Segment segment =  segments.values().stream()
                 .filter(s -> (((Math.abs(s.getNode1().getLongitude() - lon) <= epsilon) && (Math.abs(s.getNode1().getLatitude() - lat) <= epsilon))
                         || ((Math.abs(s.getNode2().getLongitude() - lon) <= epsilon) && (Math.abs(s.getNode2().getLatitude() - lat) <= epsilon))))
                 .findFirst().get();
         if(segment != null){
-            System.out.println("Segment is present: " + segment);
             if((Math.abs(segment.getNode1().getLongitude() - lon) <= epsilon) && (Math.abs(segment.getNode1().getLatitude() - lat) <= epsilon))
                 return segment.getNode1();
             else if((Math.abs(segment.getNode2().getLongitude() - lon) <= epsilon) && (Math.abs(segment.getNode2().getLatitude() - lat) <= epsilon)) {
-                System.out.println("Second node: " + segment.getNode2() + " lat: " + segment.getNode2().getLatitude() + " lon: " + segment.getNode2().getLongitude());
                 return segment.getNode2();
             }
         }
@@ -70,6 +66,10 @@ public class Graph {
                 return true;
         }
         return false;
+    }
+
+    public void removeSegment(Segment s){
+        segments.remove(s.getId());
     }
 
     public List<Segment> getSegmentsForNode(Node n){

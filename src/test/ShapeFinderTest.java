@@ -1,7 +1,6 @@
 import map.graph.DataSculptor;
 import map.graph.algorithm.ShapeFinder;
-import map.graph.algorithm.conditions.ConditionManager;
-import map.graph.algorithm.conditions.DirectionCondition;
+import map.graph.algorithm.conditions.*;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
@@ -30,6 +29,7 @@ public class ShapeFinderTest {
         hits.keySet().forEach(System.out::println);
         graph = ds.rebuildGraph(index, hits);
 
+        graph.getSegments().values().forEach(segment -> System.out.println(String.format("%s \t\t\tLength: %s", segment,segment.getLength())));
     }
 
     /* creates shape
@@ -57,14 +57,14 @@ public class ShapeFinderTest {
         shapeNodes.add(5,1);
         shapeNodes.add(6,1);
         shapeNodes.add(7,5);
-        List<Segment> shape = createShapeSegments(0.0, shapeNodes);
+        List<Segment> shape = createShapeSegments(0.0, shapeNodes, new LinkedList<>());
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.0));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
     /* creates shape
@@ -92,14 +92,14 @@ public class ShapeFinderTest {
         shapeNodes.add(5,3);
         shapeNodes.add(6,3);
         shapeNodes.add(7,4);
-        List<Segment> shape = createShapeSegments(0.0, shapeNodes);
+        List<Segment> shape = createShapeSegments(0.0, shapeNodes, new LinkedList<>());
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.0));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addCondition(conditionFactory.newCondition(0.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
 
@@ -115,7 +115,7 @@ public class ShapeFinderTest {
      */
 
     @Test
-    public void findShapeInDifferentAngle() throws IOException, OsmXmlParserException {
+    public void findShapeInDifferentAngleWithPadding() throws IOException, OsmXmlParserException {
         setup("test_inf.osm");
 
         Node startNode = graph.getNodeByCoordinates(2.0,1.0);
@@ -130,18 +130,26 @@ public class ShapeFinderTest {
         shapeNodes.add(3,2);
         shapeNodes.add(4,2);
         shapeNodes.add(5,6);
-        List<Segment> shape = createShapeSegments(0.0, shapeNodes);
+
+        List<Double> percentLengthList = new LinkedList<>();
+        percentLengthList.add(0,0.29325513196480938416422287390029);
+        percentLengthList.add(1,0.41348973607038123167155425219941);
+        percentLengthList.add(2,0.29325513196480938416422287390029);
+
+        List<Segment> shape = createShapeSegments(0.0, shapeNodes, percentLengthList);
 
         ConditionManager cm = new ConditionManager();
-        cm.addCondition(new DirectionCondition(0.1));
+        ConditionFactory conditionFactory = new ConditionFactory();
+        cm.addPrimaryCondition(conditionFactory.newPrimaryCondition(150.0, Math.PI));
+        cm.addCondition(conditionFactory.newCondition(0.1));
+        cm.addCondition(conditionFactory.newCondition(0.1, 750000.0));
         ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        Graph foundGraph = shapeFinder.findShape(startNode,0.0,0.0);
-        foundGraph.getSegments().values().forEach(System.out::println);
+        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
     }
 
 
-    private List<Segment> createShapeSegments(double noiseRange, List<Integer> shapeNodes ){
+    private List<Segment> createShapeSegments(double noiseRange, List<Integer> shapeNodes, List<Double> percentLength){
         List<Segment> result = new LinkedList<>();
         List<Node> nodes = new ArrayList<>(7);
         NodeFactory nf = new NodeFactory();
@@ -157,11 +165,22 @@ public class ShapeFinderTest {
         nodes.add(6,nf.newNode(4.0 + random.nextDouble()*noiseRange,3.0 + random.nextDouble()*noiseRange));
 
         Iterator<Integer> i = shapeNodes.iterator();
+        Iterator<Double> iPercent = percentLength.iterator();
 
         int index = 0;
-        while(i.hasNext()){
-            result.add(index,sf.newFullSegment(nodes.get(i.next()),nodes.get(i.next())));
-            index++;
+        if(!percentLength.isEmpty()) {
+            while (i.hasNext()) {
+                Double percent = iPercent.next();
+                log.info(percent.toString());
+                result.add(index, sf.newSegment(nodes.get(i.next()), nodes.get(i.next()), percent ));
+                index++;
+            }
+        }
+        else {
+            while (i.hasNext()) {
+                result.add(index, sf.newSegment(nodes.get(i.next()), nodes.get(i.next())));
+                index++;
+            }
         }
 
         result.forEach(seg -> log.info(seg.toString()));

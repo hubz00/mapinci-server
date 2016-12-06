@@ -18,8 +18,7 @@ public class GraphTest {
 
         SegmentFactory sf = new SegmentFactory();
 
-        Segment s1 = sf.newHalfSegment(n1);
-        s1.setNode2(n2);
+        Segment s1 = sf.newSegment(n1,n2);
 
         Vector vs1n1 = s1.getVectorFromNode(n1);
         Vector vs1n2 = s1.getVectorFromNode(n2);

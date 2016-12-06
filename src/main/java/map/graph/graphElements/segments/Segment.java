@@ -13,6 +13,7 @@ public class Segment implements SegmentSoul{
     private Double length;
     private Double slope;
     private HashMap<Long, Vector> vectors;
+    private Double percentLength;
 
     protected Segment(Long id, Node n1){
         this.id = id;
@@ -20,6 +21,17 @@ public class Segment implements SegmentSoul{
         this.n2 = null;
         this.length = 0.0;
         this.vectors = new HashMap<>();
+    }
+
+    protected Segment(Long id, Node n1, Node n2, Double percentLength){
+        this.id = id;
+        this.n1 = n1;
+        this.n2 = n2;
+        this.length = 0.0;
+        this.vectors = new HashMap<>();
+        this.percentLength = percentLength;
+        calculateLength();
+        setVectorsAndSlope();
     }
 
     protected Segment(Long id, Node n1, Node n2) {
@@ -109,7 +121,15 @@ public class Segment implements SegmentSoul{
     }
 
     @Override public String toString() {
-        return "-- " + n1 + " ---- " + n2 + " -- " + "[Slope: " + slope + "]";
+        return String.format("-- %s ---- %s --\t[Slope: %s]\t[Length: %s]",n1 ,n2, slope, length);
+    }
+
+    public Double getPercentLength() {
+        return percentLength;
+    }
+
+    public void setPercentLength(Double percentLength) {
+        this.percentLength = percentLength;
     }
 
     protected void calculateLength() {
