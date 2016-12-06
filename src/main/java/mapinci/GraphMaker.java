@@ -11,18 +11,14 @@ import se.kodapan.osm.parser.xml.OsmXmlParserException;
 import serialized.NodeSerialized;
 import serialized.WaySerialized;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by m on 05.11.16.
- */
 public class GraphMaker {
 
-    public GraphMaker(){};
+    public GraphMaker(){
+    };
 
     public ArrayList<Node> runApp() throws IOException, OsmXmlParserException {
         OsmFetcher osmFetcher = new OsmFetcher();
