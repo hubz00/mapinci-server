@@ -82,7 +82,8 @@ public class AppTest {
 
         shape.forEach(System.out::println);
 
-        ShapeFinder finder = new ShapeFinder(g,shape, cm);
-        finder.findShape(nf.newNode(1.5305071,42.5082785), 0.00001).forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
+        ShapeFinder finder = new ShapeFinder(g, shape, cm);
+        finder.findShape(nf.newNode(1.5305071,42.5082785), 0.00001)
+                .forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
     }
 }

@@ -2,17 +2,15 @@ package map.graph.graphElements;
 
 import map.graph.graphElements.segments.Segment;
 
-import java.util.List;
-
 public class Shape {
-    private List<Segment> segments;
+    private Segment[] segments;
     private Double length;
 
-    public List<Segment> getSegments() {
+    public Segment[] getSegments() {
         return segments;
     }
 
-    public void setSegments(List<Segment> segments) {
+    public void setSegments(Segment[] segments) {
         this.segments = segments;
     }
 
