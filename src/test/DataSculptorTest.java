@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import java.util.Collection;
 
+import static junit.framework.TestCase.assertTrue;
+
 public class DataSculptorTest {
 
     @Test
@@ -20,9 +22,7 @@ public class DataSculptorTest {
 
         Graph graph = ds.rebuildGraph(mapFragment);
 
-        Collection<Segment> segments = graph.getSegments().values();
-
-        segments.forEach(System.out::println);
+        assertTrue(graph.getNodes().size() == 52506);
     }
 
 }

@@ -18,47 +18,39 @@ import java.util.logging.Logger;
 public class DataSculptor {
 
     private final SegmentFactory segmentFactory;
-    private final NodeFactory nodeFactory;
+    private NodeFactory nodeFactory;
     private Map<Long, List<Long>> addedSegments;
     private Graph graph;
-    private Logger log;
-    private int index;
 
 
     public DataSculptor(){
         this.segmentFactory = new SegmentFactory();
-        this.nodeFactory = new NodeFactory();
         this.addedSegments = new HashMap<>();
-        this.log = Logger.getLogger("DataSculptor");
-        index = 0;
     }
 
-    public Graph rebuildGraph(MapFragment mapFragment){
-        this.graph = new Graph();
-        log.info("Rebuild Started");
+    public Graph rebuildGraph(MapFragment mapFragment, Graph g){
+        this.graph = g;
+        this.nodeFactory = new NodeFactory(graph);
         Map<Long, Node> nodeMap = mapFragment.getNodes();
         mapFragment.getWays().parallelStream()
                 .forEach(way ->{
-                        iteration();
-                        way.getNodeIds().stream()
-                                .filter(id ->  way.getNodeIds().indexOf(id) < way.getNodeIds().size() - 1)
-                                .forEach(nodeId -> {
-                                    map.graph.graphElements.Node currentNode = getNodeOrCreate(nodeMap.get(nodeId));
-                                    map.graph.graphElements.Node nextNode = getNodeOrCreate(nodeMap.get(way.getNodeIds().get((way.getNodeIds().indexOf(nodeId) + 1))));
-                                    if (!checkIfSegmentAdded(currentNode.getId(), nextNode.getId())) {
-                                        Segment checkedSegment = segmentFactory.newSegment(currentNode, nextNode);
-                                        graph.addSegment(checkedSegment);
-                                    }
-            });}        );
-        log.info("Rebuild Finished");
+                    way.getNodeIds().stream()
+                            .filter(id ->  way.getNodeIds().indexOf(id) < way.getNodeIds().size() - 1)
+                            .forEach(nodeId -> {
+                                map.graph.graphElements.Node currentNode = getNodeOrCreate(nodeMap.get(nodeId));
+                                map.graph.graphElements.Node nextNode = getNodeOrCreate(nodeMap.get(way.getNodeIds().get((way.getNodeIds().indexOf(nodeId) + 1))));
+                                if (!checkIfSegmentAdded(currentNode.getId(),
+                                        nextNode.getId())) {
+                                    Segment checkedSegment = segmentFactory.newSegment(currentNode, nextNode);
+                                    graph.addSegment(checkedSegment);
+                                }
+                            });
+                });
         return graph;
     }
 
-
-    private synchronized void iteration(){
-        if(index%500 == 0)
-            log.info("" + index);
-        index++;
+    public Graph rebuildGraph(MapFragment mapFragment){
+        return rebuildGraph(mapFragment, new Graph());
     }
 
     private synchronized boolean checkIfSegmentAdded(Long nodeId1, Long nodeId2){
@@ -97,13 +89,15 @@ public class DataSculptor {
         map.graph.graphElements.Node nn = this.graph.getNodeById(tmpNode.getId());
         if (nn != null)
             return nn;
-        else
+        else {
+            map.graph.graphElements.Node result = null;
             try {
-                return nodeFactory.newNodeFromLibNode(tmpNode);
+                result =  nodeFactory.newNodeFromLibNode(tmpNode);
             } catch (InvalidDataException e) {
-            //todo
+                //todo
                 System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             }
-            return null;
+            return result;
+        }
     }
 }

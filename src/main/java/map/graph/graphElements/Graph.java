@@ -3,18 +3,29 @@ package map.graph.graphElements;
 import map.graph.graphElements.segments.Segment;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Graph {
-    private HashMap<Long, Segment> segments;
+    private Map<Long, Segment> segments;
+    private Map<Long, Node> nodes;
 
     public Graph(){
-        this.segments = new HashMap<>();
+        this.segments = new ConcurrentHashMap<>();
+        this.nodes = new ConcurrentHashMap<>();
     }
 
-    public synchronized void addSegment(Segment s){
+    public void addSegment(Segment s){
         segments.put(s.getId(), s);
+    }
+
+    void addNode(Node n){
+        nodes.put(n.getId(),n);
+    }
+
+    public Map<Long, Node> getNodes(){
+        return nodes;
     }
 
     public Segment getSegment(Long key){
@@ -29,17 +40,10 @@ public class Graph {
     }
 
     public Node getNodeById(Long id){
-        Optional<Segment> segment =  segments.values().parallelStream()
-                .filter(s -> s.getNode1().getId() == id || s.getNode2().getId() == id)
-                .findFirst();
-        if(segment.isPresent()){
-            Segment s = segment.get();
-            if(segment.get().getNode1().getId() == id)
-                return s.getNode1();
-            else
-                return s.getNode2();
-        }
-        return null;
+        if (nodes.containsKey(id))
+            return nodes.get(id);
+        else
+            return null;
     }
 
     public Node getNodeByCoordinates(Double lon, Double lat, Double epsilon){
@@ -96,7 +100,7 @@ public class Graph {
     }
 
 
-    public HashMap<Long, Segment> getSegments() {
+    public Map<Long, Segment> getSegments() {
         return segments;
     }
 }

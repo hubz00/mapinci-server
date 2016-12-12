@@ -14,10 +14,16 @@ public class MapStreamHandler implements MapDataHandler {
 
     private Map<Long, Node> nodes;
     private LinkedList<Way> ways;
+    private Long nodeHandleCalls;
 
     public MapStreamHandler(){
         this.nodes = new HashMap<>();
         this.ways = new LinkedList<>();
+        this.nodeHandleCalls = 0L;
+    }
+
+    public Long getNodeHandleCalls() {
+        return nodeHandleCalls;
     }
 
     @Override
@@ -27,7 +33,10 @@ public class MapStreamHandler implements MapDataHandler {
 
     @Override
     public void handle(Node node) {
-        this.nodes.put(node.getId(), node);
+        this.nodeHandleCalls++;
+        if(!nodes.containsKey(node.getId())) {
+            this.nodes.put(node.getId(), node);
+        }
     }
 
     @Override
