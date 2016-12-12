@@ -1,9 +1,9 @@
-import map.graph.algorithm.conditions.ConditionFactory;
-import map.graph.algorithm.conditions.ConditionsResult;
-import map.graph.algorithm.conditions.DirectionCondition;
-import map.graph.graphElements.Vector;
-import map.graph.graphElements.segments.SegmentFactory;
-import map.graph.graphElements.segments.SegmentSoul;
+import computation.algorithm.conditions.ConditionFactory;
+import computation.algorithm.conditions.ConditionsResult;
+import computation.algorithm.conditions.DirectionCondition;
+import computation.graphElements.Vector;
+import computation.graphElements.segments.SegmentFactory;
+import computation.graphElements.segments.SegmentSoul;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;

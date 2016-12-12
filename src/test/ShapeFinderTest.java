@@ -1,9 +1,11 @@
-import map.graph.DataSculptor;
-import map.graph.algorithm.ShapeFinderManager;
-import map.graph.algorithm.conditions.*;
-import map.graph.graphElements.*;
-import map.graph.graphElements.segments.Segment;
-import map.graph.graphElements.segments.SegmentFactory;
+import computation.algorithm.ShapeFinderManager;
+import computation.algorithm.conditions.ConditionFactory;
+import computation.algorithm.conditions.ConditionManager;
+import computation.graphElements.Graph;
+import computation.graphElements.Node;
+import computation.graphElements.NodeFactory;
+import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
 import org.junit.Test;
 
 import java.util.*;

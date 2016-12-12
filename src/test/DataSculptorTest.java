@@ -1,13 +1,10 @@
 
-import map.graph.DataSculptor;
-import map.graph.graphElements.Graph;
-import map.graph.graphElements.NodeFactory;
-import map.graph.graphElements.segments.Segment;
-import mapinci.osmHandling.MapFetcher;
-import mapinci.osmHandling.MapFragment;
+import computation.DataSculptor;
+import computation.graphElements.Graph;
+import computation.graphElements.NodeFactory;
+import communication.osmHandling.MapFetcher;
+import communication.osmHandling.MapFragment;
 import org.junit.Test;
-
-import java.util.Collection;
 
 import static junit.framework.TestCase.assertTrue;
 

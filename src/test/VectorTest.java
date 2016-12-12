@@ -1,6 +1,6 @@
-import map.graph.graphElements.Node;
-import map.graph.graphElements.NodeFactory;
-import map.graph.graphElements.Vector;
+import computation.graphElements.Node;
+import computation.graphElements.NodeFactory;
+import computation.graphElements.Vector;
 import org.junit.Test;
 
 public class VectorTest {

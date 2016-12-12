@@ -1,4 +1,4 @@
-import map.graph.utils.LengthConverter;
+import computation.utils.LengthConverter;
 import org.junit.Test;
 
 public class LengthConverterTest {

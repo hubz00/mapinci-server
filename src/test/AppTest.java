@@ -1,14 +1,14 @@
-import map.graph.DataSculptor;
-import map.graph.algorithm.ShapeFinderManager;
-import map.graph.algorithm.conditions.ConditionFactory;
-import map.graph.algorithm.conditions.ConditionManager;
-import map.graph.graphElements.Graph;
-import map.graph.graphElements.Node;
-import map.graph.graphElements.NodeFactory;
-import map.graph.graphElements.segments.Segment;
-import map.graph.graphElements.segments.SegmentFactory;
-import mapinci.osmHandling.MapFetcher;
-import mapinci.osmHandling.MapFragment;
+import computation.DataSculptor;
+import computation.algorithm.ShapeFinderManager;
+import computation.algorithm.conditions.ConditionFactory;
+import computation.algorithm.conditions.ConditionManager;
+import computation.graphElements.Graph;
+import computation.graphElements.Node;
+import computation.graphElements.NodeFactory;
+import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
+import communication.osmHandling.MapFetcher;
+import communication.osmHandling.MapFragment;
 import org.junit.Test;
 
 import java.util.Iterator;
