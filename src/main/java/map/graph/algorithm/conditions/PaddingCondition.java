@@ -7,14 +7,25 @@ import java.util.logging.Logger;
 public class PaddingCondition implements PrimaryCondition{
 
     private Double lengthEpsilon;
+    private Double slopeEpsilon;
     private DirectionCondition direction;
     private Logger log;
 
     PaddingCondition(Double lengthEpsilon, Double slopeEpsilon){
         this.lengthEpsilon = lengthEpsilon;
+        this.slopeEpsilon = slopeEpsilon;
         ConditionFactory factory = new ConditionFactory();
         this.direction = (DirectionCondition) factory.newCondition(slopeEpsilon);
         this.log = Logger.getLogger("PaddingCondition");
+    }
+
+
+    Double getLengthEpsilon() {
+        return lengthEpsilon;
+    }
+
+    Double getSlopeEpsilon() {
+        return slopeEpsilon;
     }
 
     @Override

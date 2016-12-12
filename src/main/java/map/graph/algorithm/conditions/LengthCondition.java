@@ -18,11 +18,24 @@ public class LengthCondition implements Condition {
     private Double lastCheckLength;
     private Logger log;
 
+    /**
+     *
+     * @param epsilon - multiply by side length defines the range of length search
+     * @param overallLength
+     */
     LengthCondition(Double epsilon, Double overallLength){
         this.overallLength = overallLength;
         this.epsilon = epsilon;
         this.log = Logger.getLogger("LengthCondition");
         this.lastCheckLength = 0.0;
+    }
+
+    Double getEpsilon() {
+        return epsilon;
+    }
+
+    Double getOverallLength() {
+        return overallLength;
     }
 
     @Override

@@ -10,10 +10,7 @@ import java.util.List;
 @Component
 public class CoordinatingService {
     public List<Node> startAlgo(Shape shape) {
-
-//        Node node = new Node(1L, 10.0, 10.0);
-        List<Node> nodes = new LinkedList<>();
-//        nodes.add(node);
-        return nodes;
+        GraphMaker graphMaker = new GraphMaker();
+        return graphMaker.runApp(shape);
     }
 }

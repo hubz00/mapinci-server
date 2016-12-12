@@ -18,9 +18,11 @@ public class ConditionManager {
     private List<Condition> baseConditions;
     private List<PrimaryCondition> basePrimaryConditions;
     private List<PrimaryCondition> primaryConditions;
+    private ConditionFactory conditionFactory;
     private Logger log;
 
     public ConditionManager(){
+        conditionFactory = new ConditionFactory();
         conditions = new LinkedList<>();
         baseConditions = new LinkedList<>();
         primaryConditions = new LinkedList<>();
@@ -55,10 +57,11 @@ public class ConditionManager {
 
     public void addCondition(Condition c){
         this.conditions.add(c);
-        this.baseConditions.add(c);
+        this.baseConditions.add(conditionFactory.copyCondition(c));
     }
+
     public void addPrimaryCondition(PrimaryCondition c){
         this.primaryConditions.add(c);
-        this.basePrimaryConditions.add(c);
+        this.basePrimaryConditions.add(conditionFactory.copyPrimaryCondition(c));
     }
 }

@@ -20,6 +20,10 @@ public class DirectionCondition implements Condition {
         this.log = Logger.getLogger("DirectionCondition");
     }
 
+    double getEpsilon() {
+        return epsilon;
+    }
+
     @Override
     public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult conditionsResult, boolean newSide) {
         List<SegmentSoul> segments = new LinkedList<>();
