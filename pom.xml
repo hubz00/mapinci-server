@@ -29,23 +29,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>se.kodapan.osm.domain</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/jars/core.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>se.kodapan.osm.domain</groupId>
-            <artifactId>java</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/jars/java.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
             <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.westnordost</groupId>
+            <artifactId>osmapi</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
 

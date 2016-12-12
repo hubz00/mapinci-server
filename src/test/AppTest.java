@@ -1,6 +1,5 @@
 import map.graph.DataSculptor;
-import map.graph.algorithm.ShapeFinder;
-import map.graph.algorithm.conditions.Condition;
+import map.graph.algorithm.ShapeFinderManager;
 import map.graph.algorithm.conditions.ConditionFactory;
 import map.graph.algorithm.conditions.ConditionManager;
 import map.graph.graphElements.Graph;
@@ -8,30 +7,26 @@ import map.graph.graphElements.Node;
 import map.graph.graphElements.NodeFactory;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
-import map.graph.graphElements.segments.SegmentSoul;
-import org.apache.lucene.search.Query;
+import mapinci.osmHandling.MapFetcher;
+import mapinci.osmHandling.MapFragment;
 import org.junit.Test;
-import se.kodapan.osm.domain.OsmObject;
-import se.kodapan.osm.domain.root.indexed.IndexedRoot;
-import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class AppTest {
 
     @Test
-    public void RealDataTest() throws IOException, OsmXmlParserException {
-        map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
-        DataSculptor ds = new DataSculptor();
+    public void RealDataTest() {
         List<Segment> shape = new LinkedList<>();
 
-        IndexedRoot<Query> index = gf.makeGraph("andorra-latest.osm");
-        Map<OsmObject, Float> hits = ds.narrowDown(42.5075208,42.509080,1.5319,1.530430, index);
-        Graph g = ds.rebuildGraph(index,hits);
+        MapFetcher fetcher = new MapFetcher();
+        NodeFactory nodeFactory = new NodeFactory();
+        MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(1.5308,42.508),5000.0);
+        DataSculptor ds = new DataSculptor();
+
+        Graph g = ds.rebuildGraph(mapFragment);
 
         g.getSegments().values().forEach(System.out::println);
 
@@ -82,7 +77,7 @@ public class AppTest {
 
         shape.forEach(System.out::println);
 
-        ShapeFinder finder = new ShapeFinder(g,shape, cm);
-        finder.findShape(nf.newNode(1.5305071,42.5082785), 0.00001).forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
+        ShapeFinderManager manager = new ShapeFinderManager(g);
+        manager.findShape(shape,nf.newNode(1.5205071,42.4982785), cm, 0.05).forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
     }
 }

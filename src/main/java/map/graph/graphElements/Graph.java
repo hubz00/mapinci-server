@@ -3,6 +3,7 @@ package map.graph.graphElements;
 import map.graph.graphElements.segments.Segment;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Graph {
@@ -12,7 +13,7 @@ public class Graph {
         this.segments = new HashMap<>();
     }
 
-    public void addSegment(Segment s){
+    public synchronized void addSegment(Segment s){
         segments.put(s.getId(), s);
     }
 
@@ -54,6 +55,18 @@ public class Graph {
             }
         }
         return null;
+    }
+
+    public List<Node> getNodesWithinRadius(Double lon, Double lat, Double maxEpsilon, Double minEpsilon){
+        return segments.values().parallelStream()
+                .filter(s -> (((Math.abs(s.getNode1().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode1().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) >= minEpsilon))
+                        || ((Math.abs(s.getNode2().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode2().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) >= minEpsilon))))
+                .map(seg -> {
+                        if((Math.abs(seg.getNode1().getLongitude() - lon) <= maxEpsilon) && (Math.abs(seg.getNode1().getLatitude() - lat) <= maxEpsilon) && (Math.abs(seg.getNode1().getLongitude() - lon) >= minEpsilon) && (Math.abs(seg.getNode1().getLatitude() - lat) >= minEpsilon))
+                            return seg.getNode1();
+                        else
+                            return seg.getNode2();})
+                .collect(Collectors.toList());
     }
 
     public Node getNodeByCoordinates(Double lon, Double lat){
