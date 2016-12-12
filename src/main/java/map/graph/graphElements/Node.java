@@ -15,7 +15,7 @@ public class Node implements Comparable<Node>{
 
     protected Node() {}
 
-    protected Node(Long id, Double longitude, Double latitude){
+    public Node(Long id, Double longitude, Double latitude){
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;

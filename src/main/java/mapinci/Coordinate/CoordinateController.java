@@ -1,29 +1,50 @@
 package mapinci.Coordinate;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import map.graph.graphElements.Node;
 import map.graph.graphElements.NodeFactory;
+import map.graph.graphElements.Shape;
+import map.graph.graphElements.segments.Nodes;
+import mapinci.CoordinatingService;
 import mapinci.GraphMaker;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 @RestController
 @RequestMapping("/coordinate")
 public class CoordinateController {
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ArrayList<Node> coordinate(@RequestParam(value="shapeId", defaultValue="1") int shapeId, @RequestParam(value="startingLat", defaultValue = "0") String startingLat,
-                                      @RequestParam(value="startingLong", defaultValue = "0") String startingLong)  {
+    private static Logger logger = LoggerFactory.getLogger(CoordinateController.class);
 
-        GraphMaker gm = new GraphMaker();
-        NodeFactory nodeFactory = new NodeFactory();
 
-        //TODO change from all nodes to important
-        ArrayList<Node> result = gm.runApp(nodeFactory.newNode(Double.parseDouble(startingLong), Double.parseDouble(startingLong)),0.05);
+    private CoordinatingService service;
 
-        return result;
+    @Autowired
+    public CoordinateController(CoordinatingService service) {
+        this.service = service;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public Nodes postShape (@RequestBody Shape shape) {
+        logger.info("Request for some fresh nodes");
+        try {
+            List<Node> nodes = service.startAlgo(shape);
+            logger.info("Returning nodes: {}", nodes.size());
+            return new Nodes(nodes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (OsmXmlParserException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
     }
 }

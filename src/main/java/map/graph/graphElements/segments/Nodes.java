@@ -3,22 +3,24 @@ package map.graph.graphElements.segments;
 
 import map.graph.graphElements.Node;
 
+import java.util.List;
+
 public class Nodes {
 
-    private Node[] nodes;
+    private List<Node> nodes;
 
-    public Nodes(Node[] nodes) {
+    public Nodes(List<Node> nodes) {
         this.nodes = nodes;
     }
 
     public Nodes() {
     }
 
-    public Node[] getNodes() {
+    public List<Node> getNodes() {
         return nodes;
     }
 
-    public void setNodes(Node[] nodes) {
+    public void setNodes(List<Node> nodes) {
         this.nodes = nodes;
     }
 }
