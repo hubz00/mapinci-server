@@ -37,11 +37,11 @@ public class CoordinateControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
-//    @Test
-//    public void getShape() throws Exception {
-//        mockMvc.perform(get("/coordinate"))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    public void getShape() throws Exception {
+        mockMvc.perform(get("/coordinate"))
+                .andExpect(status().isOk());
+    }
 
     @Test
     public void postShape() throws Exception {

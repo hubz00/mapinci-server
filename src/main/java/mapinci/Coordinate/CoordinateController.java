@@ -22,20 +22,25 @@ public class CoordinateController {
 
     private static Logger logger = LoggerFactory.getLogger(CoordinateController.class);
 
-    @Autowired
+
     private CoordinatingService service;
 
-//    @RequestMapping(method = RequestMethod.GET)
-//    public ArrayList<Node> coordinate(@RequestParam(value="shapeId", defaultValue="1") int shapeId, @RequestParam(value="startingLat", defaultValue = "0") String startingLat,
-//                                      @RequestParam(value="startingLong", defaultValue = "0") String startingLong) throws IOException, OsmXmlParserException {
-//
+    @Autowired
+    public CoordinateController(CoordinatingService service) {
+        this.service = service;
+    }
+
+        @RequestMapping(method = RequestMethod.GET)
+    public void coordinate(@RequestParam(value="shapeId", defaultValue="1") int shapeId, @RequestParam(value="startingLat", defaultValue = "0") String startingLat,
+                                      @RequestParam(value="startingLong", defaultValue = "0") String startingLong) throws IOException, OsmXmlParserException {
+
 //        GraphMaker gm = new GraphMaker();
-//
-//        //TODO change from all nodes to important
+
+        //TODO change from all nodes to important
 //        ArrayList<Node> result = gm.runApp();
-//
-//        return result;
-//    }
+
+        System.out.println("zajebiscie");
+    }
 
 //
 //
@@ -49,7 +54,9 @@ public class CoordinateController {
     public Nodes postShape (@RequestBody Shape shape) {
         logger.info("Request for some fresh nodes");
         try {
-            return new Nodes(service.startAlgo(shape));
+            List<Node> nodes = service.startAlgo(shape);
+            logger.info("Returning {} nodes", nodes.size());
+            return new Nodes(nodes);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

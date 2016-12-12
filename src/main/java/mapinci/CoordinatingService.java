@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class CoordinatingService {
-    public Node[] startAlgo(Shape shape) throws IOException, OsmXmlParserException {
+    public List<Node> startAlgo(Shape shape) throws IOException, OsmXmlParserException {
 //        map.graph.graphElements.OsmFetcher gf = new map.graph.graphElements.OsmFetcher();
 //        DataSculptor ds = new DataSculptor();
 //
@@ -29,7 +31,9 @@ public class CoordinatingService {
 //        List<Segment> segments = finder.findShape(nf.newNode(1.5305071,42.5082785), 0.00001);
 //
 //        return segments.stream().map(segment -> { return segment.getNode1(); }).collect(Collectors.toList());
-        return null;
-
+        Node node = new Node(1L, 10.0, 10.0);
+        List<Node> nodes = new LinkedList<>();
+        nodes.add(node);
+        return nodes;
     }
 }
