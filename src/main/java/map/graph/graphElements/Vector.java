@@ -1,11 +1,9 @@
 package map.graph.graphElements;
 
-import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.logging.Logger;
 
-import static java.lang.Math.atan2;
 
 public class Vector{
 

@@ -1,7 +1,5 @@
 package map.graph.graphElements.segments;
 
-import com.esotericsoftware.minlog.Log;
-import map.graph.graphElements.Node;
 import map.graph.graphElements.Vector;
 
 import java.util.HashMap;
