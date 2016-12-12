@@ -27,7 +27,7 @@ public class LengthCondition implements Condition {
 
     @Override
     public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, boolean newSide) {
-        if(newSide){
+        if(newSide || lengthToFind == null){
             lengthToFind = graphSegment.getPercentLength()*overallLength;
             epsilonLength = lengthToFind*epsilon;
             log.info(String.format("NEW SIDE [Shape Segment: %s]", graphSegment));
