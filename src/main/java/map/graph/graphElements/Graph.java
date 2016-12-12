@@ -29,7 +29,7 @@ public class Graph {
     }
 
     public Node getNodeById(Long id){
-        Optional<Segment> segment =  segments.values().stream()
+        Optional<Segment> segment =  segments.values().parallelStream()
                 .filter(s -> s.getNode1().getId() == id || s.getNode2().getId() == id)
                 .findFirst();
         if(segment.isPresent()){

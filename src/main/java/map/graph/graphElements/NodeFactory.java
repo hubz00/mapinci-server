@@ -1,5 +1,7 @@
 package map.graph.graphElements;
 
+import com.sun.media.sound.InvalidDataException;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -12,10 +14,9 @@ public final class NodeFactory {
     }
 
 
-    public Node newNodeFromLibNode(de.westnordost.osmapi.map.data.Node n){
+    public synchronized Node newNodeFromLibNode(de.westnordost.osmapi.map.data.Node n) throws InvalidDataException {
         if(ids.containsKey(n.getId())){
-            //todo: throw error
-            System.out.println("Node with id: " + n.getId() + " already exists");
+            throw new InvalidDataException("Duplicated node");
         }
         ids.put(n.getId(), "");
         return new Node(n.getId(), n);

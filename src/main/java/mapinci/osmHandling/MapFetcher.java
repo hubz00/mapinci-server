@@ -27,6 +27,7 @@ public class MapFetcher {
             return fetch(n,searchNodeRadius - searchNodeRadius*0.1);
         }
 
+        System.out.println(String.format("Fetched ways: %s\nFetched nodes:%s", handler.getWays().size(), handler.getNodes().size()));
         return new MapFragment(handler.getNodes(),handler.getWays());
     }
 }
