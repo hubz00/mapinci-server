@@ -1,4 +1,4 @@
-import map.graph.algorithm.ReferenceRotator;
+import map.graph.utils.ReferenceRotator;
 import map.graph.graphElements.NodeFactory;
 import map.graph.graphElements.Vector;
 import map.graph.graphElements.segments.Segment;

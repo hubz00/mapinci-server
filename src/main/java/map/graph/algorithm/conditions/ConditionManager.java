@@ -15,12 +15,16 @@ import java.util.logging.Logger;
 public class ConditionManager {
 
     private List<Condition> conditions;
+    private List<Condition> baseConditions;
+    private List<PrimaryCondition> basePrimaryConditions;
     private List<PrimaryCondition> primaryConditions;
     private Logger log;
 
     public ConditionManager(){
         conditions = new LinkedList<>();
+        baseConditions = new LinkedList<>();
         primaryConditions = new LinkedList<>();
+        basePrimaryConditions = new LinkedList<>();
         this.log = Logger.getLogger("Condition Manager");
     }
 
@@ -44,10 +48,17 @@ public class ConditionManager {
         return result;
     }
 
+    public void reset(){
+        this.conditions = this.baseConditions;
+        this.primaryConditions = this.basePrimaryConditions;
+    }
+
     public void addCondition(Condition c){
         this.conditions.add(c);
+        this.baseConditions.add(c);
     }
     public void addPrimaryCondition(PrimaryCondition c){
         this.primaryConditions.add(c);
+        this.basePrimaryConditions.add(c);
     }
 }

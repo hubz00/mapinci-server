@@ -1,6 +1,5 @@
 package map.graph.graphElements;
 
-import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -13,7 +12,7 @@ public final class NodeFactory {
     }
 
 
-    public Node newNodeFromLibNode(se.kodapan.osm.domain.Node n){
+    public Node newNodeFromLibNode(de.westnordost.osmapi.map.data.Node n){
         if(ids.containsKey(n.getId())){
             //todo: throw error
             System.out.println("Node with id: " + n.getId() + " already exists");

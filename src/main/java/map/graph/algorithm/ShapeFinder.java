@@ -4,15 +4,12 @@ import map.graph.algorithm.conditions.ConditionManager;
 import map.graph.algorithm.conditions.ConditionsResult;
 import map.graph.graphElements.Graph;
 import map.graph.graphElements.Node;
-import map.graph.graphElements.Vector;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
 import map.graph.graphElements.segments.SegmentSoul;
+import map.graph.utils.ReferenceRotator;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class ShapeFinder {
@@ -26,40 +23,41 @@ public class ShapeFinder {
     private ReferenceRotator referenceRotator;
     private SegmentSoul firstOriginalAngleSegment;
 
-    public ShapeFinder(Graph graph, List<Segment> shape, ConditionManager cm){
-        this.preShape = shape;
-        this.shape = new LinkedList<>();
+    public ShapeFinder(Graph graph){
         this.graph = graph;
-        this.onMapSegments = new LinkedList<>();
-        this.conditionManager = cm;
         this.referenceRotator = new ReferenceRotator();
     }
 
-    public List<Segment> findShape(Node startNode, Double nodeSearchEpsilon){
-        Node node = graph.getNodeByCoordinates(startNode.getLongitude(), startNode.getLatitude(), nodeSearchEpsilon);
-        log.info("Start node: " + node);
+    List<Segment> findShapeForNode(Node node, List<Segment> shape, ConditionManager conditionManager){
+        this.shape = new LinkedList<>();
+        this.preShape = shape;
+        this.conditionManager = conditionManager;
+        this.onMapSegments = new LinkedList<>();
+
         if(isClosedShape()){
             log.info("Is a closed shape");
-            for(int i = 0; i < shape.size(); i++){
-                log.info(String.format("Taking next node to check, loop: %d, left: %d", i, shape.size() - i));
+            for(int i = 0; i < this.shape.size(); i++){
+                log.info(String.format("Taking next node to check, loop: %d, left: %d", i, this.shape.size() - i));
                 if(initAlgorithm(node)){
                     return onMapSegments;
                 }
-                SegmentSoul tmp = shape.remove(0);
-                shape.add(tmp);
+                SegmentSoul tmp = this.shape.remove(0);
+                this.shape.add(tmp);
+                this.onMapSegments = new LinkedList<>();
+
             }
         }
         else {
             if(initAlgorithm(node)) {
                 return onMapSegments;
             }
-            Collections.reverse(shape);
+            Collections.reverse(this.shape);
             if(initAlgorithm(node)){
                 return onMapSegments;
             }
         }
         log.info("Empty result graph");
-        return onMapSegments;
+        return new LinkedList<>();
     }
 
     /**

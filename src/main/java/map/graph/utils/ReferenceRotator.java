@@ -1,4 +1,4 @@
-package map.graph.algorithm;
+package map.graph.utils;
 
 import map.graph.graphElements.Vector;
 import map.graph.graphElements.segments.Segment;

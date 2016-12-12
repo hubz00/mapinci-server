@@ -8,7 +8,7 @@ public class Node implements Comparable<Node>{
     private Double longitude;
     private Double latitude;
 
-    protected Node (long id, se.kodapan.osm.domain.Node n){
+    protected Node (long id, de.westnordost.osmapi.map.data.Node n){
         this.id = id;
         initiateWithNode(n);
     }
@@ -21,9 +21,9 @@ public class Node implements Comparable<Node>{
         this.latitude = latitude;
     }
 
-    private void initiateWithNode(se.kodapan.osm.domain.Node n) {
-        this.longitude = n.getLongitude();
-        this.latitude = n.getLatitude();
+    private void initiateWithNode(de.westnordost.osmapi.map.data.Node n) {
+        this.longitude = n.getPosition().getLongitude();
+        this.latitude = n.getPosition().getLatitude();
     }
 
     public long getId() {

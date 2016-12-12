@@ -1,12 +1,11 @@
 package map.graph.algorithm.conditions;
 
 
-import map.graph.algorithm.ReferenceRotator;
+import map.graph.utils.ReferenceRotator;
 import map.graph.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DirectionCondition implements Condition {

@@ -1,16 +1,11 @@
 import map.graph.DataSculptor;
-import map.graph.algorithm.ShapeFinder;
+import map.graph.algorithm.ShapeFinderManager;
 import map.graph.algorithm.conditions.*;
 import map.graph.graphElements.*;
 import map.graph.graphElements.segments.Segment;
 import map.graph.graphElements.segments.SegmentFactory;
-import org.apache.lucene.search.Query;
 import org.junit.Test;
-import se.kodapan.osm.domain.OsmObject;
-import se.kodapan.osm.domain.root.indexed.IndexedRoot;
-import se.kodapan.osm.parser.xml.OsmXmlParserException;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -19,15 +14,45 @@ public class ShapeFinderTest {
     private Graph graph;
     private Logger log;
 
-    private void setup(String dataSourceName) throws IOException, OsmXmlParserException {
-        OsmFetcher gf = new OsmFetcher();
-        DataSculptor ds = new DataSculptor();
+    private void setup() {
         log = Logger.getLogger("ShapeFinderTest");
 
-        IndexedRoot<Query> index = gf.makeGraph(dataSourceName);
-        Map<OsmObject, Float> hits = ds.narrowDown(0.0,6.6, 6.6, 0.0, index);
-        hits.keySet().forEach(System.out::println);
-        graph = ds.rebuildGraph(index, hits);
+        graph = new Graph();
+
+        NodeFactory nodeFactory = new NodeFactory();
+        SegmentFactory segmentFactory = new SegmentFactory();
+
+        Node n0 = nodeFactory.newNode(0.0,0.0);
+        Node n1 = nodeFactory.newNode(2.0,1.0);
+        Node n2 = nodeFactory.newNode(4.0,1.0);
+        Node n3 = nodeFactory.newNode(5.0,3.0);
+        Node n4 = nodeFactory.newNode(3.0,4.0);
+        Node n5 = nodeFactory.newNode(2.0,3.0);
+        Node n7 = nodeFactory.newNode(3.0,1.0);
+        Node n8 = nodeFactory.newNode(4.0001,1.0001);
+        Node n9 = nodeFactory.newNode(3.999,1.0002);
+
+
+        List<Segment> segments = new LinkedList<Segment>();
+        segments.add(segmentFactory.newSegment(n1,n7));
+        segments.add(segmentFactory.newSegment(n7,n2));
+        segments.add(segmentFactory.newSegment(n2,n3));
+        segments.add(segmentFactory.newSegment(n3,n4));
+        segments.add(segmentFactory.newSegment(n4,n5));
+
+        segments.add(segmentFactory.newSegment(n1,n4));
+        segments.add(segmentFactory.newSegment(n4,n2));
+        segments.add(segmentFactory.newSegment(n2,n7));
+        segments.add(segmentFactory.newSegment(n7,n1));
+
+        segments.add(segmentFactory.newSegment(n2,n8));
+        segments.add(segmentFactory.newSegment(n8,n9));
+        segments.add(segmentFactory.newSegment(n9,n5));
+        segments.add(segmentFactory.newSegment(n5,n1));
+
+        segments.add(segmentFactory.newSegment(n1,n3));
+
+        graph.setSegments(segments);
 
         graph.getSegments().values().forEach(segment -> System.out.println(String.format("%s \t\t\tLength: %s", segment,segment.getLength())));
     }
@@ -40,9 +65,9 @@ public class ShapeFinderTest {
     */
 
     @Test
-    public void findPathWithInfiniteSlope() throws IOException, OsmXmlParserException {
+    public void findPathWithInfiniteSlope(){
 
-        setup("test_inf.osm");
+        setup();
 
         Node startNode = graph.getNodeByCoordinates(2.0,3.0);
         assert startNode != null;
@@ -62,9 +87,9 @@ public class ShapeFinderTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addCondition(conditionFactory.newCondition(0.0));
-        ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph);
+        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
     /* creates shape
@@ -74,9 +99,9 @@ public class ShapeFinderTest {
         3 -- 4
     */
     @Test
-    public void findPerfectlyFittedRoute() throws IOException, OsmXmlParserException {
+    public void findPerfectlyFittedRoute() {
 
-        setup("test.osm");
+        setup();
 
         Node startNode = graph.getNodeByCoordinates(2.0,1.0);
         assert startNode != null;
@@ -97,9 +122,9 @@ public class ShapeFinderTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addCondition(conditionFactory.newCondition(0.0));
-        ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph);
+        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
 
@@ -110,13 +135,11 @@ public class ShapeFinderTest {
      * 3 --- 6
      * 6 --- 4
      *
-     * @throws IOException
-     * @throws OsmXmlParserException
      */
 
     @Test
-    public void findShapeInDifferentAngleWithPadding() throws IOException, OsmXmlParserException {
-        setup("test_inf.osm");
+    public void findShapeInDifferentAngleWithPadding(){
+        setup();
 
         Node startNode = graph.getNodeByCoordinates(2.0,1.0);
         assert startNode != null;
@@ -143,9 +166,9 @@ public class ShapeFinderTest {
         cm.addPrimaryCondition(conditionFactory.newPrimaryCondition(150.0, Math.PI));
         cm.addCondition(conditionFactory.newCondition(0.1));
         cm.addCondition(conditionFactory.newCondition(0.1, 750000.0));
-        ShapeFinder shapeFinder = new ShapeFinder(graph,shape,cm);
 
-        shapeFinder.findShape(startNode,0.0).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph);
+        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
 
