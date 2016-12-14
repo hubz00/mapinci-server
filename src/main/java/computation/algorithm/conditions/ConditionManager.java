@@ -64,4 +64,9 @@ public class ConditionManager {
         this.primaryConditions.add(c);
         this.basePrimaryConditions.add(conditionFactory.copyPrimaryCondition(c));
     }
+
+    public void simplifyConditions(){
+        baseConditions.parallelStream().forEach(Condition::simplify);
+        basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
+    }
 }
