@@ -64,4 +64,9 @@ public class LengthCondition implements Condition {
         lengthToFind += lastCheckLength;
         lastCheckLength = 0.0;
     }
+
+    @Override
+    public void simplify() {
+        this.epsilon *= 1.3;
+    }
 }

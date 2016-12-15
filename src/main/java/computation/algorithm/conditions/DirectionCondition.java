@@ -36,7 +36,7 @@ public class DirectionCondition implements Condition {
         }
         Double angleEpsilon = Math.abs(segments.get(0).getSlope())*epsilon;
         if(angleEpsilon < 0.25)
-            angleEpsilon = epsilon;
+            angleEpsilon = 0.25;
         notMet = (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon)
                 || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon);
 
@@ -48,5 +48,10 @@ public class DirectionCondition implements Condition {
     @Override
     public void revertLastCheck() {
 
+    }
+
+    @Override
+    public void simplify() {
+        this.epsilon *= 1.3;
     }
 }

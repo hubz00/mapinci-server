@@ -49,4 +49,7 @@ public class PaddingCondition implements PrimaryCondition{
         log.info(String.format("\t[Map length: %s] [length Epsilon: %s]", mapSegment.getLength(), lengthEpsilon));
         return (mapSegment.getLength() <= lengthEpsilon);
     }
+
+    @Override
+    public void simplify() {}
 }
