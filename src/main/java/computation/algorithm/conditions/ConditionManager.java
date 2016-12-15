@@ -27,24 +27,24 @@ public class ConditionManager {
         baseConditions = new LinkedList<>();
         primaryConditions = new LinkedList<>();
         basePrimaryConditions = new LinkedList<>();
-        this.log = Logger.getLogger("Condition Manager");
+//        this.log = Logger.getLogger("Condition Manager");
     }
 
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.parallelStream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-            log.info("\t[Primary conditions apply]");
+//            log.info("\t[Primary conditions apply]");
                primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
             if(!result.areMet()){
-                log.info("\tReverting changes in conditions");
+//                log.info("\tReverting changes in conditions");
                 primaryConditions.parallelStream().forEach(Condition::revertLastCheck);
             }
                return result;
         }
         conditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
-        log.info(String.format("\t[Conditions: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), result.isEnoughSpaceForAnotherSegment()));
+//        log.info(String.format("\t[Conditions: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), result.isEnoughSpaceForAnotherSegment()));
         if(!result.areMet()){
-            log.info("\tReverting changes in conditions");
+//            log.info("\tReverting changes in conditions");
             conditions.parallelStream().forEach(Condition::revertLastCheck);
         }
         return result;
@@ -68,5 +68,9 @@ public class ConditionManager {
     public void simplifyConditions(){
         baseConditions.parallelStream().forEach(Condition::simplify);
         basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
+    }
+
+    public List<Condition> getBaseConditions() {
+        return baseConditions;
     }
 }
