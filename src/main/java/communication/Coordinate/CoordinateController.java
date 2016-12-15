@@ -36,4 +36,8 @@ public class CoordinateController {
             return new Nodes(nodes);
 
     }
+    @RequestMapping(method = RequestMethod.GET)
+    public String snoop() {
+        return "Hello there ;>";
+    }
 }
