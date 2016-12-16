@@ -73,12 +73,12 @@ public class ShapeFinderManager {
         return findShapeOneThread(shape,startNode,conditionManager,startPointRange, ++iteration);
     }
 
-    public List<Segment> findShapeConcurrent(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange) {
+    public List<List<Segment>> findShapeConcurrent(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange) {
         Optional<Condition> foundCondition =  conditionManager.getBaseConditions().stream()
                 .filter(c -> c instanceof LengthCondition)
                 .findAny();
         Double minSearchEpsilon = 0.0;
-        List<Future<List<Segment>>> callsList = new LinkedList<>();
+        List<Future<List<List<Segment>>>> callsList = new LinkedList<>();
 
         if(foundCondition.isPresent()){
             this.lengthCondition = (LengthCondition) foundCondition.get();
@@ -94,7 +94,7 @@ public class ShapeFinderManager {
                     graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon)
                             .forEach(startN -> {
                                 for (int i = 0; i < shape.size(); i++) {
-                                    callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(shape, startN, conditionManager, graph.hashCode())));
+                                    callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
                                     Segment tmp = shape.remove(0);
                                     shape.add(tmp);
                                 }
@@ -106,17 +106,17 @@ public class ShapeFinderManager {
                     Double tempMaxSearch = minSearchEpsilon + 0.005;
                     graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon )
                             .forEach(startN -> {
-                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(shape, startN, conditionManager, graph.hashCode())));
+                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
                                 Collections.reverse(shape);
-                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(shape, startN, conditionManager, graph.hashCode())));
+                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
                             });
                     minSearchEpsilon = tempMaxSearch;
                 }
             }
 
-            List<Segment> result;
+            List<List<Segment>> result;
             while(true){
-                for(Future<List<Segment>> future: callsList){
+                for(Future<List<List<Segment>>> future: callsList){
                     if(future.isDone()){
                         try {
                             result = future.get();

@@ -30,6 +30,14 @@ public class ConditionManager {
 //        this.log = Logger.getLogger("Condition Manager");
     }
 
+    public ConditionManager(ConditionManager cm){
+        conditionFactory = new ConditionFactory();
+        conditions = cm.getBaseConditions();
+        baseConditions = cm.getBaseConditions();
+        primaryConditions = cm.getPrimaryConditions();
+        basePrimaryConditions = cm.getPrimaryConditions();
+    }
+
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.parallelStream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
@@ -70,7 +78,15 @@ public class ConditionManager {
         basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
     }
 
+    public void revertLastCheck(){
+        conditions.parallelStream().forEach(Condition::revertLastCheck);
+    }
+
     public List<Condition> getBaseConditions() {
         return baseConditions;
+    }
+
+    public List<PrimaryCondition> getPrimaryConditions(){
+        return basePrimaryConditions;
     }
 }

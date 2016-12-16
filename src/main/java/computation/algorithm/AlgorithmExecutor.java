@@ -12,10 +12,11 @@ import computation.utils.PositionApproximator;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class AlgorithmExecutor implements Callable<List<Segment>>{
+public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
 
     private List<Segment> shape;
     private Node startNode;
@@ -30,10 +31,11 @@ public class AlgorithmExecutor implements Callable<List<Segment>>{
     }
 
     @Override
-    public List<Segment> call() throws Exception {
+    public List<List<Segment>> call() throws Exception {
         //todo initialize new call for next segment
+        List<List<Segment>> potentialPaths = new LinkedList<>();
         ExecutorService executorService = ComputationDispatcher.executorService;
-        Map<Node,Future<List<Segment>>> futures = new HashMap<>();
+        Map<Node,Future<List<List<Segment>>>> futures = new HashMap<>();
         Map<Node,List<Segment>> foundSegments = new HashMap<>();
         Graph graph = ComputationDispatcher.getGraph(graphKey);
         Node firstNode = findFirstNode();
@@ -56,26 +58,25 @@ public class AlgorithmExecutor implements Callable<List<Segment>>{
             startPointRange = 0.05;
 
         List<Node> potentialNodes = graph.getNodesWithinRadius(desiredNode.getLongitude(), desiredNode.getLatitude(), startPointRange, 0.0);
-
-        potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(shape, n,conditionManager, graphKey))));
+        potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n,conditionManager, graphKey))));
 
         //todo find way for this segment
 
-        SegmentFinder segmentFinder = new SegmentFinder();
-        for(Node n: potentialNodes){
-            List<Segment> result = segmentFinder.findSegment();
+        SegmentFinder segmentFinder = new SegmentFinder(graph,conditionManager);
+        for(Node endNode: potentialNodes){
+            List<Segment> result = segmentFinder.findSegment(startNode, endNode, segmentToMap);
             if(result.isEmpty()){
-                futures.get(n).cancel(true);
-                potentialNodes.remove(n);
+                futures.get(endNode).cancel(true);
+                potentialNodes.remove(endNode);
             }
             else {
-                foundSegments.put(n,result);
+                foundSegments.put(endNode,result);
             }
         }
 
         //todo add returning a class not list -> what if multiple shapes found
         while (!futures.isEmpty()){
-            for(Map.Entry<Node,Future<List<Segment>>> futureEntry: futures.entrySet()){
+            for(Map.Entry<Node,Future<List<List<Segment>>>> futureEntry: futures.entrySet()){
                 if(futureEntry.getValue().isDone()){
                     if(futureEntry.getValue().get().isEmpty()){
                         futures.remove(futureEntry.getKey());
@@ -83,11 +84,12 @@ public class AlgorithmExecutor implements Callable<List<Segment>>{
                     }
                     else{
                         List<Segment> result = foundSegments.get(futureEntry.getKey());
-                        result.addAll(futureEntry.getValue().get());
-                        //todo return every found
-                        // right now cancel the rest
-                        potentialNodes.forEach(n-> futures.get(n).cancel(true));
-                        return result;
+                        for(List<Segment> list: futureEntry.getValue().get()){
+                            List<Segment> tmp = new LinkedList<>(result);
+                            tmp.addAll(list);
+                            potentialPaths.add(tmp);
+                        }
+                        futures.remove(futureEntry.getKey());
                     }
                 }
                 else if(futureEntry.getValue().isCancelled()) {
@@ -98,7 +100,7 @@ public class AlgorithmExecutor implements Callable<List<Segment>>{
             Thread.sleep(1000);
         }
         //todo cancel or wait for the result
-        return new LinkedList<>();
+        return potentialPaths;
     }
 
     private Node findFirstNode(){

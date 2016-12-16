@@ -47,7 +47,7 @@ public class ShapeFinder {
                 SegmentSoul tmp = this.shape.remove(0);
                 this.shape.add(tmp);
                 this.onMapSegments = new LinkedList<>();
-
+                conditionManager.reset();
             }
         }
         else {
@@ -55,6 +55,8 @@ public class ShapeFinder {
                 return onMapSegments;
             }
             Collections.reverse(this.shape);
+            this.onMapSegments = new LinkedList<>();
+            conditionManager.reset();
             if(initAlgorithm(node)){
                 return onMapSegments;
             }
@@ -91,6 +93,7 @@ public class ShapeFinder {
             }
 
             onMapSegments = new LinkedList<>();
+            conditionManager.reset();
         }
         return false;
     }
@@ -112,16 +115,20 @@ public class ShapeFinder {
                     if (conditionsResult.isEnoughSpaceForAnotherSegment())
                         if (findNextSegment(s.getNeighbour(startNode), position, false))
                             return true;
-                        else
+                        else{
                             onMapSegments.remove(s);
+                            conditionManager.revertLastCheck();
+                        }
                     else {
                         if(position == 0){
                             checkRotation();
                         }
                         if (findNextSegment(s.getNeighbour(startNode), position + 1, true))
                             return true;
-                        else
+                        else {
                             onMapSegments.remove(s);
+                            conditionManager.revertLastCheck();
+                        }
                     }
                 }
             }

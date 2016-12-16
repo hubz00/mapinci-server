@@ -19,7 +19,6 @@ public class LengthCondition implements Condition {
     private Logger log;
 
     /**
-     *
      * @param epsilon - multiply by side length defines the range of length search
      * @param overallLength
      */
