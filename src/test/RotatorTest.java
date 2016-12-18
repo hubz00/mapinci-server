@@ -29,7 +29,7 @@ public class RotatorTest {
         list.add(sf.newSegment(new Vector(0.0,1.0), new Vector(0.0,-1.0)));
         list.add(sf.newSegment(new Vector(1.0,1.0), new Vector(-1.0,-1.0)));
 
-        List<SegmentSoul> rotated = rotator.rotateShapeToFit(s1,s2,list);
+        List<SegmentSoul> rotated = rotator.rotateShapeToFit(list, s1.getVector1(), s2.getVector1() );
         list.forEach(System.out::println);
         System.out.println("=========================");
         rotated.forEach(System.out::println);

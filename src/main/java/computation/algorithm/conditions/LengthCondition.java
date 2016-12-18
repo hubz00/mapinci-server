@@ -13,8 +13,6 @@ public class LengthCondition implements Condition {
 
     private Double epsilon;
     private Logger log;
-    private SegmentSoul justChecked;
-    private Double changedByValue;
 
     /**
      * @param epsilon - multiply by side length defines the range of length search
@@ -32,18 +30,15 @@ public class LengthCondition implements Condition {
     public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result) {
         Double lengthToFind = graphSegment.getLengthToFind();
         Double epsilonLength = lengthToFind * epsilon;
-//        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
+        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
-            justChecked = graphSegment;
-            changedByValue = mapSegment.getLength();
             lengthToFind -= mapSegment.getLength();
-            graphSegment.changeLengthToFind(-mapSegment.getLength());
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-//            log.info("\t[Length condition: " + true + "]");
+            log.info("\t[Length condition: " + true + "]");
             return true;
         }
         //todo write tests
-//        log.info("\t[Length condition: " + false + "] ");
+        log.info("\t[Length condition: " + false + "] ");
         result.setBoolResult(false);
         return false;
     }

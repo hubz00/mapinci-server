@@ -38,10 +38,10 @@ public class ConcurrentAppTest {
         NodeFactory nf = new NodeFactory();
         List<Node> nodes = new LinkedList<>();
         nodes.add(0,nf.newNode(0.0,0.0));
-        nodes.add(1,nf.newNode(1.530441,42.508301));
-        nodes.add(2,nf.newNode(1.531757,42.508306));
-        nodes.add(3,nf.newNode(1.531628,42.509072));
-        nodes.add(4,nf.newNode(1.530771,42.50877));
+        nodes.add(1,nf.newNode(0.2,0.1));
+        nodes.add(2,nf.newNode(0.4,0.1));
+        nodes.add(3,nf.newNode(0.4,0.3));
+        nodes.add(4,nf.newNode(0.2,0.3));
 
         List<Integer> shapeNodes = new LinkedList<>();
         shapeNodes.add(0,1);
@@ -74,7 +74,7 @@ public class ConcurrentAppTest {
             }
         }
 
-        shape.forEach(System.out::println);
+//        shape.forEach(System.out::println);
 
         ShapeFinderManager manager = new ShapeFinderManager(g,4, 76120.0);
         manager.findShapeConcurrent(shape,nf.newNode(1.532178,42.507852), cm, 0.05).forEach(list  -> list.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment))));

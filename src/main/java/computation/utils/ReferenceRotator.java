@@ -1,5 +1,6 @@
 package computation.utils;
 
+import computation.graphElements.Node;
 import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 import computation.graphElements.segments.Segment;
@@ -37,9 +38,10 @@ public class ReferenceRotator {
         return result;
     }
 
-    public List<SegmentSoul> rotateShapeToFit(Segment mapSegment, SegmentSoul shapeSegment, List<SegmentSoul> shape) {
-        Double angle = mapSegment.getVector1().getAngleBetween(shapeSegment.getVector2());
-        if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8) || angle >= 3.14159265358979) {
+    public List<SegmentSoul> rotateShapeToFit(List<SegmentSoul> shape, Vector mapVector, Vector shapeVector) {
+        log.info(String.format("Rotating to match map Vector: %s, shape Vector: %s",mapVector, shapeVector));
+        Double angle = mapVector.getAngleBetween(shapeVector);
+        if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8)) {
             log.info("Angle too small");
             return shape;
         }

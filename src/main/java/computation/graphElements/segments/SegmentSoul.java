@@ -3,6 +3,8 @@ package computation.graphElements.segments;
 
 import computation.graphElements.Vector;
 
+import java.util.List;
+
 public interface SegmentSoul {
 
     Double getSlope();
@@ -13,4 +15,5 @@ public interface SegmentSoul {
     Double getPercentLength();
     Double getLengthToFind();
     void changeLengthToFind(Double value);
+    List<Vector> getVectors();
 }

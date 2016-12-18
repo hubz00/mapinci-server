@@ -4,33 +4,27 @@ import computation.graphElements.Node;
 import computation.graphElements.Vector;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Segment implements SegmentSoul{
 
-    private long id;
-    private Node n1;
-    private Node n2;
-    private Double length;
+    private final long id;
+    private final Node n1;
+    private final Node n2;
+    private final Double length;
     private Double slope;
     private HashMap<Long, Vector> vectors;
     private Double percentLength;
 
-    protected Segment(Long id, Node n1){
-        this.id = id;
-        this.n1 = n1;
-        this.n2 = null;
-        this.length = 0.0;
-        this.vectors = new HashMap<>();
-    }
 
     protected Segment(Long id, Node n1, Node n2, Double percentLength){
         this.id = id;
         this.n1 = n1;
         this.n2 = n2;
-        this.length = 0.0;
         this.vectors = new HashMap<>();
         this.percentLength = percentLength;
-        calculateLength();
+        this.length = calculateLength();
         setVectorsAndSlope();
     }
 
@@ -39,7 +33,7 @@ public class Segment implements SegmentSoul{
         this.n1 = n1;
         this.n2 = n2;
         this.vectors = new HashMap<>();
-        calculateLength();
+        this.length = calculateLength();
         setVectorsAndSlope();
     }
 
@@ -48,9 +42,6 @@ public class Segment implements SegmentSoul{
         vectors.put(n2.getId(), new Vector(n2,n1));
         slope = vectors.get(n1.getId()).getY()/vectors.get(n1.getId()).getX();
     }
-
-    protected Segment() {}
-
 
     public boolean containsNode(Node n){
         return n1.equals(n) || n2.equals(n);
@@ -74,22 +65,8 @@ public class Segment implements SegmentSoul{
         return n1;
     }
 
-    public void setNode1(Node n1) {
-        this.n1 = n1;
-            if (this.n2 != null)
-                calculateLength();
-    }
-
     public Node getNode2() {
         return n2;
-    }
-
-    public void setNode2(Node n2) {
-        this.n2 = n2;
-        if (this.n1 != null && this.n2 != null) {
-            calculateLength();
-            setVectorsAndSlope();
-        }
     }
 
     public Double getSlope() {
@@ -100,20 +77,12 @@ public class Segment implements SegmentSoul{
         return length;
     }
 
-    public void setLength(Double length) {
-        this.length = length;
-    }
-
     public boolean contains(Node n){
         return (n1.equals(n) || n2.equals(n));
     }
 
     public Node getNeighbour(Node n){
         return n.equals(n1)? n2 : n1;
-    }
-
-    public HashMap<Long, Vector> getVectors() {
-        return vectors;
     }
 
     public Vector getVectorFromNode(Node n){
@@ -132,7 +101,7 @@ public class Segment implements SegmentSoul{
         this.percentLength = percentLength;
     }
 
-    protected void calculateLength() {
+    Double calculateLength() {
         final int R = 6371; // Radius of the earth
 
         Double latDistance = Math.toRadians(this.n2.getLatitude() - this.n1.getLatitude());
@@ -141,7 +110,7 @@ public class Segment implements SegmentSoul{
                 + Math.cos(Math.toRadians(this.n1.getLatitude())) * Math.cos(Math.toRadians(this.n1.getLatitude()))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        this.length = R * c * 1000; // convert to meters
+        return R * c * 1000; // convert to meters
 
     }
 
@@ -160,5 +129,9 @@ public class Segment implements SegmentSoul{
     }
 
     public void changeLengthToFind(Double addedValue){
+    }
+
+    public List<Vector> getVectors(){
+        return new LinkedList<>(vectors.values());
     }
 }
