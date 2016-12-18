@@ -90,8 +90,8 @@ public class ShapeFinderTest {
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addCondition(conditionFactory.newCondition(0.0));
 
-        ShapeFinderManager manager = new ShapeFinderManager(graph);
-        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph, 3);
+        manager.findShapeOneThread(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
     /* creates shape
@@ -125,8 +125,8 @@ public class ShapeFinderTest {
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addCondition(conditionFactory.newCondition(0.0));
 
-        ShapeFinderManager manager = new ShapeFinderManager(graph);
-        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph, 3);
+        manager.findShapeOneThread(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
 
@@ -169,8 +169,8 @@ public class ShapeFinderTest {
         cm.addCondition(conditionFactory.newCondition(0.1));
         cm.addCondition(conditionFactory.newCondition(0.1, 750000.0));
 
-        ShapeFinderManager manager = new ShapeFinderManager(graph);
-        manager.findShape(shape,startNode,cm, 0.05).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph, 3);
+        manager.findShapeOneThread(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
 

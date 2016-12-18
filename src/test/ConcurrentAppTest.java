@@ -1,3 +1,5 @@
+import communication.osmHandling.MapFetcher;
+import communication.osmHandling.MapFragment;
 import computation.DataSculptor;
 import computation.algorithm.ShapeFinderManager;
 import computation.algorithm.conditions.ConditionFactory;
@@ -7,18 +9,16 @@ import computation.graphElements.Node;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
-import communication.osmHandling.MapFetcher;
-import communication.osmHandling.MapFragment;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AppTest {
+public class ConcurrentAppTest {
 
     @Test
-    public void RealDataTest() {
+    public void test(){
         List<Segment> shape = new LinkedList<>();
 
         MapFetcher fetcher = new MapFetcher();
@@ -77,6 +77,7 @@ public class AppTest {
         shape.forEach(System.out::println);
 
         ShapeFinderManager manager = new ShapeFinderManager(g,4);
-        manager.findShapeOneThread(shape,nf.newNode(1.532178,42.507852), cm, 0.05).forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
+        manager.findShapeConcurrent(shape,nf.newNode(1.532178,42.507852), cm, 0.05).forEach(list  -> list.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment))));
+
     }
 }

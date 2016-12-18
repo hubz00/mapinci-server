@@ -19,7 +19,8 @@ public class ConditionManager {
     private List<PrimaryCondition> basePrimaryConditions;
     private List<PrimaryCondition> primaryConditions;
     private ConditionFactory conditionFactory;
-    private Logger log;
+    private Logger log = Logger.getLogger("Condition Manager");
+
 
     public ConditionManager(){
         conditionFactory = new ConditionFactory();
@@ -27,12 +28,19 @@ public class ConditionManager {
         baseConditions = new LinkedList<>();
         primaryConditions = new LinkedList<>();
         basePrimaryConditions = new LinkedList<>();
-        this.log = Logger.getLogger("Condition Manager");
+    }
+
+    public ConditionManager(ConditionManager cm){
+        conditionFactory = new ConditionFactory();
+        conditions = cm.getBaseConditions();
+        baseConditions = cm.getBaseConditions();
+        primaryConditions = cm.getPrimaryConditions();
+        basePrimaryConditions = cm.getPrimaryConditions();
     }
 
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
         ConditionsResult result = new ConditionsResult();
-        if(!primaryConditions.isEmpty() && primaryConditions.parallelStream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
+        if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
             log.info("\t[Primary conditions apply]");
                primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
             if(!result.areMet()){
@@ -41,8 +49,8 @@ public class ConditionManager {
             }
                return result;
         }
-        conditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
-        log.info(String.format("\t[Conditions: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), result.isEnoughSpaceForAnotherSegment()));
+        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
+        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
         if(!result.areMet()){
             log.info("\tReverting changes in conditions");
             conditions.parallelStream().forEach(Condition::revertLastCheck);
@@ -68,5 +76,17 @@ public class ConditionManager {
     public void simplifyConditions(){
         baseConditions.parallelStream().forEach(Condition::simplify);
         basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
+    }
+
+    public void revertLastCheck(){
+        conditions.parallelStream().forEach(Condition::revertLastCheck);
+    }
+
+    public List<Condition> getBaseConditions() {
+        return baseConditions;
+    }
+
+    public List<PrimaryCondition> getPrimaryConditions(){
+        return basePrimaryConditions;
     }
 }

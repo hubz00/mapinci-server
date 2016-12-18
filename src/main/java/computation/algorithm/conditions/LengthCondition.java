@@ -19,7 +19,6 @@ public class LengthCondition implements Condition {
     private Logger log;
 
     /**
-     *
      * @param epsilon - multiply by side length defines the range of length search
      * @param overallLength
      */
@@ -30,11 +29,11 @@ public class LengthCondition implements Condition {
         this.lastCheckLength = 0.0;
     }
 
-    Double getEpsilon() {
+    public Double getEpsilon() {
         return epsilon;
     }
 
-    Double getOverallLength() {
+    public Double getOverallLength() {
         return overallLength;
     }
 
@@ -43,18 +42,18 @@ public class LengthCondition implements Condition {
         if(newSide || lengthToFind == null){
             lengthToFind = graphSegment.getPercentLength()*overallLength;
             epsilonLength = lengthToFind*epsilon;
-            log.info(String.format("NEW SIDE [Shape Segment: %s]", graphSegment));
+//            log.info(String.format("NEW SIDE [Shape Segment: %s]", graphSegment));
         }
-        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
+//        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
             lastCheckLength = mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-            log.info("\t[Length condition: " + true + "]");
+//            log.info("\t[Length condition: " + true + "]");
             return true;
         }
         //todo write tests
-        log.info("\t[Length condition: " + false + "] ");
+//        log.info("\t[Length condition: " + false + "] ");
         result.setBoolResult(false);
         return false;
     }
@@ -69,4 +68,6 @@ public class LengthCondition implements Condition {
     public void simplify() {
         this.epsilon *= 1.3;
     }
+
+
 }

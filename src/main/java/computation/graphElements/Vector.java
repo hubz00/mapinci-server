@@ -46,6 +46,10 @@ public class Vector{
         return Math.acos((x*otherX + y*otherY)/(Math.sqrt(x*x + y*y) * Math.sqrt(otherX*otherX + otherY*otherY)));
     }
 
+    public Double getLength(){
+        return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    }
+
     public String toString(){
         return String.format("X: %f    Y: %f",x,y);
     }

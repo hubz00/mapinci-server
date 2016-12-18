@@ -41,7 +41,7 @@ public class DirectionCondition implements Condition {
                 || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon);
 
         if(!notMet) conditionsResult.setBoolResult(false);
-        log.info(String.format("\t[Direction condition: %s]\t[Shape slope: %s] [Map slope: %s]", notMet, graphSegment.getSlope(),mapSegment.getSlope()));
+//        log.info(String.format("\t[Direction condition: %s]\t[Shape slope: %s] [Map slope: %s]", notMet, graphSegment.getSlope(),mapSegment.getSlope()));
         return notMet;
     }
 

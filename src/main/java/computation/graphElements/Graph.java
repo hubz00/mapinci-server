@@ -61,7 +61,7 @@ public class Graph {
     }
 
     public List<Node> getNodesWithinRadius(Double lon, Double lat, Double maxEpsilon, Double minEpsilon){
-        return segments.values().parallelStream()
+        return new LinkedList<>(segments.values().parallelStream()
                 .filter(s -> (((Math.abs(s.getNode1().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode1().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) >= minEpsilon))
                         || ((Math.abs(s.getNode2().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode2().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) >= minEpsilon))))
                 .map(seg -> {
@@ -69,7 +69,7 @@ public class Graph {
                             return seg.getNode1();
                         else
                             return seg.getNode2();})
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet()));
     }
 
     public Node getNodeByCoordinates(Double lon, Double lat){
