@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/coordinate")
 public class CoordinateController {
 
     private static Logger logger = LoggerFactory.getLogger(CoordinateController.class);
@@ -28,7 +27,7 @@ public class CoordinateController {
         this.service = service;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    @RequestMapping(value ="/coordinate", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public Nodes postShape (@RequestBody Shape shape) {
         logger.info("Request for some fresh nodes");
             List<Node> nodes = service.startAlgo(shape);
