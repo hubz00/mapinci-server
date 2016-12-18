@@ -8,17 +8,23 @@ import computation.graphElements.Graph;
 import computation.graphElements.LatLon;
 import computation.graphElements.Node;
 import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
+import computation.graphElements.segments.SegmentSoul;
 import computation.utils.PositionApproximator;
+import computation.utils.ReferenceRotator;
 import computation.utils.ShapeStateChecker;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class ShapeFinderManager {
 
     private Graph graph;
     private int simplifyingIterations;
+    private List<SegmentSoul> shape;
     private LengthCondition lengthCondition;
+    private Logger log = Logger.getLogger("ShapeFinderManager");
 
 
     //todo remove graph after search
@@ -73,12 +79,13 @@ public class ShapeFinderManager {
         return findShapeOneThread(shape,startNode,conditionManager,startPointRange, ++iteration);
     }
 
-    public List<List<Segment>> findShapeConcurrent(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange) {
+    public List<List<Segment>> findShapeConcurrent(List<Segment> shapeToFind, Node startNode, ConditionManager conditionManager, Double startPointRange) {
+        this.shape = new LinkedList<>();
         Optional<Condition> foundCondition =  conditionManager.getBaseConditions().stream()
                 .filter(c -> c instanceof LengthCondition)
                 .findAny();
         Double minSearchEpsilon = 0.0;
-        List<Future<List<List<Segment>>>> callsList = new LinkedList<>();
+        Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
 
         if(foundCondition.isPresent()){
             this.lengthCondition = (LengthCondition) foundCondition.get();
@@ -86,18 +93,19 @@ public class ShapeFinderManager {
             return new LinkedList<>();
         }
 
+        migrateShapeToInterfaceShape(shapeToFind);
 
-
-            if (ShapeStateChecker.isClosedShape(shape)) {
+            if (ShapeStateChecker.isClosedShape(shapeToFind)) {
                 while (minSearchEpsilon < startPointRange) {
                     Double tempMaxSearch = minSearchEpsilon + 0.005;
-                    graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon)
-                            .forEach(startN -> {
-                                for (int i = 0; i < shape.size(); i++) {
-                                    callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
-                                    Segment tmp = shape.remove(0);
+                    List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
+                    nodesWithinRadius.forEach(n -> log.info(String.format("nodes in radius on map: %s \tId: %s", n, n.getId())));
+                            nodesWithinRadius.forEach(startN -> {
+                                //for (int i = 0; i < shape.size(); i++) {
+                                    futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(),0)));
+                                    SegmentSoul tmp = shape.remove(0);
                                     shape.add(tmp);
-                                }
+                                //}
                             });
                     minSearchEpsilon = tempMaxSearch;
                 }
@@ -106,26 +114,28 @@ public class ShapeFinderManager {
                     Double tempMaxSearch = minSearchEpsilon + 0.005;
                     graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon )
                             .forEach(startN -> {
-                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
+                                futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(),0)));
                                 Collections.reverse(shape);
-                                callsList.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, conditionManager, graph.hashCode())));
+                                futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(),0)));
                             });
                     minSearchEpsilon = tempMaxSearch;
                 }
             }
 
             List<List<Segment>> result;
-            while(true){
-                for(Future<List<List<Segment>>> future: callsList){
+            while(!futuresSet.isEmpty()){
+                Iterator<Future<List<List<Segment>>>> i = futuresSet.iterator();
+                while(i.hasNext()){
+                    Future<List<List<Segment>>> future = i.next();
                     if(future.isDone()){
                         try {
                             result = future.get();
                             if(!result.isEmpty()) {
-                                callsList.forEach(f -> f.cancel(true));
+                                futuresSet.forEach(f -> f.cancel(true));
                                 return result;
                             }
                             else
-                                callsList.remove(future);
+                                i.remove();
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }
@@ -137,5 +147,15 @@ public class ShapeFinderManager {
                     e.printStackTrace();
                 }
             }
+
+            log.info("Empty set :c");
+        return new LinkedList<>();
+    }
+
+    private void migrateShapeToInterfaceShape(List<Segment> preShape) {
+        SegmentFactory sf = new SegmentFactory();
+        preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength())));
     }
  }
+
+

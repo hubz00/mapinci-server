@@ -39,11 +39,11 @@ public class ReferenceRotator {
 
     public List<SegmentSoul> rotateShapeToFit(Segment mapSegment, SegmentSoul shapeSegment, List<SegmentSoul> shape) {
         Double angle = mapSegment.getVector1().getAngleBetween(shapeSegment.getVector2());
-        if(angle > 0 && angle < Math.pow(5,-8) || angle < 0 && angle > Math.pow(-5,-8)) {
-//            log.info("Angle too small");
+        if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8) || angle >= 3.14159265358979) {
+            log.info("Angle too small");
             return shape;
         }
-//        log.info("\tRotating. Angle: " + angle);
+        log.info("\tRotating. Angle: " + angle);
         return rotate(shape, angle);
     }
 
