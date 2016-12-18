@@ -4,3 +4,4 @@ build/
 /.idea/
 target/classes/.gitignore
 target/
+server.iml
