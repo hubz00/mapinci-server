@@ -154,4 +154,11 @@ public class Segment implements SegmentSoul{
         else
             return -1;
     }
+
+    public Double getLengthToFind(){
+        return 0.0;
+    }
+
+    public void changeLengthToFind(Double addedValue){
+    }
 }

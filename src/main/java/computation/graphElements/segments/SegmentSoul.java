@@ -11,4 +11,6 @@ public interface SegmentSoul {
     Vector getVector2();
     Double getLength();
     Double getPercentLength();
+    Double getLengthToFind();
+    void changeLengthToFind(Double value);
 }

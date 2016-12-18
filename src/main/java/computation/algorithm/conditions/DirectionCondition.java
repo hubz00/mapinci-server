@@ -25,7 +25,7 @@ public class DirectionCondition implements Condition {
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult conditionsResult, boolean newSide) {
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult conditionsResult) {
         List<SegmentSoul> segments = new LinkedList<>();
         boolean notMet;
         segments.add(0,graphSegment);
@@ -43,11 +43,6 @@ public class DirectionCondition implements Condition {
         if(!notMet) conditionsResult.setBoolResult(false);
 //        log.info(String.format("\t[Direction condition: %s]\t[Shape slope: %s] [Map slope: %s]", notMet, graphSegment.getSlope(),mapSegment.getSlope()));
         return notMet;
-    }
-
-    @Override
-    public void revertLastCheck() {
-
     }
 
     @Override

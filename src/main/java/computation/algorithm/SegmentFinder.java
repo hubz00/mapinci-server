@@ -45,14 +45,15 @@ public class SegmentFinder {
         for(Segment segment: possibleSegments){
             if(previouslyAdded == null || segment.compareTo(previouslyAdded) != 0) {
                 log.info(String.format("\t\t\tChecking segment: %s with shape segment: %s", segment, shapeSegment));
-                ConditionsResult conditionsResult = conditionManager.checkConditions(shapeSegment, segment, false);
+                ConditionsResult conditionsResult = conditionManager.checkConditions(shapeSegment, segment);
                 if (conditionsResult.areMet()) {
                     log.info(String.format("\t\t\tAdding segment: %s, first node: %s",segment.getNeighbour(startNode), segment));
                     onMapSegments.add(segment);
+                    shapeSegment.changeLengthToFind(-segment.getLength());
                     if (executeSearch(segment.getNeighbour(startNode), endNode, segment)) {
                         return true;
                     }
-                    conditionManager.revertLastCheck();
+                    shapeSegment.changeLengthToFind(segment.getLength());
                     onMapSegments.remove(segment);
                 }
             }

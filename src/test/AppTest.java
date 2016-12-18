@@ -32,8 +32,8 @@ public class AppTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
         cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newCondition(0.25));
-        cm.addCondition(factory.newCondition(0.3,338.0));
+        cm.addCondition(factory.newDirectionCondition(0.25));
+        cm.addCondition(factory.newLengthCondition(0.3));
 
         NodeFactory nf = new NodeFactory();
         List<Node> nodes = new LinkedList<>();
@@ -76,7 +76,7 @@ public class AppTest {
 
         shape.forEach(System.out::println);
 
-        ShapeFinderManager manager = new ShapeFinderManager(g,4);
+        ShapeFinderManager manager = new ShapeFinderManager(g,4, 77000.0);
         manager.findShapeOneThread(shape,nf.newNode(1.532178,42.507852), cm, 0.05).forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
     }
 }

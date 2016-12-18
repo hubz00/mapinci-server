@@ -15,7 +15,7 @@ public class PaddingCondition implements PrimaryCondition{
         this.lengthEpsilon = lengthEpsilon;
         this.slopeEpsilon = slopeEpsilon;
         ConditionFactory factory = new ConditionFactory();
-        this.direction = (DirectionCondition) factory.newCondition(slopeEpsilon);
+        this.direction = (DirectionCondition) factory.newDirectionCondition(slopeEpsilon);
         this.log = Logger.getLogger("PaddingCondition");
     }
 
@@ -29,19 +29,14 @@ public class PaddingCondition implements PrimaryCondition{
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, boolean newSide) {
-        if(direction.meet(graphSegment,mapSegment,result,true) && mapSegment.getLength() <= lengthEpsilon){
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result) {
+        if(direction.meet(graphSegment,mapSegment,result) && mapSegment.getLength() <= lengthEpsilon){
             result.setEnoughSpaceForAnotherSegment(true);
 //            log.info(String.format("\t[Padding condition: true]"));
             return true;
         }
 //        log.info(String.format("\t[Padding condition: false]"));
         return false;
-    }
-
-    @Override
-    public void revertLastCheck() {
-
     }
 
     @Override

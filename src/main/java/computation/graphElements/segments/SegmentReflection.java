@@ -11,6 +11,8 @@ public class SegmentReflection implements SegmentSoul{
     private HashMap<Integer, Vector> vectors;
     private Double slope;
     private Double percentLength;
+    private Double length;
+    private Double lengthToFind;
 
     SegmentReflection(long id, Long correspondingSegmentId, Vector v1, Vector v2){
         this.id = id;
@@ -29,6 +31,24 @@ public class SegmentReflection implements SegmentSoul{
         vectors.put(1,v2);
         this.slope = v1.getY()/v1.getX();
         this.percentLength = percentLength;
+    }
+
+    SegmentReflection(long id, Long correspondingSegmentId, Vector v1, Vector v2, Double percentLength, double overallLength){
+        assert v1 != null;
+        assert v2 != null;
+        this.id = id;
+        this.correspondingSegmentId = correspondingSegmentId;
+        this.vectors = new HashMap<>();
+        vectors.put(0,v1);
+        vectors.put(1,v2);
+        this.slope = v1.getY()/v1.getX();
+        if(percentLength == null){
+            this.percentLength = 1.0;
+        } else {
+            this.percentLength = percentLength;
+        }
+        this.length = this.percentLength * overallLength;
+        this.lengthToFind = length;
     }
 
     SegmentReflection(long id, Vector v1, Vector v2){
@@ -53,7 +73,7 @@ public class SegmentReflection implements SegmentSoul{
 
     @Override
     public Double getLength() {
-        return Math.sqrt(Math.pow(vectors.get(0).getX(),2.0) + Math.pow(vectors.get(1).getY(),2.0));
+        return this.length;
     }
 
     public Double getPercentLength() {
@@ -74,5 +94,13 @@ public class SegmentReflection implements SegmentSoul{
 
     public String toString() {
         return String.format("[Slope: %s]", slope.toString());
+    }
+
+    public Double getLengthToFind(){
+        return this.lengthToFind;
+    }
+
+    public void changeLengthToFind(Double addedValue){
+        this.lengthToFind += addedValue;
     }
 }

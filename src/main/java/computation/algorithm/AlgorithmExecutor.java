@@ -49,6 +49,10 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         Map<Node,List<Segment>> foundSegments = new HashMap<>();
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
+        if(shape.size() == 0){
+            log.info("Null will be thrown");
+        }
+
 
 
         //if first call - >  rotate shape to fit segment
@@ -74,12 +78,11 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                     else {
                         foundSegments.put(endNode,result);
                     }
-                    conditionManager.reset();
                 }
 
                 log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s",System.identityHashCode(this),potentialNodes.size() ));
                 if(!shape.subList(1, shape.size()).isEmpty())
-                    potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape.subList(1, shape.size())), n,new ConditionManager(conditionManager), graphKey, depthLevel + 1))));
+                    potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape.subList(1, shape.size())), n,conditionManager, graphKey, depthLevel + 1))));
             });
 
         }
@@ -99,12 +102,11 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                     i.remove();
                 else
                     foundSegments.put(endNode, result);
-                conditionManager.reset();
             }
             log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s",System.identityHashCode(this), potentialNodes.size()));
             // running algo for potential nodes
             if(!shape.isEmpty())
-                potentialNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, new ConditionManager(conditionManager), graphKey, depthLevel + 1))));
+                potentialNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, depthLevel + 1))));
         }
 
 
@@ -144,14 +146,14 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                 .findAny()
                 .get();
 
-        Double ratio = segmentToMap.getPercentLength() * lengthCondition.getOverallLength() / segmentToMap.getVector1().getLength();
+        Double ratio = segmentToMap.getLength() / segmentToMap.getVector1().getLength();
         Double offsetX = segmentToMap.getVector1().getX() * ratio;
         Double offsetY = segmentToMap.getVector1().getY() * ratio;
         LatLon desiredCoordinates = new PositionApproximator().offset(startNode, offsetX, offsetY);
 
         Node desiredNode = new NodeFactory().newNode(desiredCoordinates.getLon(), desiredCoordinates.getLat());
 
-        Double startPointRange = segmentToMap.getPercentLength() * lengthCondition.getOverallLength() * lengthCondition.getEpsilon();
+        Double startPointRange = segmentToMap.getLength() * lengthCondition.getEpsilon();
         if(startPointRange < 0.05)
             startPointRange = 0.05;
 

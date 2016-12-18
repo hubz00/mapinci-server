@@ -88,10 +88,10 @@ public class ConcurrentShapeFinderTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addPrimaryCondition(conditionFactory.newPrimaryCondition(150.0, Math.PI));
-        cm.addCondition(conditionFactory.newCondition(0.1));
-        cm.addCondition(conditionFactory.newCondition(0.05, 76120.0));
+        cm.addCondition(conditionFactory.newDirectionCondition(0.1));
+        cm.addCondition(conditionFactory.newLengthCondition(0.05));
 
-        ShapeFinderManager manager = new ShapeFinderManager(graph, 3);
+        ShapeFinderManager manager = new ShapeFinderManager(graph, 3, 77000.0);
         manager.findShapeConcurrent(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
