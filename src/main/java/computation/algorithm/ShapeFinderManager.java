@@ -87,7 +87,7 @@ public class ShapeFinderManager {
                 while (minSearchEpsilon < startPointRange) {
                     Double tempMaxSearch = minSearchEpsilon + 0.005;
                     List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
-                    nodesWithinRadius.forEach(n -> log.info(String.format("nodes in radius on map: %s \tId: %s", n, n.getId())));
+//                    nodesWithinRadius.forEach(n -> log.info(String.format("nodes in radius on map: %s \tId: %s", n, n.getId())));
                             nodesWithinRadius.forEach(startN -> {
                                 for (int i = 0; i < shape.size(); i++) {
                                     futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(),0)));

@@ -70,6 +70,19 @@ public class SegmentReflection implements SegmentSoul{
         this.lengthToFind = length;
     }
 
+    public SegmentReflection(long id, SegmentSoul segmentSoul) {
+        this.id = id;
+        this.correspondingSegmentId = id;
+        this.vectors = new HashMap<>();
+        vectors.put(0,segmentSoul.getVector1());
+        vectors.put(1,segmentSoul.getVector2());
+        this.slope = vectors.get(0).getY()/vectors.get(0).getX();
+        this.percentLength = segmentSoul.getPercentLength();
+        this.length = segmentSoul.getLength();
+        this.lengthToFind = length;
+
+    }
+
     public long getCorrespondingSegmentId(){
         return correspondingSegmentId;
     }

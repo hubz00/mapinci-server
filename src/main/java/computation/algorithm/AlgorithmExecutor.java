@@ -8,6 +8,7 @@ import computation.graphElements.LatLon;
 import computation.graphElements.Node;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
 import computation.utils.PositionApproximator;
 import computation.utils.ReferenceRotator;
@@ -40,7 +41,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
 
     @Override
     public List<List<Segment>> call() throws Exception {
-        log.info(String.format("\t[%s] AlgorithmExecutor from node: %s \t[Depth: %s]",System.identityHashCode(this), startNode, depthLevel));
+//        log.info(String.format("\t[%s] AlgorithmExecutor from node: %s \t[Depth: %s]",System.identityHashCode(this), startNode, depthLevel));
         //todo initialize new call for next segment
         ReferenceRotator referenceRotator = new ReferenceRotator();
         List<List<Segment>> potentialPaths = new LinkedList<>();
@@ -50,7 +51,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
         if(shape.size() == 0){
-            log.info("Null will be thrown");
+//            log.info("Null will be thrown");
         }
 
 
@@ -59,21 +60,22 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         if(depthLevel == 0){
             List<Segment> initialSegmentsFromMap = graph.getSegmentsForNode(startNode);
             initialSegmentsFromMap.forEach(segment -> {
-                log.info(String.format("\t\t[%s] First segment on map: %s",System.identityHashCode(this), segment));
+//                log.info(String.format("\t\t[%s] First segment on map: %s",System.identityHashCode(this), segment));
                 shape.get(0).getVectors().forEach( shapeVector -> {
                     this.shape = referenceRotator.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
 
-                    log.info(String.format("\t\t[%s] First segment rotated: %s",System.identityHashCode(this), shape.get(0)));
+//                    log.info(String.format("\t\t[%s] First segment rotated: %s",System.identityHashCode(this), shape.get(0)));
                     List<Node> potentialNodes = obtainPotentialNodes(shape.get(0), graph);
-                    log.info(String.format("\t\t[%s] Potential nodes: %s",System.identityHashCode(this), potentialNodes.size()));
+//                    log.info(String.format("\t\t[%s] Potential nodes: %s",System.identityHashCode(this), potentialNodes.size()));
 
                     SegmentFinder segmentFinder = new SegmentFinder(graph,conditionManager);
                     Iterator<Node> i = potentialNodes.iterator();
                     while(i.hasNext()){
                         Node endNode = i.next();
-                        log.info(String.format("\t\t[%s] Checking endNode: %s",System.identityHashCode(this),endNode));
-                        List<Segment> result = segmentFinder.findSegment(startNode, endNode, shape.get(0));
-                        log.info(String.format("\t\t[%s] Path found: %s",System.identityHashCode(this), result.toString()));
+                        SegmentFactory sf = new SegmentFactory();
+//                        log.info(String.format("\t\t[%s] Checking endNode: %s",System.identityHashCode(this),endNode));
+                        List<Segment> result = segmentFinder.findSegment(startNode, endNode, sf.newSegment(shape.get(0)));
+//                        log.info(String.format("\t\t[%s] Path found: %s",System.identityHashCode(this), result.toString()));
                         if(result.isEmpty()){
                             i.remove();
                         }
@@ -82,7 +84,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                         }
                     }
 
-                    log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s \n\t\tFound paths: %s",System.identityHashCode(this),potentialNodes, foundSegments.values()));
+//                    log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s \n\t\tFound paths: %s",System.identityHashCode(this),potentialNodes, foundSegments.values()));
                     if(!shape.subList(1, shape.size()).isEmpty())
                         potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape.subList(1, shape.size())), n,conditionManager, graphKey, ++depthLevel))));
                 });
@@ -91,10 +93,10 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         }
         else {
             SegmentSoul segmentToMap = shape.remove(0);
-            log.info(String.format("\t\t[%s] First segment: %s",System.identityHashCode(this), segmentToMap));
+//            log.info(String.format("\t\t[%s] First segment: %s",System.identityHashCode(this), segmentToMap));
             List<Node> potentialNodes = obtainPotentialNodes(segmentToMap, graph);
 
-            log.info(String.format("\t\t[%s] Potential nodes: %s",System.identityHashCode(this), potentialNodes));
+//            log.info(String.format("\t\t[%s] Potential nodes: %s",System.identityHashCode(this), potentialNodes));
             //todo find way for this segment
 
             SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
@@ -107,16 +109,19 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                 else
                     foundSegments.put(endNode, result);
             }
-            log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s\n\t\tFound paths: %s",System.identityHashCode(this), potentialNodes.size(), foundSegments.values()));
+//            log.info(String.format("\t\t[%s] After checking paths, potential nodes: %s\n\t\tFound paths: %s",System.identityHashCode(this), potentialNodes.size(), foundSegments.values()));
             if(!shape.isEmpty())
                 potentialNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, ++depthLevel))));
         }
 
         if(shape.isEmpty() && !foundSegments.isEmpty()){
-            log.info(String.format("\t\t[%s] Finished shape and found paths",System.identityHashCode(this)));
+//            log.info(String.format("\t\t[%s] Finished shape and found paths",System.identityHashCode(this)));
             List<List<Segment>> result = new LinkedList<>();
             foundSegments.values().forEach(list -> result.add(new LinkedList<>(list)));
             return result;
+        } else if(foundSegments.isEmpty()){
+            futures.values().forEach(f -> f.cancel(true));
+            return new LinkedList<>();
         }
 
 
@@ -168,7 +173,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         if(startPointRange < 0.05)
             startPointRange = 0.005;
 
-        log.info(String.format("\t\t\t[%s] Looking for endNodes near: %s",System.identityHashCode(this), desiredNode ));
+//        log.info(String.format("\t\t\t[%s] Looking for endNodes near: %s",System.identityHashCode(this), desiredNode ));
         return graph.getNodesWithinRadius(desiredNode.getLongitude(), desiredNode.getLatitude(), startPointRange, 0.0);
     }
 
