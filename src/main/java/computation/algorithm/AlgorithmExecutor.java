@@ -8,6 +8,7 @@ import computation.graphElements.LatLon;
 import computation.graphElements.Node;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
 import computation.utils.PositionApproximator;
 import computation.utils.ReferenceRotator;
@@ -71,8 +72,9 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                     Iterator<Node> i = potentialNodes.iterator();
                     while(i.hasNext()){
                         Node endNode = i.next();
+                        SegmentFactory sf = new SegmentFactory();
                         log.info(String.format("\t\t[%s] Checking endNode: %s",System.identityHashCode(this),endNode));
-                        List<Segment> result = segmentFinder.findSegment(startNode, endNode, shape.get(0));
+                        List<Segment> result = segmentFinder.findSegment(startNode, endNode, sf.newSegment(shape.get(0)));
                         log.info(String.format("\t\t[%s] Path found: %s",System.identityHashCode(this), result.toString()));
                         if(result.isEmpty()){
                             i.remove();
@@ -117,6 +119,9 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
             List<List<Segment>> result = new LinkedList<>();
             foundSegments.values().forEach(list -> result.add(new LinkedList<>(list)));
             return result;
+        }else if(foundSegments.isEmpty()){
+            futures.values().forEach(f -> f.cancel(true));
+            return new LinkedList<>();
         }
 
 

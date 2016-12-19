@@ -40,6 +40,9 @@ public class SegmentFinder {
             log.info("Found segment: " + shapeSegment);
             return true;
         }
+        if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*0.4){
+            return false;
+        }
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
         log.info(String.format("\t\t[New Call]\n\t\t\tStart node: %s\n\t\t\tEnd node: [X: %f\t%f]\n\t\t\tnumber of possible segments: %s", startNode,endNode.getLongitude(), endNode.getLatitude(), possibleSegments.size()));
         for(Segment segment: possibleSegments){
