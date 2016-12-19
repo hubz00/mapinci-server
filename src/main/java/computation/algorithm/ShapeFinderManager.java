@@ -82,8 +82,9 @@ public class ShapeFinderManager {
         Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
 
         migrateShapeToInterfaceShape(shapeToFind);
-        while (minSearchEpsilon < startPointRange) {
-            Double tempMaxSearch = minSearchEpsilon + 0.005;
+        while (minSearchEpsilon <= startPointRange) {
+            //todo change to add something
+            Double tempMaxSearch = minSearchEpsilon + 0.00001;
             if (ShapeStateChecker.isClosedShape(shapeToFind)) {
                 List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
                 log.info(String.format("nodes in radius on map: %s", nodesWithinRadius.size()));
