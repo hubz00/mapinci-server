@@ -28,7 +28,7 @@ public class SegmentFinder {
 
     public List<Segment> findSegment(Node startNode, Node endNode, SegmentSoul shapeSegment) {
         this.shapeSegment = shapeSegment;
-
+//        log.info(String.format("Looking for segment: [%s]\n\t between strartNode: [%s] endNode: [%s]", shapeSegment,startNode,endNode));
         if(executeSearch(startNode,endNode, null))
             return onMapSegments;
 

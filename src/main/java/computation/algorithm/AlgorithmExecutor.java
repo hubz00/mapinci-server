@@ -41,7 +41,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
 
     @Override
     public List<List<Segment>> call() throws Exception {
-//        log.info(String.format("\t[%s] AlgorithmExecutor from node: %s \t[Depth: %s]",System.identityHashCode(this), startNode, depthLevel));
+        log.info(String.format("\t[%s] AlgorithmExecutor from node: %s [ID: %s]\t[Depth: %s]",System.identityHashCode(this), startNode, startNode.getId(), depthLevel));
         //todo initialize new call for next segment
         ReferenceRotator referenceRotator = new ReferenceRotator();
         List<List<Segment>> potentialPaths = new LinkedList<>();
@@ -173,8 +173,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         if(startPointRange < 0.05)
             startPointRange = 0.005;
 
-//        log.info(String.format("\t\t\t[%s] Looking for endNodes near: %s",System.identityHashCode(this), desiredNode ));
+        log.info(String.format("\t\t\t[%s] Looking for endNodes near: %s",System.identityHashCode(this), desiredNode ));
         return graph.getNodesWithinRadius(desiredNode.getLongitude(), desiredNode.getLatitude(), startPointRange, 0.0);
     }
-
 }
