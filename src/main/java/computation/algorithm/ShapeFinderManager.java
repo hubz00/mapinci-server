@@ -86,6 +86,7 @@ public class ShapeFinderManager {
             //todo change to add something
             Double tempMaxSearch = minSearchEpsilon + 0.0002;
             if (ShapeStateChecker.isClosedShape(shapeToFind)) {
+
                 List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
                 log.info(String.format("nodes in radius on map: %s", nodesWithinRadius.size()));
                 nodesWithinRadius.forEach(startN -> {
@@ -95,16 +96,17 @@ public class ShapeFinderManager {
                         shape.add(tmp);
                     }
                 });
-                minSearchEpsilon = tempMaxSearch;
-            } else {
+
+            } else{
                 graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon)
                         .forEach(startN -> {
                             futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
                             Collections.reverse(shape);
                             futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
                         });
-                minSearchEpsilon = tempMaxSearch;
+
             }
+            minSearchEpsilon = tempMaxSearch;
         }
 
         List<List<Segment>> result;

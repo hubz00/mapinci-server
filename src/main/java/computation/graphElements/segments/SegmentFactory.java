@@ -49,7 +49,7 @@ public final class SegmentFactory {
 
 
     public SegmentSoul newSegment(SegmentSoul segmentSoul) {
-        SegmentReflection sr = new SegmentReflection(id, segmentSoul);
+        SegmentReflection sr= new SegmentReflection(id, segmentSoul);
         id++;
         return sr;
     }
