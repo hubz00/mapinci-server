@@ -37,6 +37,7 @@ public class CoordinateController {
     }
     @RequestMapping(method = RequestMethod.GET)
     public String snoop() {
+        logger.info("Someone says hello!");
         return "Hello there ;>";
     }
 }
