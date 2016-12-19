@@ -38,23 +38,15 @@ public class ConditionManager {
         basePrimaryConditions = cm.getPrimaryConditions();
     }
 
-    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, boolean newSide){
+    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-            log.info("\t[Primary conditions apply]");
-               primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
-            if(!result.areMet()){
-                log.info("\tReverting changes in conditions");
-                primaryConditions.parallelStream().forEach(Condition::revertLastCheck);
-            }
-               return result;
+//            log.info("\t[Primary conditions apply]");
+            primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result));
+            return result;
         }
-        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result, newSide));
-        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
-        if(!result.areMet()){
-            log.info("\tReverting changes in conditions");
-            conditions.parallelStream().forEach(Condition::revertLastCheck);
-        }
+        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result));
+//        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
         return result;
     }
 
@@ -76,10 +68,6 @@ public class ConditionManager {
     public void simplifyConditions(){
         baseConditions.parallelStream().forEach(Condition::simplify);
         basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
-    }
-
-    public void revertLastCheck(){
-        conditions.parallelStream().forEach(Condition::revertLastCheck);
     }
 
     public List<Condition> getBaseConditions() {

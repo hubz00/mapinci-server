@@ -2,8 +2,8 @@ package computation.algorithm;
 
 import computation.algorithm.conditions.ConditionManager;
 import computation.algorithm.conditions.ConditionsResult;
-import computation.graphElements.Graph;
-import computation.graphElements.Node;
+import computation.graphElements.*;
+import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
@@ -24,13 +24,15 @@ public class ShapeFinder {
     private ConditionManager conditionManager;
     private ReferenceRotator referenceRotator;
     private SegmentSoul firstOriginalAngleSegment;
+    private Double overallLength;
 
     public ShapeFinder(Graph graph){
         this.graph = graph;
         this.referenceRotator = new ReferenceRotator();
     }
 
-    List<Segment> findShapeForNode(Node node, List<Segment> shape, ConditionManager conditionManager){
+    List<Segment> findShapeForNode(Node node, List<Segment> shape, ConditionManager conditionManager, Double overallLength){
+        this.overallLength = overallLength;
         this.shape = new LinkedList<>();
         this.preShape = shape;
         this.conditionManager = conditionManager;
@@ -74,26 +76,30 @@ public class ShapeFinder {
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
 
         for(Segment s: possibleSegments) {
-            this.shape = referenceRotator.rotateShapeToFit(s, shape.get(0), shape);
+            for(Vector shapeVector: shape.get(0).getVectors()) {
+                this.shape = referenceRotator.rotateShapeToFit(shape,s.getVectorFromNode(startNode),  shapeVector);
 //            log.info("New Shape angle --------------------------------------------");
 //            shape.forEach(seg -> log.info(seg.toString()));
 //            log.info("------------------------------------------------------------");
-            ConditionsResult result = conditionManager.checkConditions(shape.get(0),s,true);
-            if(result.areMet()){
-                //todo add handling condition manager
+                ConditionsResult result = conditionManager.checkConditions(shape.get(0), s);
+                if (result.areMet()) {
+                    //todo add handling condition manager
 //                log.info(String.format("[Adding new segment to result: %s]", s));
-                onMapSegments.add(s);
-                if(result.isEnoughSpaceForAnotherSegment()) {
-                    if (findNextSegment(s.getNeighbour(startNode), 0, false))
-                        return true;
-                } else {
-                    if (findNextSegment(s.getNeighbour(startNode), 1, true))
-                        return true;
+                    onMapSegments.add(s);
+                    shape.get(0).changeLengthToFind(-s.getLength());
+                    if (result.isEnoughSpaceForAnotherSegment()) {
+                        if (findNextSegment(s.getNeighbour(startNode), 0, false))
+                            return true;
+                    } else {
+                        if (findNextSegment(s.getNeighbour(startNode), 1, true))
+                            return true;
+                    }
+                    shape.get(0).changeLengthToFind(s.getLength());
                 }
-            }
 
-            onMapSegments = new LinkedList<>();
-            conditionManager.reset();
+                onMapSegments = new LinkedList<>();
+                conditionManager.reset();
+            }
         }
         return false;
     }
@@ -108,16 +114,17 @@ public class ShapeFinder {
         for (Segment s: possibleSegments){
 //            log.info(String.format("\t[Checking Segment: %s]\n\t\t[Comparing to recently added: %s]\n\t\t[Added list size: %s]",s, s.compareTo(onMapSegments.get(onMapSegments.size()-1)), onMapSegments.size()));
             if(((onMapSegments.size() == 0) || (s.compareTo(onMapSegments.get(onMapSegments.size()-1)) != 0))) {
-                ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap, s, newSegment);
+                ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap, s);
                 if (conditionsResult.areMet()) {
                     onMapSegments.add(s);
+                    segmentToMap.changeLengthToFind(-s.getLength());
 //                    log.info(String.format("[Adding new segment to result: %s]", s));
                     if (conditionsResult.isEnoughSpaceForAnotherSegment())
                         if (findNextSegment(s.getNeighbour(startNode), position, false))
                             return true;
                         else{
                             onMapSegments.remove(s);
-                            conditionManager.revertLastCheck();
+                            segmentToMap.changeLengthToFind(s.getLength());
                         }
                     else {
                         if(position == 0){
@@ -127,7 +134,7 @@ public class ShapeFinder {
                             return true;
                         else {
                             onMapSegments.remove(s);
-                            conditionManager.revertLastCheck();
+                            segmentToMap.changeLengthToFind(s.getLength());
                         }
                     }
                 }
@@ -139,11 +146,10 @@ public class ShapeFinder {
     private void checkRotation() {
 
         SegmentSoul shapeSegment = shape.get(0);
-        SegmentFactory sf = new SegmentFactory();
 
 //        log.info(String.format("\t\tCurrent slope: %f real Slope: %f", shapeSegment.getSlope(), firstOriginalAngleSegment.getSlope()));
         if(Math.abs(shapeSegment.getSlope() - firstOriginalAngleSegment.getSlope()) >= 0.1){
-            this.shape = referenceRotator.rotateShapeToFit((Segment) firstOriginalAngleSegment,shapeSegment, shape);
+            this.shape = referenceRotator.rotateShapeToFit(shape,firstOriginalAngleSegment.getVector1(), shapeSegment.getVector1());
 //            log.info("New Shape angle --------------------------------------------");
 //            shape.forEach(seg -> log.info(seg.toString()));
 //            log.info("------------------------------------------------------------");
@@ -154,7 +160,7 @@ public class ShapeFinder {
 
     private void migratePreShapeToShape() {
         SegmentFactory sf = new SegmentFactory();
-        preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength())));
+        preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength(), overallLength)));
         firstOriginalAngleSegment = shape.get(0);
     }
 

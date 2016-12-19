@@ -71,28 +71,28 @@ public class ConcurrentShapeFinderTest {
 
 
         List<Integer> shapeNodes = new LinkedList<>();
-        shapeNodes.add(0,1);
-        shapeNodes.add(1,2);
-        shapeNodes.add(2,2);
-        shapeNodes.add(3,3);
-        shapeNodes.add(4,3);
-        shapeNodes.add(5,1);
+        shapeNodes.add(0,2);
+        shapeNodes.add(1,6);
+        shapeNodes.add(2,6);
+        shapeNodes.add(3,5);
+        shapeNodes.add(4,5);
+        shapeNodes.add(5,2);
 
         List<Double> percentLengthList = new LinkedList<>();
         percentLengthList.add(0,0.29325513196480938416422287390029);
-        percentLengthList.add(1,0.41348973607038123167155425219941);
-        percentLengthList.add(2,0.29325513196480938416422287390029);
+        percentLengthList.add(1,0.29325513196480938416422287390029);
+        percentLengthList.add(2,0.41348973607038123167155425219941);
 
         List<Segment> shape = createShapeSegments(0.0, shapeNodes, percentLengthList);
 
         ConditionManager cm = new ConditionManager();
         ConditionFactory conditionFactory = new ConditionFactory();
         cm.addPrimaryCondition(conditionFactory.newPrimaryCondition(150.0, Math.PI));
-        cm.addCondition(conditionFactory.newCondition(0.1));
-        cm.addCondition(conditionFactory.newCondition(0.05, 76120.0));
+        cm.addCondition(conditionFactory.newDirectionCondition(0.1));
+        cm.addCondition(conditionFactory.newLengthCondition(0.05));
 
-        ShapeFinderManager manager = new ShapeFinderManager(graph, 3);
-        manager.findShapeConcurrent(shape,startNode,cm, 0.05).forEach(System.out::println);
+        ShapeFinderManager manager = new ShapeFinderManager(graph, 3, 75950.0);
+        manager.findShapeConcurrent(shape,startNode,cm, 0.005).forEach(System.out::println);
     }
 
 

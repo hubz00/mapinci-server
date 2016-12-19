@@ -27,10 +27,10 @@ public class GraphMaker {
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
         cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newCondition(0.25));
-        cm.addCondition(factory.newCondition(0.3,shape.getLength()));
+        cm.addCondition(factory.newDirectionCondition(0.25));
+        cm.addCondition(factory.newLengthCondition(0.3));
 
-        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3);
+        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, shape.getLength());
         List<Segment> foundShape = manager.findShapeOneThread(shape.getSegments(),shape.getStartPoint(),cm,shape.getRadius());
 
         return segmentsToNodeList(foundShape);

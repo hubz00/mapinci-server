@@ -29,8 +29,8 @@ public final class SegmentFactory {
         return sr;
     }
 
-    public SegmentReflection newSegment(Long correspondingId, Vector v1, Vector v2, Double percentLength){
-        SegmentReflection sr = new SegmentReflection(id, correspondingId, v1, v2, percentLength);
+    public SegmentReflection newSegment(Long correspondingId, Vector v1, Vector v2, Double percentLength, double length){
+        SegmentReflection sr = new SegmentReflection(id, correspondingId, v1, v2, percentLength, length);
         id++;
         return sr;
     }
@@ -41,12 +41,16 @@ public final class SegmentFactory {
         return sr;
     }
 
-    public SegmentReflection newSegment(Vector v1, Vector v2, Double percentLength){
-        SegmentReflection sr = new SegmentReflection(id, id, v1, v2, percentLength);
+    public SegmentReflection newSegment(Vector v1, Vector v2, Double percentLength, double overallLength){
+        SegmentReflection sr = new SegmentReflection(id, v1, v2, percentLength, overallLength);
         id++;
         return sr;
     }
 
 
-
+    public SegmentSoul newSegment(SegmentSoul segmentSoul) {
+        SegmentReflection sr = new SegmentReflection(id, segmentSoul);
+        id++;
+        return sr;
+    }
 }

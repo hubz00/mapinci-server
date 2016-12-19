@@ -16,11 +16,11 @@ public class DirectionConditionTest {
         assertTrue(Math.abs(Double.NEGATIVE_INFINITY) == Double.POSITIVE_INFINITY);
 
         ConditionFactory conditionFactory = new ConditionFactory();
-        DirectionCondition condition = (DirectionCondition) conditionFactory.newCondition(0.1);
+        DirectionCondition condition = (DirectionCondition) conditionFactory.newDirectionCondition(0.1);
 
         SegmentFactory sf = new SegmentFactory();
         SegmentSoul mapSegment = sf.newSegment(1L, new Vector(0.0, 5.0), new Vector(0.0, -5.0));
         SegmentSoul graphSegment = sf.newSegment(1L, new Vector(0.05, 5.0), new Vector(-0.05, -5.0));
-        assertTrue(condition.meet(mapSegment,graphSegment, new ConditionsResult(), true));
+        assertTrue(condition.meet(mapSegment,graphSegment, new ConditionsResult()));
     }
 }

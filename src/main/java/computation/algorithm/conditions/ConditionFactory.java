@@ -2,12 +2,12 @@ package computation.algorithm.conditions;
 
 public class ConditionFactory {
 
-    public Condition newCondition(Double angleEpsilon){
+    public Condition newDirectionCondition(Double angleEpsilon){
         return new DirectionCondition(angleEpsilon);
     }
 
-    public Condition newCondition(Double lengthEpsilon, Double overallLength){
-        return new LengthCondition(lengthEpsilon, overallLength);
+    public Condition newLengthCondition(Double lengthEpsilon){
+        return new LengthCondition(lengthEpsilon);
     }
 
     public Condition copyCondition(Condition c){
@@ -15,7 +15,7 @@ public class ConditionFactory {
             return new DirectionCondition(((DirectionCondition) c).getEpsilon());
         }
         else if (c instanceof LengthCondition){
-            return new LengthCondition(((LengthCondition) c).getEpsilon(), ((LengthCondition) c).getOverallLength());
+            return new LengthCondition(((LengthCondition) c).getEpsilon());
         }
         else return null;
     }

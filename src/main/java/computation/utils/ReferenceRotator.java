@@ -1,5 +1,6 @@
 package computation.utils;
 
+import computation.graphElements.Node;
 import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 import computation.graphElements.segments.Segment;
@@ -30,20 +31,21 @@ public class ReferenceRotator {
             Vector rotatedV1 = new Vector(roundUp(v1.getX()*Math.cos(angle) - v1.getY()*Math.sin(angle)), roundUp(v1.getX()*Math.sin(angle) + v1.getY()*Math.cos(angle)));
             Vector rotatedV2 = new Vector(roundUp(v2.getX()*Math.cos(angle) - v2.getY()*Math.sin(angle)), roundUp(v2.getX()*Math.sin(angle) + v2.getY()*Math.cos(angle)));
 
-            result.add(i,sf.newSegment(s.getId(),rotatedV1,rotatedV2, s.getPercentLength()));
+            result.add(i,sf.newSegment(s.getId(),rotatedV1,rotatedV2, s.getPercentLength(), s.getLength()));
             i += 1;
         }
 
         return result;
     }
 
-    public List<SegmentSoul> rotateShapeToFit(Segment mapSegment, SegmentSoul shapeSegment, List<SegmentSoul> shape) {
-        Double angle = mapSegment.getVector1().getAngleBetween(shapeSegment.getVector2());
-        if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8) || angle >= 3.14159265358979) {
-            log.info("Angle too small");
+    public List<SegmentSoul> rotateShapeToFit(List<SegmentSoul> shape, Vector mapVector, Vector shapeVector) {
+//        log.info(String.format("Rotating to match map Vector: %s, shape Vector: %s",mapVector, shapeVector));
+        Double angle = mapVector.getAngleBetween(shapeVector);
+        if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8)) {
+//            log.info("Angle too small");
             return shape;
         }
-        log.info("\tRotating. Angle: " + angle);
+//        log.info("\tRotating. Angle: " + angle);
         return rotate(shape, angle);
     }
 
