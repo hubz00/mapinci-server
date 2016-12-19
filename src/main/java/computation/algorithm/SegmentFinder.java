@@ -28,7 +28,7 @@ public class SegmentFinder {
 
     public List<Segment> findSegment(Node startNode, Node endNode, SegmentSoul shapeSegment) {
         this.shapeSegment = shapeSegment;
-
+        log.info(String.format("Looking for segment: [%s]\n\t between strartNode: [%s] endNode: [%s]", shapeSegment,startNode,endNode));
         if(executeSearch(startNode,endNode, null))
             return onMapSegments;
 
@@ -47,10 +47,10 @@ public class SegmentFinder {
         log.info(String.format("\t\t[New Call]\n\t\t\tStart node: %s\n\t\t\tEnd node: [X: %f\t%f]\n\t\t\tnumber of possible segments: %s", startNode,endNode.getLongitude(), endNode.getLatitude(), possibleSegments.size()));
         for(Segment segment: possibleSegments){
             if(previouslyAdded == null || segment.compareTo(previouslyAdded) != 0) {
-                log.info(String.format("\t\t\tChecking segment: %s with shape segment: %s", segment, shapeSegment));
+//                log.info(String.format("\t\t\tChecking segment: %s with shape segment: %s", segment, shapeSegment));
                 ConditionsResult conditionsResult = conditionManager.checkConditions(shapeSegment, segment);
                 if (conditionsResult.areMet()) {
-                    log.info(String.format("\t\t\tAdding segment: %s, first node: %s",segment.getNeighbour(startNode), segment));
+//                    log.info(String.format("\t\t\tAdding segment: %s, first node: %s",segment.getNeighbour(startNode), segment));
                     onMapSegments.add(segment);
                     shapeSegment.changeLengthToFind(-segment.getLength());
                     if (executeSearch(segment.getNeighbour(startNode), endNode, segment)) {

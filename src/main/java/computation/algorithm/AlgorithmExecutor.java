@@ -115,7 +115,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         }
 
         if(shape.isEmpty() && !foundSegments.isEmpty()){
-            log.info(String.format("\t\t[%s] Finished shape and found paths",System.identityHashCode(this)));
+            log.info(String.format("\t\t[%s] Finished shape and found paths------------------------------------------",System.identityHashCode(this)));
             List<List<Segment>> result = new LinkedList<>();
             foundSegments.values().forEach(list -> result.add(new LinkedList<>(list)));
             return result;
