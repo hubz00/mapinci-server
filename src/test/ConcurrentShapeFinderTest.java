@@ -92,7 +92,7 @@ public class ConcurrentShapeFinderTest {
         cm.addCondition(conditionFactory.newLengthCondition(0.05));
 
         ShapeFinderManager manager = new ShapeFinderManager(graph, 3, 75950.0);
-        manager.findShapeConcurrent(shape,startNode,cm, 0.005).forEach(System.out::println);
+        manager.findShapeConcurrent(shape,startNode,cm, 0.05).forEach(System.out::println);
     }
 
 

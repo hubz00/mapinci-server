@@ -41,12 +41,12 @@ public class ConditionManager {
     public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-//            log.info("\t[Primary conditions apply]");
+            log.info("\t[Primary conditions apply]");
             primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result));
             return result;
         }
         conditions.forEach(c -> c.meet(graphSegment,mapSegment, result));
-//        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
+        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
         return result;
     }
 

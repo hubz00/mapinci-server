@@ -84,7 +84,7 @@ public class ShapeFinderManager {
         migrateShapeToInterfaceShape(shapeToFind);
         while (minSearchEpsilon <= startPointRange) {
             //todo change to add something
-            Double tempMaxSearch = minSearchEpsilon + 0.00001;
+            Double tempMaxSearch = minSearchEpsilon + 0.0002;
             if (ShapeStateChecker.isClosedShape(shapeToFind)) {
                 List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
                 log.info(String.format("nodes in radius on map: %s", nodesWithinRadius.size()));

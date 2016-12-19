@@ -37,8 +37,7 @@ public class DataSculptor {
                             .forEach(nodeId -> {
                                 computation.graphElements.Node currentNode = getNodeOrCreate(nodeMap.get(nodeId));
                                 computation.graphElements.Node nextNode = getNodeOrCreate(nodeMap.get(way.getNodeIds().get((way.getNodeIds().indexOf(nodeId) + 1))));
-                                if (!checkIfSegmentAdded(currentNode.getId(),
-                                                                                                                                                                 nextNode.getId())) {
+                                if (!checkIfSegmentAdded(currentNode.getId(), nextNode.getId())) {
                                     Segment checkedSegment = segmentFactory.newSegment(currentNode, nextNode);
                                     graph.addSegment(checkedSegment);
                                 }

@@ -59,12 +59,13 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         //if first call - >  rotate shape to fit segment
         if(depthLevel == 0){
             List<Segment> initialSegmentsFromMap = graph.getSegmentsForNode(startNode);
+            log.info(String.format("For node [%s]\tfound segments: %s", startNode, initialSegmentsFromMap.size()));
             initialSegmentsFromMap.forEach(segment -> {
                 log.info(String.format("\t\t[%s] First segment on map: %s",System.identityHashCode(this), segment));
                 shape.get(0).getVectors().forEach( shapeVector -> {
                     this.shape = referenceRotator.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
 
-//                    log.info(String.format("\t\t[%s] First segment rotated: %s",System.identityHashCode(this), shape.get(0)));
+                    log.info(String.format("\t\t[%s] First segment rotated: %s",System.identityHashCode(this), shape.get(0)));
                     List<Node> potentialNodes = obtainPotentialNodes(shape.get(0), graph);
                     log.info(String.format("\t\t[%s] Potential nodes: %s",System.identityHashCode(this), potentialNodes.size()));
 
