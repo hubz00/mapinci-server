@@ -10,8 +10,7 @@ import java.util.concurrent.Executors;
 
 public class ComputationDispatcher {
 
-    public final static ExecutorService executorService = Executors.newSingleThreadExecutor();
-            //Executors.newWorkStealingPool();
+    public final static ExecutorService executorService = Executors.newWorkStealingPool();
     private static final Map<Integer, Graph> graphs  = new ConcurrentHashMap<>();
 
     public static Graph getGraph(int key){
