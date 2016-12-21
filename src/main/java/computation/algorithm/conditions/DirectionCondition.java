@@ -25,24 +25,23 @@ public class DirectionCondition implements Condition {
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult conditionsResult) {
+    public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult conditionsResult) {
         List<SegmentSoul> segments = new LinkedList<>();
-        boolean notMet;
-        segments.add(0,graphSegment);
+        boolean met;
+
+        segments.add(0,shapeSegment);
         segments.add(1,mapSegment);
         while (Math.abs(segments.get(0).getSlope()) == Double.POSITIVE_INFINITY
                 || Math.abs(segments.get(1).getSlope()) == Double.POSITIVE_INFINITY){
             segments = rotator.rotate(segments,(Math.PI/12) + epsilon);
         }
-        Double angleEpsilon = Math.abs(segments.get(0).getSlope())*epsilon;
-        if(angleEpsilon < 0.25)
-            angleEpsilon = 0.25;
-        notMet = (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon)
-                || (Math.abs(segments.get(0).getSlope() - segments.get(1).getSlope()) <= angleEpsilon);
 
-        if(!notMet) conditionsResult.setBoolResult(false);
-        log.info(String.format("\t[Direction condition: %s]\t[Shape slope: %s] [Map slope: %s]", notMet, graphSegment.getSlope(),mapSegment.getSlope()));
-        return notMet;
+        met = (Math.abs(segments.get(0).getSlope()/segments.get(1).getSlope())  >= 1.0 -  epsilon)
+                && (Math.abs(segments.get(0).getSlope()/segments.get(1).getSlope()) <= 1.0 + epsilon);
+
+        if(!met) conditionsResult.setBoolResult(false);
+        log.info(String.format("\t\t\t\tDirection condition: [%s]\n\t\t\t\t\tShape segment slope: [%s]\n\t\t\t\t\tMap segment slope: [%s]", met,shapeSegment,mapSegment));
+        return met;
     }
 
     @Override

@@ -21,6 +21,7 @@ public class ShapeFinderManager {
     private List<SegmentSoul> shape;
     private Logger log = Logger.getLogger("ShapeFinderManager");
     private Double overallLength;
+    private boolean once = true;
 
 
     //todo remove graph after search
@@ -80,33 +81,42 @@ public class ShapeFinderManager {
         this.shape = new LinkedList<>();
         Double minSearchEpsilon = 0.0;
         Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
+        //todo delete this
+
 
         migrateShapeToInterfaceShape(shapeToFind);
         while (minSearchEpsilon <= startPointRange) {
             //todo change to add something
-            Double tempMaxSearch = minSearchEpsilon + 0.0002;
+            Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
             if (ShapeStateChecker.isClosedShape(shapeToFind)) {
-
-                List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
-                log.info(String.format("nodes in radius on map: %s", nodesWithinRadius.size()));
+                List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
                 nodesWithinRadius.forEach(startN -> {
-                    for (int i = 0; i < shape.size(); i++) {
-                        futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                        SegmentSoul tmp = shape.remove(0);
-                        shape.add(tmp);
+                    //todo this if only for testing to search from one specific node #debugging
+                    if(startN.getLatitude() == 50.0669934 && startN.getLongitude() == 19.9203659 && once) {
+                        // todo return with loop after testing
+                        // for (int i = 0; i < shape.size(); i++) {
+                            log.info(shape.get(1).toString());
+                            updateOnce();
+//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
+                            SegmentSoul tmp = shape.remove(0);
+                            shape.add(tmp);
+                            //todo remove after test uncomment upper
+                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
+
+//                        }
                     }
                 });
 
             } else{
-                graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon)
+                graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon)
                         .forEach(startN -> {
-                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
+//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
                             Collections.reverse(shape);
-                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
+//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
                         });
 
             }
-            minSearchEpsilon = tempMaxSearch;
+            minSearchEpsilon = maxSearchEpsilon;
         }
 
         List<List<Segment>> result;
@@ -142,6 +152,10 @@ public class ShapeFinderManager {
     private void migrateShapeToInterfaceShape(List<Segment> preShape) {
         SegmentFactory sf = new SegmentFactory();
         preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength(), overallLength)));
+    }
+
+    private void updateOnce(){
+        once = false;
     }
 }
 

@@ -62,10 +62,10 @@ public class Graph {
 
     public List<Node> getNodesWithinRadius(Double lon, Double lat, Double maxEpsilon, Double minEpsilon){
         return new LinkedList<>(segments.values().parallelStream()
-                .filter(s -> (((Math.abs(s.getNode1().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode1().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode1().getLatitude() - lat) >= minEpsilon))
-                        || ((Math.abs(s.getNode2().getLongitude() - lon) <= maxEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) <= maxEpsilon) && (Math.abs(s.getNode2().getLongitude() - lon) >= minEpsilon) && (Math.abs(s.getNode2().getLatitude() - lat) >= minEpsilon))))
+                .filter(s -> ((Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0))
+                || ((Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0)))
                 .map(seg -> {
-                        if((Math.abs(seg.getNode1().getLongitude() - lon) <= maxEpsilon) && (Math.abs(seg.getNode1().getLatitude() - lat) <= maxEpsilon) && (Math.abs(seg.getNode1().getLongitude() - lon) >= minEpsilon) && (Math.abs(seg.getNode1().getLatitude() - lat) >= minEpsilon))
+                        if((Math.pow(seg.getNode1().getLongitude() - lon, 2.0) + Math.pow(seg.getNode1().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(seg.getNode1().getLongitude() - lon, 2.0) + Math.pow(seg.getNode1().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0))
                             return seg.getNode1();
                         else
                             return seg.getNode2();})

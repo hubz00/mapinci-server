@@ -23,7 +23,7 @@ public class ConcurrentAppTest {
 
         MapFetcher fetcher = new MapFetcher();
         NodeFactory nodeFactory = new NodeFactory();
-        MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(19.918212,50.067670),2000.0);
+        MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(19.9203659,50.0679934),2000.0);
         DataSculptor ds = new DataSculptor();
 
         Graph g = ds.rebuildGraph(mapFragment);
@@ -32,7 +32,7 @@ public class ConcurrentAppTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
         cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newDirectionCondition(0.25));
+        cm.addCondition(factory.newDirectionCondition(0.6));
         cm.addCondition(factory.newLengthCondition(0.3));
 
         NodeFactory nf = new NodeFactory();
@@ -70,10 +70,10 @@ public class ConcurrentAppTest {
             }
         }
 
-//        shape.forEach(System.out::println);
+        shape.forEach(System.out::println);
 
-        ShapeFinderManager manager = new ShapeFinderManager(g,4, 5100.0);
-        manager.findShapeConcurrent(shape,nf.newNode(19.918162, 50.0675762), cm, 0.0000).forEach(list  -> list.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment))));
-
+        ShapeFinderManager manager = new ShapeFinderManager(g,4, 510.0);
+        System.out.println(g.getNodes().values().size());
+        manager.findShapeConcurrent(shape,nf.newNode(19.9202640, 50.0678914), cm, 0.05).forEach(list  -> list.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment))));
     }
 }

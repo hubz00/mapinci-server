@@ -27,19 +27,18 @@ public class LengthCondition implements Condition {
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result) {
-        Double lengthToFind = graphSegment.getLengthToFind();
+    public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult result) {
+        Double lengthToFind = shapeSegment.getLengthToFind();
         Double epsilonLength = lengthToFind * epsilon;
-        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-            log.info("\t[Length condition: " + true + "]");
+            log.info(String.format("\t\t\t\tLength condition: [True]\n\t\t\t\t\tShape segment length to find: [%s]\n\t\t\t\t\tMap segment slope: [%s]",shapeSegment.getLengthToFind(),mapSegment.getLength()));
             return true;
         }
         //todo write tests
-        log.info("\t[Length condition: " + false + "] ");
         result.setBoolResult(false);
+        log.info(String.format("\t\t\t\tLength condition: [False]\n\t\t\t\t\tShape segment length to find: [%s]\n\t\t\t\t\tMap segment slope: [%s]",shapeSegment.getLengthToFind(),mapSegment.getLength()));
         return false;
     }
 
