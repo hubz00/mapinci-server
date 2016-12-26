@@ -44,8 +44,138 @@ public class ReferenceRotator {
             log.info("Angle too small");
             return shape;
         }
+
+        angle = checkSumOrSub(mapVector, shapeVector) * angle;
+
         log.info("\t\tRotating. Angle: " + angle);
         return rotate(shape, angle);
+    }
+
+    private Double checkSumOrSub(Vector mapVector, Vector shapeVector) {
+
+        Double mX = mapVector.getX();
+        Double mY = mapVector.getY();
+        Double sX = shapeVector.getX();
+        Double sY = shapeVector.getY();
+        Double mSlope = mY/mX;
+        Double sSlope = sY/sX;
+
+        switch (whichQuarter(mX,mY)){
+            case 1:{
+                switch (whichQuarter(sX, sY)){
+                    case 1:{
+                        if(sSlope > mSlope)
+                            return -1.0;
+                        else
+                            return 1.0;
+                    }
+                    case 2:{
+                        return -1.0;
+                    }
+                    case 3:{
+                        if(sSlope > mSlope)
+                            return 1.0;
+                        else
+                            return -1.0;
+                    }
+                    case 4:{
+                        return 1.0;
+                    }
+                    default:
+                        return 1.0;
+                }
+            }
+            case 2:{
+                switch (whichQuarter(sX, sY)){
+                    case 1:{
+                        return 1.0;
+                    }
+                    case 2:{
+                        if (sSlope > mSlope)
+                            return -1.0;
+                        else
+                            return 1.0;
+                    }
+                    case 3:{
+                        return -1.0;
+                    }
+                    case 4:{
+                        if (sSlope > mSlope)
+                            return 1.0;
+                        else
+                            return -1.0;
+                    }
+                    default:
+                        return 1.0;
+                }
+            }
+            case 3:{
+                switch (whichQuarter(sX, sY)){
+                    case 1:{
+                        if(sSlope > mSlope)
+                            return 1.0;
+                        else
+                            return -1.0;
+                    }
+                    case 2:{
+                        return 1.0;
+                    }
+                    case 3:{
+                        if(sSlope > mSlope)
+                            return -1.0;
+                        else
+                            return 1.0;
+                    }
+                    case 4:{
+                        return -1.0;
+                    }
+                    default:
+                        return 1.0;
+                }
+            }
+            case 4:{
+                switch (whichQuarter(sX, sY)){
+                    case 1:{
+                        return -1.0;
+                    }
+                    case 2:{
+                        if(sSlope > mSlope)
+                            return 1.0;
+                        else
+                            return -1.0;
+                    }
+                    case 3:{
+                        return 1.0;
+                    }
+                    case 4:{
+                        if (sSlope > mSlope)
+                            return -1.0;
+                        else
+                            return 1.0;
+                    }
+                    default:
+                        return 1.0;
+                }
+            }
+            default:
+                return 1.0;
+        }
+
+    }
+
+    private int whichQuarter(Double x, Double y){
+        if(x >= 0){
+            if (y >= 0)
+                return 1;
+            else
+                return 4;
+        }
+        else{
+            if(y >= 0)
+                return 2;
+            else
+                return 3;
+        }
     }
 
     private Double roundUp(Double x){

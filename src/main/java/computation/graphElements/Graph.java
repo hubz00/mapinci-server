@@ -62,8 +62,8 @@ public class Graph {
 
     public List<Node> getNodesWithinRadius(Double lon, Double lat, Double maxEpsilon, Double minEpsilon){
         return new LinkedList<>(segments.values().parallelStream()
-                .filter(s -> ((Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0))
-                || ((Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0)))
+                .filter(s -> ((Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) < Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode1().getLongitude() - lon, 2.0) + Math.pow(s.getNode1().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0))
+                || ((Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) < Math.pow(maxEpsilon,2.0)) && Math.pow(s.getNode2().getLongitude() - lon, 2.0) + Math.pow(s.getNode2().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0)))
                 .map(seg -> {
                         if((Math.pow(seg.getNode1().getLongitude() - lon, 2.0) + Math.pow(seg.getNode1().getLatitude() - lat,2.0) <= Math.pow(maxEpsilon,2.0)) && Math.pow(seg.getNode1().getLongitude() - lon, 2.0) + Math.pow(seg.getNode1().getLatitude() - lat,2.0) >= Math.pow(minEpsilon,2.0))
                             return seg.getNode1();

@@ -3,10 +3,8 @@ package computation.algorithm;
 import computation.ComputationDispatcher;
 import computation.algorithm.conditions.ConditionManager;
 import computation.algorithm.conditions.LengthCondition;
-import computation.graphElements.Graph;
-import computation.graphElements.LatLon;
-import computation.graphElements.Node;
-import computation.graphElements.NodeFactory;
+import computation.graphElements.*;
+import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
@@ -64,6 +62,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                     log.info(String.format("\t\tRotating shape vector: [%s]\n\t\t\tto map Vector: [%s]",shapeVector, segment.getVectorFromNode(startNode)));
                     this.shape = referenceRotator.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
                     List<Node> potentialNodes = obtainPotentialNodes(shape.get(0), graph);
+                    potentialNodes.forEach( pn -> System.out.println(String.format("From node: %s\tto Node: %s\tslope: %s", startNode, pn, segment.getSlope())));
                     if(potentialNodes.stream().anyMatch(potNode -> potNode.getLatitude() == 50.0683923 && potNode.getLongitude() == 19.9208255 )) {
                         SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
                         //todo remove after tests
@@ -74,16 +73,23 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                         Iterator<Node> i = potentialNodes.iterator();
                         while (i.hasNext()) {
                             Node endNode = i.next();
+                            this.shape = referenceRotator.rotateShapeToFit(shape, new Vector(startNode,endNode), shapeVector);
                             SegmentFactory sf = new SegmentFactory();
                             log.info(String.format("\t\tSearching for path between:\n\t\t\t[%s %s]",startNode, endNode));
                             List<Segment> result = segmentFinder.findSegment(startNode, endNode, sf.newSegment(shape.get(0)));
                             if (result.isEmpty()) {
                                 i.remove();
                             } else {
+                                log.info(String.format("Found path between:\n\t\t\t[%s %s]", startNode, endNode));
                                 foundSegments.put(endNode, result);
                             }
                         }
                     }
+                    //todo remove - just for testing
+                    else{
+                        potentialNodes = new LinkedList<Node>();
+                    }
+                    // ------------------------------
                     if(!shape.subList(1, shape.size()).isEmpty())
                         potentialNodes.forEach(n -> futures.put(n,executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape.subList(1, shape.size())), n,conditionManager, graphKey, ++depthLevel))));
                 });
@@ -103,8 +109,10 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                 List<Segment> result = segmentFinder.findSegment(startNode, endNode, segmentToMap);
                 if (result.isEmpty())
                     i.remove();
-                else
+                else {
+                    log.info(String.format("Found path between:\n\t\t\t[%s %s]", startNode, endNode));
                     foundSegments.put(endNode, result);
+                }
             }
             if(!shape.isEmpty())
                 potentialNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, ++depthLevel))));
@@ -146,6 +154,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
             Thread.sleep(1000);
         }
         //todo cancel or wait for the result
+        log.info(String.format("\tReturning path: %s", potentialPaths));
         return potentialPaths;
     }
 

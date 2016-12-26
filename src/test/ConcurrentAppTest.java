@@ -32,7 +32,7 @@ public class ConcurrentAppTest {
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
         cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newDirectionCondition(0.6));
+        cm.addCondition(factory.newDirectionCondition(0.8));
         cm.addCondition(factory.newLengthCondition(0.3));
 
         NodeFactory nf = new NodeFactory();

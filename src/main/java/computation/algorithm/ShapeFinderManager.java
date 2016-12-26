@@ -21,7 +21,7 @@ public class ShapeFinderManager {
     private List<SegmentSoul> shape;
     private Logger log = Logger.getLogger("ShapeFinderManager");
     private Double overallLength;
-    private boolean once = true;
+    private boolean once;
 
 
     //todo remove graph after search
@@ -30,6 +30,7 @@ public class ShapeFinderManager {
         ComputationDispatcher.addGraph(graph);
         this.simplifyingIterations = simplifyingIterations;
         this.overallLength = overallLength;
+        this.once = true;
     }
 
 
@@ -81,8 +82,6 @@ public class ShapeFinderManager {
         this.shape = new LinkedList<>();
         Double minSearchEpsilon = 0.0;
         Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
-        //todo delete this
-
 
         migrateShapeToInterfaceShape(shapeToFind);
         while (minSearchEpsilon <= startPointRange) {

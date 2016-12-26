@@ -36,6 +36,7 @@ public class SegmentFinder {
 
     public boolean executeSearch(Node startNode, Node endNode, Segment previouslyAdded){
         if(startNode.compareTo(endNode) == 0){
+            log.info(String.format("\t\t\tNode match: %s\n\t\t\t\tPath: %s", startNode, onMapSegments));
             return true;
         }
         if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*0.4){
