@@ -1,5 +1,6 @@
 package computation.algorithm.conditions;
 
+import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ public class LengthCondition implements Condition {
     }
 
     @Override
-    public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult result) {
+    public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult result, Vector shapeVector, Vector mapVector) {
         Double lengthToFind = shapeSegment.getLengthToFind();
         Double epsilonLength = lengthToFind * epsilon;
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {

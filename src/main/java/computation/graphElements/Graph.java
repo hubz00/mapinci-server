@@ -16,6 +16,9 @@ public class Graph {
     }
 
     public void addSegment(Segment s){
+        if(segments.containsKey(s.getId())){
+            System.out.println("!!!!!!!!!!!!#################!!!!!!!!!!!!!!!!!!!");
+        }
         segments.put(s.getId(), s);
     }
 

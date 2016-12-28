@@ -31,9 +31,10 @@ public class GraphMaker {
         cm.addCondition(factory.newLengthCondition(0.3));
 
         ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, shape.getLength());
-        List<Segment> foundShape = manager.findShapeOneThread(shape.getSegments(),shape.getStartPoint(),cm,shape.getRadius());
+        //List<Segment> foundShape = manager.findShapeOneThread(shape.getSegments(),shape.getStartPoint(),cm,shape.getRadius());
 
-        return segmentsToNodeList(foundShape);
+        //return segmentsToNodeList(foundShape);
+        return null;
     }
 
     private List<Node> segmentsToNodeList(List<Segment> foundShape){

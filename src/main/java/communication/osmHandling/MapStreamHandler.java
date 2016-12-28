@@ -37,10 +37,31 @@ public class MapStreamHandler implements MapDataHandler {
         if(!nodes.containsKey(node.getId())) {
             this.nodes.put(node.getId(), node);
         }
+        else {
+            System.out.println(String.format("Duplicated: %s", node.getId()));
+        }
     }
 
     @Override
     public void handle(Way way) {
+        if(way.getId() == 178067341L){
+            System.out.println("Urzednicza");
+            way.getNodeIds().forEach(System.out::println);
+        }
+        else if(way.getId() == 440915828L){
+            System.out.println("Czarnowiejska lewa");
+            way.getNodeIds().forEach(System.out::println);
+        }
+        else if(way.getId() == 155221402L){
+            System.out.println("Czarnowiejska prawa");
+            way.getNodeIds().forEach(System.out::println);
+        }
+        else if(way.getId() == 251533289L){
+            System.out.println("agh");
+            way.getNodeIds().forEach(System.out::println);
+        }
+
+
         this.ways.add(way);
     }
 

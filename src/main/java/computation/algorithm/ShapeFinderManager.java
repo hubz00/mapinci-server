@@ -33,51 +33,6 @@ public class ShapeFinderManager {
         this.once = true;
     }
 
-
-    /**
-     * Initiates searching for given shape from coordinates given in startNode
-     * maxSearchEpsilon given in degrees
-     * recommended value between: 0.005 - 0.05
-     * shape found on map needs to meet conditions form conditionManager
-     *
-     * @param shape
-     * @param startNode
-     * @param conditionManager
-     * @param startPointRange
-     * @return list of segments from the map in asked shape
-     */
-
-    public List<Segment> findShapeOneThread(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange){
-        return findShapeOneThread(shape, startNode, conditionManager, startPointRange, 0);
-    }
-
-    private List<Segment> findShapeOneThread(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange, int iteration) {
-        ShapeFinder finder = new ShapeFinder(graph);
-        Double minSearchEpsilon = 0.0;
-        if(iteration > simplifyingIterations)
-            return new LinkedList<>();
-
-        while (minSearchEpsilon < startPointRange) {
-            Double tempMaxSearch = minSearchEpsilon + 0.005;
-            List <Node> nodes = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
-            for(Node n: nodes){
-                try {
-                    List<Segment> result = finder.findShapeForNode(n, shape, conditionManager, overallLength);
-                    if (!result.isEmpty())
-                        return result;
-                } catch (StackOverflowError e){
-                    //taking another node
-                }
-                conditionManager.reset();
-            }
-            minSearchEpsilon = tempMaxSearch;
-        }
-
-        conditionManager.simplifyConditions();
-
-        return findShapeOneThread(shape,startNode,conditionManager,startPointRange, ++iteration);
-    }
-
     public List<List<Segment>> findShapeConcurrent(List<Segment> shapeToFind, Node startNode, ConditionManager conditionManager, Double startPointRange) {
         this.shape = new LinkedList<>();
         Double minSearchEpsilon = 0.0;

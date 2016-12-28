@@ -1,5 +1,6 @@
 package computation.algorithm.conditions;
 
+import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 
 import java.util.logging.Logger;
@@ -29,8 +30,8 @@ public class PaddingCondition implements PrimaryCondition{
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result) {
-        if(direction.meet(graphSegment,mapSegment,result) && mapSegment.getLength() <= lengthEpsilon){
+    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, Vector shapeVector, Vector mapVector) {
+        if(direction.meet(graphSegment,mapSegment,result, shapeVector, mapVector) && mapSegment.getLength() <= lengthEpsilon){
             result.setEnoughSpaceForAnotherSegment(true);
 //            log.info(String.format("\t[Padding condition: true]"));
             return true;

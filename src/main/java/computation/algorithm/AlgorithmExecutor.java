@@ -17,6 +17,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
 
@@ -41,7 +42,6 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
     public List<List<Segment>> call() throws Exception {
         //todo initialize new call for next segment
         ReferenceRotator referenceRotator = new ReferenceRotator();
-        List<List<Segment>> potentialPaths = new LinkedList<>();
         ExecutorService executorService = ComputationDispatcher.executorService;
         Map<Node,Future<List<List<Segment>>>> futures = new HashMap<>();
         Map<Node,List<Segment>> foundSegments = new HashMap<>();
@@ -62,7 +62,6 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                     log.info(String.format("\t\tRotating shape vector: [%s]\n\t\t\tto map Vector: [%s]",shapeVector, segment.getVectorFromNode(startNode)));
                     this.shape = referenceRotator.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
                     List<Node> potentialNodes = obtainPotentialNodes(shape.get(0), graph);
-                    potentialNodes.forEach( pn -> System.out.println(String.format("From node: %s\tto Node: %s\tslope: %s", startNode, pn, segment.getSlope())));
                     if(potentialNodes.stream().anyMatch(potNode -> potNode.getLatitude() == 50.0683923 && potNode.getLongitude() == 19.9208255 )) {
                         SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
                         //todo remove after tests
@@ -99,23 +98,30 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
         else {
             SegmentSoul segmentToMap = shape.remove(0);
             List<Node> potentialNodes = obtainPotentialNodes(segmentToMap, graph);
+            potentialNodes.forEach( pn -> System.out.println(String.format("From node: %s\tto Node: %s\tslope: %s", startNode, pn, segmentToMap.getSlope())));
 
-            //todo find way for this segment
+            //todo remove - onl for testing
+            List<Node> tmpNodes = new LinkedList<>();
+            //---------------------------
 
             SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
             Iterator<Node> i = potentialNodes.iterator();
             while (i.hasNext()) {
                 Node endNode = i.next();
-                List<Segment> result = segmentFinder.findSegment(startNode, endNode, segmentToMap);
-                if (result.isEmpty())
-                    i.remove();
-                else {
-                    log.info(String.format("Found path between:\n\t\t\t[%s %s]", startNode, endNode));
-                    foundSegments.put(endNode, result);
+                if(endNode.getId() == 236160072L || endNode.getId() == 267538595L) {
+                    List<Segment> result = segmentFinder.findSegment(startNode, endNode, segmentToMap);
+                    if (result.isEmpty())
+                        i.remove();
+                    else {
+                        log.info(String.format("Found path between:\n\t\t\t[%s %s]", startNode, endNode));
+                        tmpNodes.add(endNode);
+                        foundSegments.put(endNode, result);
+                    }
                 }
             }
+            //todo change to potentialNodes ------- this only for testing
             if(!shape.isEmpty())
-                potentialNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, ++depthLevel))));
+                tmpNodes.forEach(n -> futures.put(n, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, ++depthLevel))));
         }
 
         if(shape.isEmpty() && !foundSegments.isEmpty()){
@@ -127,8 +133,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
             return new LinkedList<>();
         }
 
-
-        //todo add returning a class not list -> what if multiple shapes found
+        List<List<Segment>> potentialPaths = new LinkedList<>();
         while (!futures.entrySet().isEmpty()){
             Iterator<Map.Entry<Node,Future<List<List<Segment>>>>> iterator = futures.entrySet().iterator();
             while(iterator.hasNext()){
@@ -145,6 +150,7 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
                             potentialPaths.add(tmp);
                         }
                         iterator.remove();
+                        futures.entrySet().parallelStream().forEach(entry -> entry.getValue().cancel(true));
                     }
                 }
                 else if(futureEntry.getValue().isCancelled()) {
@@ -174,8 +180,9 @@ public class AlgorithmExecutor implements Callable<List<List<Segment>>>{
 
         //divided by approx length of one coordinate point -> to make in range in points
         Double startPointRange = segmentToMap.getLength() * lengthCondition.getEpsilon()/111111;
-        if(startPointRange > 0.005)
-            startPointRange = 0.000005;
+
+        if(startPointRange > 0.001)
+            startPointRange = 0.0005;
 
         return graph.getNodesWithinRadius(desiredNode.getLongitude(), desiredNode.getLatitude(), startPointRange, 0.0);
     }

@@ -14,11 +14,13 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ConcurrentAppTest {
 
     @Test
     public void test(){
+        Logger log = Logger.getLogger("ConcappTest");
         List<Segment> shape = new LinkedList<>();
 
         MapFetcher fetcher = new MapFetcher();
@@ -31,8 +33,8 @@ public class ConcurrentAppTest {
 
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
-        cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newDirectionCondition(0.8));
+        cm.addPrimaryCondition(factory.newPrimaryCondition(15.0, 3*Math.PI/4));
+        cm.addCondition(factory.newDirectionCondition(Math.PI/6));
         cm.addCondition(factory.newLengthCondition(0.3));
 
         NodeFactory nf = new NodeFactory();

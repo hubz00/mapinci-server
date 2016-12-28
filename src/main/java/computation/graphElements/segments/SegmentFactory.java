@@ -8,49 +8,39 @@ public final class SegmentFactory {
     private static long id;
 
     public SegmentFactory(){
-        SegmentFactory.id = 1;
+        SegmentFactory.id = 1L;
     }
 
     public Segment newSegment(Node n1, Node n2){
-        Segment segment = new Segment(id,n1,n2);
-        id++;
-        return segment;
+        return new Segment(getId(),n1,n2);
     }
 
     public Segment newSegment(Node n1, Node n2, Double percentLength){
-        Segment segment = new Segment(id,n1,n2, percentLength);
-        id++;
-        return segment;
+        return new Segment(getId(),n1,n2, percentLength);
     }
 
     public SegmentReflection newSegment(Long correspondingId, Vector v1, Vector v2){
-        SegmentReflection sr = new SegmentReflection(id, correspondingId, v1, v2);
-        id++;
-        return sr;
+        return new SegmentReflection(getId(), correspondingId, v1, v2);
     }
 
     public SegmentReflection newSegment(Long correspondingId, Vector v1, Vector v2, Double percentLength, double length){
-        SegmentReflection sr = new SegmentReflection(id, correspondingId, v1, v2, percentLength, length);
-        id++;
-        return sr;
+        return new SegmentReflection(getId(), correspondingId, v1, v2, percentLength, length);
     }
 
     public SegmentReflection newSegment(Vector v1, Vector v2){
-        SegmentReflection sr = new SegmentReflection(id, v1, v2);
-        id++;
-        return sr;
+        return new SegmentReflection(getId(), v1, v2);
     }
 
     public SegmentReflection newSegment(Vector v1, Vector v2, Double percentLength, double overallLength){
-        SegmentReflection sr = new SegmentReflection(id, v1, v2, percentLength, overallLength);
-        id++;
-        return sr;
+        return new SegmentReflection(getId(), v1, v2, percentLength, overallLength);
     }
 
 
     public SegmentSoul newSegment(SegmentSoul segmentSoul) {
-        SegmentReflection sr= new SegmentReflection(id, segmentSoul);
-        id++;
-        return sr;
+        return new SegmentReflection(getId(), segmentSoul);
+    }
+
+    private synchronized Long getId(){
+        return id++;
     }
 }

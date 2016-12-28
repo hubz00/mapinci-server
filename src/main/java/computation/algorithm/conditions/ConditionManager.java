@@ -1,5 +1,6 @@
 package computation.algorithm.conditions;
 
+import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
@@ -38,16 +39,16 @@ public class ConditionManager {
         basePrimaryConditions = cm.getPrimaryConditions();
     }
 
-    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
+    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, Vector shapeVector, Vector mapVector){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-            primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result));
+            primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector , mapVector));
             if(result.areMet()){
                 log.info("\t\t\t\tPrimary conditions: [True]");
             }
             return result;
         }
-        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result));
+        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector, mapVector));
         return result;
     }
 
