@@ -10,8 +10,6 @@ import computation.graphElements.segments.SegmentSoul;
 import computation.utils.ShapeStateChecker;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class ShapeFinderManager {
@@ -37,7 +35,6 @@ public class ShapeFinderManager {
         this.shape = new LinkedList<>();
 
         Double minSearchEpsilon = 0.0;
-        Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
 
         migrateShapeToInterfaceShape(shapeToFind);
         while (minSearchEpsilon <= startPointRange) {
@@ -56,8 +53,7 @@ public class ShapeFinderManager {
                         SegmentSoul tmp = shape.remove(0);
                         shape.add(tmp);
                         //todo remove after test uncomment upper
-                        futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
-
+                        ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode()));
 //                        }
                     }
                 });
@@ -74,35 +70,20 @@ public class ShapeFinderManager {
             minSearchEpsilon = maxSearchEpsilon;
         }
 
-        List<List<Segment>> result;
-        while(!futuresSet.isEmpty()){
+        List<List<Segment>> result = new LinkedList<>();
+
+        while(result.isEmpty()){
             try {
-                Iterator<Future<List<List<Segment>>>> i = futuresSet.iterator();
-                while(i.hasNext()){
-                    Future<List<List<Segment>>> future = i.next();
-                    if(future.isDone()){
-                        try {
-                            result = future.get();
-                            if(!result.isEmpty()) {
-                                futuresSet.forEach(f -> f.cancel(true));
-                                return result;
-                            }
-                            else
-                                i.remove();
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                Thread.sleep(500);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            result = checkIfFinished();
         }
-
         ComputationDispatcher.removeGraph(graph.hashCode());
-        log.info("Empty set :c");
-        return new LinkedList<>();
+        ComputationDispatcher.removeResults();
+        System.out.println("----------------------------------------------\n\nFound Paths: " + result.size() + "\n\n-------------------------------------------------");
+        return result;
     }
 
     private void migrateShapeToInterfaceShape(List<Segment> preShape) {
@@ -125,6 +106,45 @@ public class ShapeFinderManager {
     private void updateOnce(){
         once = false;
     }
-}
 
+    private List<List<Segment>> checkIfFinished(){
+        Map<Node, List<AlgorithmExecutionResult>> map = ComputationDispatcher.getResultsStartingFromNode();
+
+        for(List<AlgorithmExecutionResult> startNodeList: map.values()){
+            for(AlgorithmExecutionResult firstNodeResult: startNodeList){
+                List<List<Segment>> tmp = checkNthSegment(1,firstNodeResult);
+                if(!tmp.isEmpty())
+                    return tmp;
+            }
+        }
+        return new LinkedList<>();
+    }
+
+    private List<List<Segment>> checkNthSegment(int depth, AlgorithmExecutionResult algoResult){
+        if(algoResult.getPathsToEndNodes()!= null && !algoResult.getPathsToEndNodes().isEmpty()){
+            if(depth == shape.size()){
+                List<List<Segment>> result = new LinkedList<>();
+                for (List<Segment> tmpList : algoResult.getPathsToEndNodes().values()){
+                    result.add(tmpList);
+                }
+                return result;
+            }
+
+            List<List<Segment>> result = new LinkedList<>();
+
+            for(Map.Entry<Node, AlgorithmExecutionResult> currentAlgoResult: algoResult.getResultsForNextSegments().entrySet()){
+                List<List<Segment>> tmpResults = checkNthSegment(depth+1, currentAlgoResult.getValue());
+                if(tmpResults != null && !tmpResults.isEmpty()){
+                    List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
+                    tmpResults.forEach(list -> {
+                        List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
+                        tmp.addAll(list);
+                        result.add(tmp);
+                    });
+                }
+            }
+            return result;
+        }
+        return new LinkedList<>();
+    }}
 

@@ -76,6 +76,14 @@ public class ConcurrentAppTest {
 
         ShapeFinderManager manager = new ShapeFinderManager(g,4, 510.0);
         System.out.println(g.getNodes().values().size());
-        manager.findShapeConcurrent(shape,nf.newNode(19.9202640, 50.0678914), cm, 0.05).forEach(list  -> list.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment))));
+        List<List<Segment>> result = manager.findShapeConcurrent(shape,nf.newNode(19.9202640, 50.0678914), cm, 0.05);
+        if(!result.isEmpty()){
+        List<Segment> shortest = result.get(0);
+        for(List<Segment> tmp: result){
+            if(tmp.size() < shortest.size())
+                shortest = tmp;
+        }
+            shortest.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
+        }
     }
 }

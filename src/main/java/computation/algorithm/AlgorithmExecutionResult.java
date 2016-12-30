@@ -12,12 +12,12 @@ public class AlgorithmExecutionResult {
 
     private Map<Node, List<Segment>> pathsToEndNodes;
     private Node startNode;
-    private Map<Node, AlgorithmExecutionResult> nextSegmentPaths;
+    private Map<Node, AlgorithmExecutionResult> nextSegmentResults;
 
-    public AlgorithmExecutionResult(Map<Node, List<Segment>> pathsToEndNodes, Node startNode) {
-        this.pathsToEndNodes = pathsToEndNodes;
+    public AlgorithmExecutionResult(Node startNode) {
+        this.pathsToEndNodes = new ConcurrentHashMap<>();
         this.startNode = startNode;
-        this.nextSegmentPaths = new ConcurrentHashMap<>();
+        this.nextSegmentResults = new ConcurrentHashMap<>();
     }
 
     public Map<Node, List<Segment>> getPathsToEndNodes() {
@@ -28,18 +28,37 @@ public class AlgorithmExecutionResult {
         return startNode;
     }
 
-    public Map<Node, AlgorithmExecutionResult> getNextSegmentPaths() {
-        return nextSegmentPaths;
+    public Map<Node, AlgorithmExecutionResult> getResultsForNextSegments() {
+        return nextSegmentResults;
     }
 
-    public AlgorithmExecutionResult getResultsForEndNode(Node n){
-        return nextSegmentPaths.get(n);
+    public AlgorithmExecutionResult getResultsForNextSegments(Node n){
+        return nextSegmentResults.get(n);
     }
 
+    public void addPathForNode(Node n, List<Segment> newPath){
+        if(pathsToEndNodes.containsKey(n)){
+            if(pathsToEndNodes.get(n).size() > newPath.size()){
+                pathsToEndNodes.put(n,newPath);
+            }
+        }
+        else {
+            pathsToEndNodes.put(n, newPath);
+        }
+    }
+
+    public void setPathsToEndNodes(Map<Node, List<Segment>> map){
+        this.pathsToEndNodes = new ConcurrentHashMap<>(map);
+    }
     public void addResultForNode(Node n, AlgorithmExecutionResult result){
-        this.nextSegmentPaths.put(n,result);
+        this.nextSegmentResults.put(n,result);
     }
+
     public void removeResultForNode(Node n){
-        this.nextSegmentPaths.remove(n);
+        this.nextSegmentResults.remove(n);
+    }
+
+    public List<Segment> getPathforEndNode(Node n){
+        return pathsToEndNodes.get(n);
     }
 }
