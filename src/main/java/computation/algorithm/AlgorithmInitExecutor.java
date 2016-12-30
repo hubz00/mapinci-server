@@ -9,9 +9,7 @@ import computation.graphElements.segments.SegmentSoul;
 import computation.utils.ReferenceRotor;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class AlgorithmInitExecutor implements Runnable{
@@ -48,8 +46,8 @@ public class AlgorithmInitExecutor implements Runnable{
         initialSegmentsFromMap.forEach(segment -> {
             Vector shapeVector = shape.get(0).getVector1();
             this.shape = referenceRotor.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
-            EndNodesPredictor endNodesPredictor = new EndNodesPredictor(graph,conditionManager);
-            Map<Node, List<Segment>> potentialNodes = endNodesPredictor.getNodes(startNode,segment,shape.get(0), shapeVector);
+            SegmentFinder segmentFinder = new SegmentFinder(graph,conditionManager);
+            Map<Node, List<Segment>> potentialNodes = segmentFinder.getNodes(startNode,segment,shape.get(0), shapeVector);
 
             if(!potentialNodes.isEmpty()) {
 
@@ -61,7 +59,7 @@ public class AlgorithmInitExecutor implements Runnable{
                 if (!shape.subList(1, shape.size()).isEmpty())
                     potentialNodes.keySet().forEach(n -> {
                         List<SegmentSoul> tmp = referenceRotor.rotateShapeToFit(shape, new Vector(startNode, n), shapeVector);
-                        executorService.submit(new AlgorithmExecutor(new LinkedList<>(tmp.subList(1, shape.size())), n, conditionManager, graphKey, algorithmResult));
+                        ComputationDispatcher.addFuture(graph.hashCode(), executorService.submit(new AlgorithmExecutor(new LinkedList<>(tmp.subList(1, shape.size())), n, conditionManager, graphKey, algorithmResult)));
                     });
             }
         });

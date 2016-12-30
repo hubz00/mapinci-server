@@ -33,16 +33,13 @@ public class PaddingCondition implements PrimaryCondition{
     public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result, Vector shapeVector, Vector mapVector) {
         if(direction.meet(graphSegment,mapSegment,result, shapeVector, mapVector) && mapSegment.getLength() <= lengthEpsilon){
             result.setEnoughSpaceForAnotherSegment(true);
-//            log.info(String.format("\t[Padding condition: true]"));
             return true;
         }
-//        log.info(String.format("\t[Padding condition: false]"));
         return false;
     }
 
     @Override
     public boolean applicable(SegmentSoul graphSegment, SegmentSoul mapSegment) {
-//        log.info(String.format("\t[Map length: %s] [length Epsilon: %s]", mapSegment.getLength(), lengthEpsilon));
         return (mapSegment.getLength() <= lengthEpsilon);
     }
 

@@ -26,15 +26,21 @@ public class GraphMaker {
 
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
-        cm.addPrimaryCondition(factory.newPrimaryCondition(10.0, 10.0));
-        cm.addCondition(factory.newDirectionCondition(0.25));
+        cm.addPrimaryCondition(factory.newPrimaryCondition(15.0, 5*Math.PI/12));
+        cm.addCondition(factory.newDirectionCondition(Math.PI/6));
         cm.addCondition(factory.newLengthCondition(0.3));
 
         ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, shape.getLength());
-        //List<Segment> foundShape = manager.findShapeOneThread(shape.getSegments(),shape.getStartPoint(),cm,shape.getRadius());
-
-        //return segmentsToNodeList(foundShape);
-        return null;
+        List<List<Segment>> foundShapes = manager.findShapeConcurrent(shape.getSegments(),shape.getStartPoint(),cm,shape.getRadius());
+        if(!foundShapes.isEmpty()) {
+            List<Segment> shortest = foundShapes.get(0);
+            for (List<Segment> tmp : foundShapes) {
+                if (tmp.size() < shortest.size())
+                    shortest = tmp;
+            }
+            return segmentsToNodeList(shortest);
+        }
+        return new LinkedList<>();
     }
 
     private List<Node> segmentsToNodeList(List<Segment> foundShape){

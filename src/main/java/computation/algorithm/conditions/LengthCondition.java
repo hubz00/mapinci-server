@@ -34,12 +34,9 @@ public class LengthCondition implements Condition {
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-            log.info(String.format("\t\t\t\tLength condition: [True]\n\t\t\t\t\tShape segment length to find: [%s]\n\t\t\t\t\tMap segment slope: [%s]",shapeSegment.getLengthToFind(),mapSegment.getLength()));
             return true;
         }
-        //todo write tests
         result.setBoolResult(false);
-        log.info(String.format("\t\t\t\tLength condition: [False]\n\t\t\t\t\tShape segment length to find: [%s]\n\t\t\t\t\tMap segment slope: [%s]",shapeSegment.getLengthToFind(),mapSegment.getLength()));
         return false;
     }
 

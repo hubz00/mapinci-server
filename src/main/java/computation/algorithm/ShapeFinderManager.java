@@ -19,70 +19,66 @@ public class ShapeFinderManager {
     private List<SegmentSoul> shape;
     private Logger log = Logger.getLogger("ShapeFinderManager");
     private Double overallLength;
-    private boolean once;
 
 
-    //todo remove graph after search
     public ShapeFinderManager(Graph graph, int simplifyingIterations, Double overallLength) {
         this.graph = graph;
         ComputationDispatcher.addGraph(graph);
         this.simplifyingIterations = simplifyingIterations;
         this.overallLength = overallLength;
-        this.once = true;
     }
 
     public List<List<Segment>> findShapeConcurrent(List<Segment> shapeToFind, Node startNode, ConditionManager conditionManager, Double startPointRange) {
-        this.shape = new LinkedList<>();
-
-        Double minSearchEpsilon = 0.0;
-
-        migrateShapeToInterfaceShape(shapeToFind);
-        while (minSearchEpsilon <= startPointRange) {
-            //todo change to add something
-            Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
-            if (ShapeStateChecker.isClosedShape(shapeToFind)) {
-                List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
-                nodesWithinRadius.forEach(startN -> {
-                    //todo this if only for testing to search from one specific node #debugging
-                    if(startN.getLatitude() == 50.0669934 && startN.getLongitude() == 19.9203659 && once) {
-                        // todo return with loop after testing
-                        // for (int i = 0; i < shape.size(); i++) {
-                        log.info(shape.get(1).toString());
-                        updateOnce();
-//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                        SegmentSoul tmp = shape.remove(0);
-                        shape.add(tmp);
-                        //todo remove after test uncomment upper
-                        ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode()));
-//                        }
-                    }
-                });
-
-            } else{
-                graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon)
-                        .forEach(startN -> {
-//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                            Collections.reverse(shape);
-//                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                        });
-
-            }
-            minSearchEpsilon = maxSearchEpsilon;
-        }
-
+        int simplifyIndex = 0;
         List<List<Segment>> result = new LinkedList<>();
+        while(simplifyIndex <= simplifyingIterations) {
+            this.shape = new LinkedList<>();
+            result = new LinkedList<>();
+            Double minSearchEpsilon = 0.0;
+            migrateShapeToInterfaceShape(shapeToFind);
+            while (minSearchEpsilon <= startPointRange) {
+                Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
+                if (ShapeStateChecker.isClosedShape(shapeToFind)) {
+                    List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
+                    nodesWithinRadius.forEach(startN -> {
+                        for (int i = 0; i < shape.size(); i++) {
+                            ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                            SegmentSoul tmp = shape.remove(0);
+                            shape.add(tmp);
+                        }
+                    });
 
-        while(result.isEmpty()){
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                } else {
+                    graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon)
+                            .forEach(startN -> {
+                                ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                                Collections.reverse(shape);
+                                ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                            });
+                }
+                minSearchEpsilon = maxSearchEpsilon;
             }
-            result = checkIfFinished();
+
+            while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                result = checkIfFinished();
+            }
+            if(result.isEmpty()){
+               conditionManager.simplifyConditions();
+                simplifyIndex++;
+            }
+            else {
+                simplifyIndex = simplifyingIterations + 1;
+            }
         }
+
         ComputationDispatcher.removeGraph(graph.hashCode());
         ComputationDispatcher.removeResults();
-        System.out.println("----------------------------------------------\n\nFound Paths: " + result.size() + "\n\n-------------------------------------------------");
+        log.info(String.format("Found paths: %s", result.size()));
         return result;
     }
 
@@ -101,10 +97,6 @@ public class ShapeFinderManager {
             shape.add(sf.newSegment(segment.getVectorFromNode(first), segment.getVectorFromNode(neighbour), segment.getPercentLength(), overallLength));
             first = neighbour;
         }
-    }
-
-    private void updateOnce(){
-        once = false;
     }
 
     private List<List<Segment>> checkIfFinished(){

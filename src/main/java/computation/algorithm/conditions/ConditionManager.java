@@ -43,9 +43,6 @@ public class ConditionManager {
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
             primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector , mapVector));
-            if(result.areMet()){
-                log.info("\t\t\t\tPrimary conditions: [True]");
-            }
             return result;
         }
         conditions.forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector, mapVector));

@@ -10,7 +10,7 @@ import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
-import computation.algorithm.EndNodesPredictor;
+import computation.algorithm.SegmentFinder;
 import computation.utils.ReferenceRotor;
 import org.junit.Test;
 
@@ -85,7 +85,7 @@ public class EndNodePredictorTest {
                 startSegment = s;
         }
 
-        EndNodesPredictor endNodesPredictor = new EndNodesPredictor(g, cm);
+        SegmentFinder segmentFinder = new SegmentFinder(g, cm);
         Vector mapVector =  startSegment.getVectorFromNode(startNode);
         Vector shapeVector;
         if(mapVector.getAngleBetween(shape.get(0).getVector1()) > mapVector.getAngleBetween(shape.get(0).getVector2()))
@@ -99,7 +99,7 @@ public class EndNodePredictorTest {
         List<SegmentSoul> postShape2 = referenceRotor.rotateShapeToFit(postShape, new Vector(startNode,endNode), shapeVector);
 
 
-        Map<Node, List<Segment>> foundNodes = endNodesPredictor.getNodes(startNode, startSegment,postShape2.get(0), shapeVector);
+        Map<Node, List<Segment>> foundNodes = segmentFinder.getNodes(startNode, startSegment,postShape2.get(0), shapeVector);
 
         foundNodes.entrySet().forEach( entry -> System.out.println(String.format("%s\t%s", entry.getKey(), entry.getValue().size())));
 

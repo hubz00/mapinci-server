@@ -50,8 +50,8 @@ public class AlgorithmExecutor implements Runnable{
         SegmentSoul segmentToMap = shape.remove(0);
         List<Segment> potentialSegments = graph.getSegmentsForNode(startNode);
         potentialSegments.forEach(segment -> {
-            EndNodesPredictor endNodesPredictor = new EndNodesPredictor(graph, conditionManager);
-            Map<Node, List<Segment>> potentialNodes = endNodesPredictor.getNodes(startNode,segment,segmentToMap, segmentToMap.getVector1());
+            SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
+            Map<Node, List<Segment>> potentialNodes = segmentFinder.getNodes(startNode,segment,segmentToMap, segmentToMap.getVector1());
 
             if(!potentialNodes.isEmpty()) {
                 potentialNodes.entrySet().forEach(entry -> {
@@ -60,7 +60,7 @@ public class AlgorithmExecutor implements Runnable{
                 });
 
                 if (!shape.isEmpty())
-                    potentialNodes.keySet().forEach(n -> executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, currentAlgorithmResult)));
+                    potentialNodes.keySet().forEach(n -> ComputationDispatcher.addFuture(graph.hashCode(), executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, currentAlgorithmResult))));
             }
         });
 

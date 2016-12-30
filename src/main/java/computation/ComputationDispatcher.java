@@ -11,12 +11,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ComputationDispatcher {
 
     public final static ExecutorService executorService = Executors.newWorkStealingPool();
     private static final Map<Integer, Graph> graphs  = new ConcurrentHashMap<>();
     private static final Map<Node, List<AlgorithmExecutionResult>> resultsStartingFromNode = new ConcurrentHashMap<>();
+    private static final Map<Integer, List<Future>> futuresForGraph = new ConcurrentHashMap<>();
 
     public static Graph getGraph(int key){
         return graphs.get(key);
@@ -46,5 +48,25 @@ public class ComputationDispatcher {
 
     public static void removeResults(){
         resultsStartingFromNode.keySet().parallelStream().forEach(resultsStartingFromNode::remove);
+    }
+
+    public static boolean allRunnableFinished(Integer key){
+        for(Future f: futuresForGraph.get(key)){
+            if(!f.isCancelled() && !f.isDone()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void addFuture(Integer graphHashCode, Future f){
+        if(futuresForGraph.containsKey(graphHashCode)){
+            futuresForGraph.get(graphHashCode).add(f);
+        }
+        else {
+            List<Future> tmp = new LinkedList<>();
+            tmp.add(f);
+            futuresForGraph.put(graphHashCode,tmp);
+        }
     }
 }

@@ -41,13 +41,10 @@ public class ReferenceRotor {
     public List<SegmentSoul> rotateShapeToFit(List<SegmentSoul> shape, Vector mapVector, Vector shapeVector) {
         Double angle = mapVector.getAngleBetween(shapeVector);
         if(angle >= 0 && angle < Math.pow(5,-8) || angle <= 0 && angle > Math.pow(-5,-8)) {
-            log.info("Angle too small");
             return shape;
         }
 
         angle = checkSumOrSub(mapVector, shapeVector) * angle;
-
-        log.info("\t\tRotating. Angle: " + angle);
         return rotate(shape, angle);
     }
 
