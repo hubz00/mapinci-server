@@ -30,7 +30,7 @@ public class LengthCondition implements Condition {
     @Override
     public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult result, Vector shapeVector, Vector mapVector) {
         Double lengthToFind = shapeSegment.getLengthToFind();
-        Double epsilonLength = lengthToFind * epsilon;
+        Double epsilonLength = shapeSegment.getLength() * epsilon;
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);

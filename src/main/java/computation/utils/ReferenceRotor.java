@@ -10,12 +10,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ReferenceRotator {
+public class ReferenceRotor {
 
     private SegmentFactory sf;
     private Logger log;
 
-    public ReferenceRotator(){
+    public ReferenceRotor(){
         this.sf = new SegmentFactory();
         this.log = Logger.getLogger("Reference rotator");
     }

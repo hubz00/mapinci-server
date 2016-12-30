@@ -31,56 +31,19 @@ public class DataSculptor {
         this.nodeFactory = new NodeFactory(graph);
         Map<Long, Node> nodeMap = mapFragment.getNodes();
         mapFragment.getWays().parallelStream()
-                .forEach(way ->{
-                    if(way.getId() == 178067341L){
-                        System.out.println("--------------------------------\nUrzednicza");
-                    }
-                    else if(way.getId() == 440915828L){
-                        System.out.println("--------------------------------\nCzarnowiejska lewa");
-                    }
-                    else if(way.getId() == 155221402L){
-                        System.out.println("--------------------------------\nCzarnowiejska prawa");
-                    }
-                    else if(way.getId() == 251533289L){
-                        System.out.println("--------------------------------\nAGH");
-                    }
+                .forEach(way ->
                     way.getNodeIds().stream()
                             .filter(id ->  way.getNodeIds().indexOf(id) < way.getNodeIds().size() - 1)
                             .forEach(nodeId -> {
                                 computation.graphElements.Node currentNode = getNodeOrCreate(nodeMap.get(nodeId));
                                 computation.graphElements.Node nextNode = getNodeOrCreate(nodeMap.get(way.getNodeIds().get((way.getNodeIds().indexOf(nodeId) + 1))));
-                                if(way.getId() == 178067341L){
-                                    System.out.println(String.format("Start:\t%s\nEnd:\t%s",currentNode,nextNode));
-                                }
-                                else if(way.getId() == 440915828L){
-                                    System.out.println(String.format("Start:\t%s\nEnd:\t%s",currentNode,nextNode));
-                                }
-                                else if(way.getId() == 155221402L){
-                                    System.out.println(String.format("Start:\t%s\nEnd:\t%s",currentNode,nextNode));
-                                }
-                                else if(way.getId() == 251533289L){
-                                    System.out.println(String.format("Start:\t%s\nEnd:\t%s",currentNode,nextNode));
-                                }
 
                                 if (!checkIfSegmentAdded(currentNode.getId(), nextNode.getId())) {
-
                                     Segment checkedSegment = segmentFactory.newSegment(currentNode, nextNode);
-                                    if(way.getId() == 178067341L){
-                                        System.out.println(String.format("Adding Segment:\t%s",checkedSegment));
-                                    }
-                                    else if(way.getId() == 440915828L){
-                                        System.out.println(String.format("Adding Segment:\t%s",checkedSegment));
-                                    }
-                                    else if(way.getId() == 155221402L){
-                                        System.out.println(String.format("Adding Segment:\t%s",checkedSegment));
-                                    }
-                                    else if(way.getId() == 251533289L){
-                                        System.out.println(String.format("Adding Segment:\t%s",checkedSegment));
-                                    }
                                     graph.addSegment(checkedSegment);
                                 }
-                            });
-                });
+                            })
+                );
         return graph;
     }
 
