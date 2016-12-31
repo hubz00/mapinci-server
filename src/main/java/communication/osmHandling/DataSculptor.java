@@ -1,4 +1,4 @@
-package computation;
+package communication.osmHandling;
 
 import com.sun.media.sound.InvalidDataException;
 import de.westnordost.osmapi.map.data.Node;
@@ -31,18 +31,19 @@ public class DataSculptor {
         this.nodeFactory = new NodeFactory(graph);
         Map<Long, Node> nodeMap = mapFragment.getNodes();
         mapFragment.getWays().parallelStream()
-                .forEach(way ->{
+                .forEach(way ->
                     way.getNodeIds().stream()
                             .filter(id ->  way.getNodeIds().indexOf(id) < way.getNodeIds().size() - 1)
                             .forEach(nodeId -> {
                                 computation.graphElements.Node currentNode = getNodeOrCreate(nodeMap.get(nodeId));
                                 computation.graphElements.Node nextNode = getNodeOrCreate(nodeMap.get(way.getNodeIds().get((way.getNodeIds().indexOf(nodeId) + 1))));
+
                                 if (!checkIfSegmentAdded(currentNode.getId(), nextNode.getId())) {
                                     Segment checkedSegment = segmentFactory.newSegment(currentNode, nextNode);
                                     graph.addSegment(checkedSegment);
                                 }
-                            });
-                });
+                            })
+                );
         return graph;
     }
 

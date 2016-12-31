@@ -1,35 +1,36 @@
 import communication.osmHandling.MapFetcher;
 import communication.osmHandling.MapFragment;
 import communication.osmHandling.DataSculptor;
-import computation.algorithm.ShapeFinderManager;
 import computation.algorithm.conditions.ConditionFactory;
 import computation.algorithm.conditions.ConditionManager;
 import computation.graphElements.Graph;
 import computation.graphElements.Node;
 import computation.graphElements.NodeFactory;
+import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
+import computation.graphElements.segments.SegmentSoul;
+import computation.algorithm.SegmentFinder;
+import computation.utils.ReferenceRotor;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 
-public class ConcurrentAppTest {
+public class EndNodePredictorTest {
 
     @Test
-    public void test(){
-        Logger log = Logger.getLogger("ConcappTest");
-        List<Segment> shape = new LinkedList<>();
+    public void correctNodesPredicted(){
 
+        List<Segment> shape =  new LinkedList<>();
         MapFetcher fetcher = new MapFetcher();
         NodeFactory nodeFactory = new NodeFactory();
         MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(19.9203659,50.0679934),2000.0);
         DataSculptor ds = new DataSculptor();
 
         Graph g = ds.rebuildGraph(mapFragment);
-
 
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
@@ -72,18 +73,35 @@ public class ConcurrentAppTest {
             }
         }
 
-        shape.forEach(System.out::println);
+        shape.remove(0);
 
-        ShapeFinderManager manager = new ShapeFinderManager(g,4, 510.0);
-        System.out.println(g.getNodes().values().size());
-        List<List<Segment>> result = manager.findShapeConcurrent(shape,nf.newNode(19.9202640, 50.0678914), cm, 0.05);
-        if(!result.isEmpty()){
-        List<Segment> shortest = result.get(0);
-        for(List<Segment> tmp: result){
-            if(tmp.size() < shortest.size())
-                shortest = tmp;
+        Node startNode = g.getNodeById(267538595L);
+        Node endNode = g.getNodeById(2564329474L);
+
+
+        Segment startSegment = null;
+        for( Segment s: g.getSegmentsForNode(startNode)){
+            if (s.getNeighbour(startNode).getId() == 2564329474L)
+                startSegment = s;
         }
-            shortest.forEach(segment -> System.out.println(String.format("Lon: %s\tLat: %s  \t\tLon: %s\tLat: %s [Segment: %s]", segment.getNode1().getLongitude(),segment.getNode1().getLatitude(), segment.getNode2().getLongitude(), segment.getNode2().getLatitude(), segment)));
-        }
+
+        SegmentFinder segmentFinder = new SegmentFinder(g, cm);
+        Vector mapVector =  startSegment.getVectorFromNode(startNode);
+        Vector shapeVector;
+        if(mapVector.getAngleBetween(shape.get(0).getVector1()) > mapVector.getAngleBetween(shape.get(0).getVector2()))
+             shapeVector = shape.get(0).getVector2();
+        else
+            shapeVector = shape.get(0).getVector1();
+
+        List<SegmentSoul> postShape = new LinkedList<>();
+        shape.forEach(segment -> postShape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength(), 510)));
+        ReferenceRotor referenceRotor = new ReferenceRotor();
+        List<SegmentSoul> postShape2 = referenceRotor.rotateShapeToFit(postShape, new Vector(startNode,endNode), shapeVector);
+
+
+        Map<Node, List<Segment>> foundNodes = segmentFinder.getNodes(startNode, startSegment,postShape2.get(0), shapeVector);
+
+        foundNodes.entrySet().forEach( entry -> System.out.println(String.format("%s\t%s", entry.getKey(), entry.getValue().size())));
+
     }
 }

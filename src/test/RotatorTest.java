@@ -1,4 +1,4 @@
-import computation.utils.ReferenceRotator;
+import computation.utils.ReferenceRotor;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
@@ -18,7 +18,7 @@ public class RotatorTest {
     public void checkIfSegmentsWillBeParallel(){
 
         List<SegmentSoul> list = new LinkedList<>();
-        ReferenceRotator rotator = new ReferenceRotator();
+        ReferenceRotor rotator = new ReferenceRotor();
         SegmentFactory sf = new SegmentFactory();
         NodeFactory nf = new NodeFactory();
 

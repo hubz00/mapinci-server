@@ -37,11 +37,14 @@ public class MapStreamHandler implements MapDataHandler {
         if(!nodes.containsKey(node.getId())) {
             this.nodes.put(node.getId(), node);
         }
+        else {
+            System.out.println(String.format("Duplicated: %s", node.getId()));
+        }
     }
 
     @Override
     public void handle(Way way) {
-        this.ways.add(way);
+             this.ways.add(way);
     }
 
     @Override

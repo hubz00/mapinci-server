@@ -104,7 +104,7 @@ public class Segment implements SegmentSoul{
     }
 
     @Override public String toString() {
-        return String.format("[%s - %s] [Slope: %s] [Length: %s]",n1 ,n2, slope, Math.round(length));
+        return String.format("[%s - %s]\t[Slope: %s]\t[Length: %s]",n1 ,n2, slope, Math.round(length));
     }
 
     public Double getPercentLength() {

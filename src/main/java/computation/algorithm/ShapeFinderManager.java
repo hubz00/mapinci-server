@@ -10,8 +10,6 @@ import computation.graphElements.segments.SegmentSoul;
 import computation.utils.ShapeStateChecker;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class ShapeFinderManager {
@@ -23,7 +21,6 @@ public class ShapeFinderManager {
     private Double overallLength;
 
 
-    //todo remove graph after search
     public ShapeFinderManager(Graph graph, int simplifyingIterations, Double overallLength) {
         this.graph = graph;
         ComputationDispatcher.addGraph(graph);
@@ -31,118 +28,123 @@ public class ShapeFinderManager {
         this.overallLength = overallLength;
     }
 
-
-    /**
-     * Initiates searching for given shape from coordinates given in startNode
-     * maxSearchEpsilon given in degrees
-     * recommended value between: 0.005 - 0.05
-     * shape found on map needs to meet conditions form conditionManager
-     *
-     * @param shape
-     * @param startNode
-     * @param conditionManager
-     * @param startPointRange
-     * @return list of segments from the map in asked shape
-     */
-
-    public List<Segment> findShapeOneThread(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange){
-        return findShapeOneThread(shape, startNode, conditionManager, startPointRange, 0);
-    }
-
-    private List<Segment> findShapeOneThread(List<Segment> shape, Node startNode, ConditionManager conditionManager, Double startPointRange, int iteration) {
-        ShapeFinder finder = new ShapeFinder(graph);
-        Double minSearchEpsilon = 0.0;
-        if(iteration > simplifyingIterations)
-            return new LinkedList<>();
-
-        while (minSearchEpsilon < startPointRange) {
-            Double tempMaxSearch = minSearchEpsilon + 0.005;
-            List <Node> nodes = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
-            for(Node n: nodes){
-                try {
-                    List<Segment> result = finder.findShapeForNode(n, shape, conditionManager, overallLength);
-                    if (!result.isEmpty())
-                        return result;
-                } catch (StackOverflowError e){
-                    //taking another node
-                }
-                conditionManager.reset();
-            }
-            minSearchEpsilon = tempMaxSearch;
-        }
-
-        conditionManager.simplifyConditions();
-
-        return findShapeOneThread(shape,startNode,conditionManager,startPointRange, ++iteration);
-    }
-
     public List<List<Segment>> findShapeConcurrent(List<Segment> shapeToFind, Node startNode, ConditionManager conditionManager, Double startPointRange) {
-        this.shape = new LinkedList<>();
-        Double minSearchEpsilon = 0.0;
-        Set<Future<List<List<Segment>>>> futuresSet = Collections.synchronizedSet(new HashSet<>());
+        int simplifyIndex = 0;
+        List<List<Segment>> result = new LinkedList<>();
 
-        migrateShapeToInterfaceShape(shapeToFind);
-        while (minSearchEpsilon <= startPointRange) {
-            //todo change to add something
-            Double tempMaxSearch = minSearchEpsilon + 0.0002;
-            if (ShapeStateChecker.isClosedShape(shapeToFind)) {
+        while(simplifyIndex <= simplifyingIterations) {
+            this.shape = new LinkedList<>();
+            result = new LinkedList<>();
+            Double minSearchEpsilon = 0.0;
+            migrateShapeToInterfaceShape(shapeToFind);
 
-                List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon);
-                log.info(String.format("nodes in radius on map: %s", nodesWithinRadius.size()));
-                nodesWithinRadius.forEach(startN -> {
-                    for (int i = 0; i < shape.size(); i++) {
-                        futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                        SegmentSoul tmp = shape.remove(0);
-                        shape.add(tmp);
-                    }
-                });
+            while (minSearchEpsilon <= startPointRange) {
+                Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
 
-            } else{
-                graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), tempMaxSearch, minSearchEpsilon)
-                        .forEach(startN -> {
-                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                            Collections.reverse(shape);
-                            futuresSet.add(ComputationDispatcher.executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode(), 0)));
-                        });
+                if (ShapeStateChecker.isClosedShape(shapeToFind)) {
+                    List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
+                    nodesWithinRadius.forEach(startN -> {
 
-            }
-            minSearchEpsilon = tempMaxSearch;
-        }
-
-        List<List<Segment>> result;
-        while(!futuresSet.isEmpty()){
-            Iterator<Future<List<List<Segment>>>> i = futuresSet.iterator();
-            while(i.hasNext()){
-                Future<List<List<Segment>>> future = i.next();
-                if(future.isDone()){
-                    try {
-                        result = future.get();
-                        if(!result.isEmpty()) {
-                            futuresSet.forEach(f -> f.cancel(true));
-                            return result;
+                        for (int i = 0; i < shape.size(); i++) {
+                            ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                            SegmentSoul tmp = shape.remove(0);
+                            shape.add(tmp);
                         }
-                        else
-                            i.remove();
-                    } catch (InterruptedException | ExecutionException e) {
+                    });
+
+                } else {
+                    graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon)
+                            .forEach(startN -> {
+                                ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                                Collections.reverse(shape);
+                                ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
+                            });
+                }
+                minSearchEpsilon = maxSearchEpsilon;
+            }
+
+            int successfulIterations = 0;
+            //todo check with better connection
+            while(successfulIterations < 1) {
+                while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    result = checkIfFinished();
                 }
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                if (result.isEmpty()) {
+                    conditionManager.simplifyConditions();
+                    simplifyIndex++;
+                } else {
+                    successfulIterations++;
+                    simplifyIndex = simplifyingIterations + 1;
+                }
             }
         }
 
-        log.info("Empty set :c");
-        return new LinkedList<>();
+        ComputationDispatcher.removeGraph(graph.hashCode());
+        ComputationDispatcher.removeResults();
+        log.info(String.format("Found paths: %s", result.size()));
+        return result;
     }
 
     private void migrateShapeToInterfaceShape(List<Segment> preShape) {
         SegmentFactory sf = new SegmentFactory();
-        preShape.forEach(segment -> shape.add(sf.newSegment(segment.getVector1(), segment.getVector2(), segment.getPercentLength(), overallLength)));
-    }
-}
+        Segment s1 = preShape.get(0);
+        Segment s2 = preShape.get(1);
+        Node first;
+        if(s2.contains(s1.getNode1()))
+            first = s1.getNode2();
+        else
+            first = s1.getNode1();
 
+        for(Segment segment: preShape){
+            Node neighbour = segment.getNeighbour(first);
+            shape.add(sf.newSegment(segment.getVectorFromNode(first), segment.getVectorFromNode(neighbour), segment.getPercentLength(), overallLength));
+            first = neighbour;
+        }
+    }
+
+    private List<List<Segment>> checkIfFinished(){
+        Map<Node, List<AlgorithmExecutionResult>> map = ComputationDispatcher.getResultsStartingFromNode();
+
+        for(List<AlgorithmExecutionResult> startNodeList: map.values()){
+            for(AlgorithmExecutionResult firstNodeResult: startNodeList){
+                List<List<Segment>> tmp = checkNthSegment(1,firstNodeResult);
+                if(!tmp.isEmpty())
+                    return tmp;
+            }
+        }
+        return new LinkedList<>();
+    }
+
+    private List<List<Segment>> checkNthSegment(int depth, AlgorithmExecutionResult algoResult){
+        if(algoResult.getPathsToEndNodes()!= null && !algoResult.getPathsToEndNodes().isEmpty()){
+            if(depth == shape.size()){
+                List<List<Segment>> result = new LinkedList<>();
+                for (List<Segment> tmpList : algoResult.getPathsToEndNodes().values()){
+                    result.add(tmpList);
+                }
+                return result;
+            }
+
+            List<List<Segment>> result = new LinkedList<>();
+
+            for(Map.Entry<Node, AlgorithmExecutionResult> currentAlgoResult: algoResult.getResultsForNextSegments().entrySet()){
+                List<List<Segment>> tmpResults = checkNthSegment(depth+1, currentAlgoResult.getValue());
+                if(tmpResults != null && !tmpResults.isEmpty()){
+                    List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
+                    tmpResults.forEach(list -> {
+                        List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
+                        tmp.addAll(list);
+                        result.add(tmp);
+                    });
+                }
+            }
+            return result;
+        }
+        return new LinkedList<>();
+    }}
 

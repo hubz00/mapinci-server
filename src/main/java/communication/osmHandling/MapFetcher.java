@@ -12,7 +12,7 @@ public class MapFetcher {
 
     public MapFragment fetch(Node n, Double searchNodeRadius){
         OsmConnection connection = new OsmConnection("http://api.openstreetmap.org/api/0.6/",
-                "mapinci");
+                "app");
         MapStreamHandler handler = new MapStreamHandler();
         LengthConverter lengthConverter = new LengthConverter();
 

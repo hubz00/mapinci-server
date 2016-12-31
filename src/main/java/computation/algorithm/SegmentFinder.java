@@ -1,59 +1,65 @@
 package computation.algorithm;
 
-
 import computation.algorithm.conditions.ConditionManager;
 import computation.algorithm.conditions.ConditionsResult;
 import computation.graphElements.Graph;
 import computation.graphElements.Node;
+import computation.graphElements.Vector;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentSoul;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.*;
 
 public class SegmentFinder {
 
     private final Graph graph;
+    private Map<Node, List<Segment>> endNodes;
     private List<Segment> onMapSegments;
-    private Logger log = Logger.getLogger("Segment Finder");
     private final ConditionManager conditionManager;
     private SegmentSoul shapeSegment;
+    private Segment firstSegment;
+    private Vector shapeVector;
 
     public SegmentFinder(Graph g, ConditionManager conditionManager){
         this.graph = g;
         this.conditionManager = new ConditionManager(conditionManager);
+        this.endNodes = new HashMap<>();
         this.onMapSegments = new LinkedList<>();
     }
 
-    public List<Segment> findSegment(Node startNode, Node endNode, SegmentSoul shapeSegment) {
+    public Map<Node, List<Segment>> getNodes(Node startNode, Segment firstSegment, SegmentSoul shapeSegment, Vector shapeVector) {
         this.shapeSegment = shapeSegment;
-        log.info(String.format("Looking for segment: [%s]\n\t between strartNode: [%s] endNode: [%s]", shapeSegment,startNode,endNode));
-        if(executeSearch(startNode,endNode, null))
-            return onMapSegments;
-
-        return new LinkedList<>();
+        this.firstSegment = firstSegment;
+        this.shapeVector = shapeVector;
+        if(conditionManager.checkConditions(shapeSegment, firstSegment,shapeVector ,firstSegment.getVectorFromNode(startNode)).areMet()) {
+            onMapSegments.add(firstSegment);
+            shapeSegment.changeLengthToFind(-firstSegment.getLength());
+            executeSearch(firstSegment.getNeighbour(startNode), null);
+            return endNodes;
+        }
+        else {
+            return new HashMap<>();
+        }
     }
 
-    public boolean executeSearch(Node startNode, Node endNode, Segment previouslyAdded){
-        if(startNode.compareTo(endNode) == 0){
-            log.info("Found segment: " + shapeSegment);
-            return true;
-        }
-        if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*0.4){
+    private boolean executeSearch(Node startNode, Segment previouslyAdded){
+        if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*0.3){
             return false;
         }
+
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
-        log.info(String.format("\t\t[New Call]\n\t\t\tStart node: %s\n\t\t\tEnd node: [X: %f\t%f]\n\t\t\tnumber of possible segments: %s", startNode,endNode.getLongitude(), endNode.getLatitude(), possibleSegments.size()));
+        possibleSegments = sortByClosestDirection(possibleSegments, startNode);
         for(Segment segment: possibleSegments){
             if(previouslyAdded == null || segment.compareTo(previouslyAdded) != 0) {
-                log.info(String.format("\t\t\tChecking segment: %s with shape segment: %s", segment, shapeSegment));
-                ConditionsResult conditionsResult = conditionManager.checkConditions(shapeSegment, segment);
+                ConditionsResult conditionsResult = conditionManager.checkConditions(shapeSegment, segment,shapeVector ,segment.getVectorFromNode(startNode) );
                 if (conditionsResult.areMet()) {
-                    log.info(String.format("\t\t\tAdding segment: %s, first node: %s",segment.getNeighbour(startNode), segment));
                     onMapSegments.add(segment);
                     shapeSegment.changeLengthToFind(-segment.getLength());
-                    if (executeSearch(segment.getNeighbour(startNode), endNode, segment)) {
+                    if(shapeSegment.getLengthToFind() < shapeSegment.getLength() * 0.3){
+                        if(!endNodes.containsKey(segment.getNeighbour(startNode)) || endNodes.containsKey(segment.getNeighbour(startNode)) && endNodes.get(segment.getNeighbour(startNode)).size() > onMapSegments.size())
+                            endNodes.put(segment.getNeighbour(startNode), new LinkedList<>(onMapSegments));
+                    }
+                    if (executeSearch(segment.getNeighbour(startNode), segment)) {
                         return true;
                     }
                     shapeSegment.changeLengthToFind(segment.getLength());
@@ -62,5 +68,20 @@ public class SegmentFinder {
             }
         }
         return false;
+    }
+
+    private List<Segment> sortByClosestDirection(List<Segment> possibleSegments, Node startNode) {
+        List<Double> angles = new LinkedList<>();
+        Map<Double, Segment> segmentMap = new HashMap<>();
+        possibleSegments.forEach(segment ->{
+            Double angle = shapeVector.getAngleBetween(segment.getVectorFromNode(startNode));
+            angles.add(angle);
+            segmentMap.put(angle, segment);
+        });
+        Collections.sort(angles);
+        List<Segment> result = new LinkedList<>();
+        angles.forEach(angle -> result.add(segmentMap.get(angle)));
+
+        return result;
     }
 }

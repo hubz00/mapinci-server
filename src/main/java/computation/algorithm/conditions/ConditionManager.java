@@ -1,5 +1,6 @@
 package computation.algorithm.conditions;
 
+import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 
 import java.util.LinkedList;
@@ -38,15 +39,13 @@ public class ConditionManager {
         basePrimaryConditions = cm.getPrimaryConditions();
     }
 
-    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment){
+    public ConditionsResult checkConditions(SegmentSoul graphSegment, SegmentSoul mapSegment, Vector shapeVector, Vector mapVector){
         ConditionsResult result = new ConditionsResult();
         if(!primaryConditions.isEmpty() && primaryConditions.stream().allMatch(c -> c.applicable(graphSegment,mapSegment))){
-            log.info("\t[Primary conditions apply]");
-            primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result));
+            primaryConditions.parallelStream().forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector , mapVector));
             return result;
         }
-        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result));
-        log.info(String.format("\t[Conditions are met: %s] [For segment: %s]\n\t\t[Enough space for next one: %s]", result.areMet(), mapSegment, result.isEnoughSpaceForAnotherSegment()));
+        conditions.forEach(c -> c.meet(graphSegment,mapSegment, result, shapeVector, mapVector));
         return result;
     }
 

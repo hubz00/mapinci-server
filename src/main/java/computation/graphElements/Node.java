@@ -46,7 +46,7 @@ public class Node implements Comparable<Node>{
 
     @Override
     public String toString() {
-        return String.format("[X: %s\tY: %s]", longitude,latitude);
+        return String.format("[%s, %s]", latitude,longitude);
     }
 
     @Override
@@ -56,4 +56,5 @@ public class Node implements Comparable<Node>{
         else
             return id > n.getId() ? 1 : -1;
     }
+
 }

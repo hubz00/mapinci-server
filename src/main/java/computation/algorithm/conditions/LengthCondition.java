@@ -1,5 +1,6 @@
 package computation.algorithm.conditions;
 
+import computation.graphElements.Vector;
 import computation.graphElements.segments.SegmentSoul;
 
 import java.util.logging.Logger;
@@ -27,18 +28,14 @@ public class LengthCondition implements Condition {
     }
 
     @Override
-    public boolean meet(SegmentSoul graphSegment, SegmentSoul mapSegment, ConditionsResult result) {
-        Double lengthToFind = graphSegment.getLengthToFind();
-        Double epsilonLength = lengthToFind * epsilon;
-        log.info(String.format("\t[Length to find: %s]\n\t\t[Checked segment length: %s]\n\t\t[Epsilon: %s]", lengthToFind, mapSegment.getLength(), epsilonLength));
+    public boolean meet(SegmentSoul shapeSegment, SegmentSoul mapSegment, ConditionsResult result, Vector shapeVector, Vector mapVector) {
+        Double lengthToFind = shapeSegment.getLengthToFind();
+        Double epsilonLength = shapeSegment.getLength() * epsilon;
         if(lengthToFind - mapSegment.getLength() >= -epsilonLength) {
             lengthToFind -= mapSegment.getLength();
             result.setEnoughSpaceForAnotherSegment(lengthToFind > epsilonLength);
-            log.info("\t[Length condition: " + true + "]");
             return true;
         }
-        //todo write tests
-        log.info("\t[Length condition: " + false + "] ");
         result.setBoolResult(false);
         return false;
     }

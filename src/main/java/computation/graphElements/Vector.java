@@ -43,7 +43,12 @@ public class Vector{
     public Double getAngleBetween(Vector v){
         Double otherX = v.getX();
         Double otherY = v.getY();
-        return Math.acos((x*otherX + y*otherY)/(Math.sqrt(x*x + y*y) * Math.sqrt(otherX*otherX + otherY*otherY)));
+        Double val = (x*otherX + y*otherY)/(Math.sqrt(x*x + y*y) * Math.sqrt(otherX*otherX + otherY*otherY));
+        if(val > 1.0)
+            val = 1.0;
+        else if(val < -1.0)
+            val = -1.0;
+        return Math.acos(val);
     }
 
     public Double getLength(){
