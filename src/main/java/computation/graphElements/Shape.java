@@ -1,9 +1,12 @@
 package computation.graphElements;
+import computation.graphElements.segments.JSONSegment;
 import computation.graphElements.segments.Segment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Shape {
@@ -44,21 +47,27 @@ public class Shape {
         this.startPoint = startPoint;
     }
 
-
-
-    public JSONObject toJson() {
-        JSONArray segmentsJson = new JSONArray(segments);
-        JSONObject json = new JSONObject();
-
-        try {
-            json.put("segments", segmentsJson);
-            json.put("length", length);
-            json.put("radius", radius);
-            json.put("startPoint", startPoint);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return json;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("length: ").append(this.length).append("\n")
+                .append("radius: ").append(this.radius).append("\n")
+                .append("startPoint: ").append(this.startPoint.toString()).append("\n");
+        segments.forEach(builder::append);
+        return builder.toString();
     }
+
+    public static Shape fromJson(JSONShape jsonShape) {
+        Shape shape = new Shape();
+        shape.setLength(jsonShape.getLength());
+        shape.setRadius(jsonShape.getRadius());
+        shape.setStartPoint(jsonShape.getStartPoint());
+        List<Segment> segments = new LinkedList<>();
+        for (JSONSegment jsonSegment : jsonShape.getSegments()) {
+            segments.add(Segment.fromJson(jsonSegment));
+        }
+        shape.setSegments(segments);
+        return shape;
+    }
+
 }

@@ -40,9 +40,9 @@ public class ShapeFinder {
 
         migratePreShapeToShape();
         if(isClosedShape(shape)){
-//            log.info("Is a closed shape");
+            log.info("Is a closed shape");
             for(int i = 0; i < this.shape.size(); i++){
-//                log.info(String.format("Taking next node to check, loop: %d, left: %d", i, this.shape.size() - i));
+                log.info(String.format("Taking next node to check, loop: %d, left: %d", i, this.shape.size() - i));
                 if(initAlgorithm(node)){
                     return onMapSegments;
                 }
@@ -63,7 +63,7 @@ public class ShapeFinder {
                 return onMapSegments;
             }
         }
-//        log.info("Empty result graph");
+        log.info("Empty result graph");
         return new LinkedList<>();
     }
 
@@ -78,9 +78,9 @@ public class ShapeFinder {
         for(Segment s: possibleSegments) {
             for(Vector shapeVector: shape.get(0).getVectors()) {
                 this.shape = referenceRotator.rotateShapeToFit(shape,s.getVectorFromNode(startNode),  shapeVector);
-//            log.info("New Shape angle --------------------------------------------");
-//            shape.forEach(seg -> log.info(seg.toString()));
-//            log.info("------------------------------------------------------------");
+            log.info("New Shape angle --------------------------------------------");
+            shape.forEach(seg -> log.info(seg.toString()));
+            log.info("------------------------------------------------------------");
                 ConditionsResult result = conditionManager.checkConditions(shape.get(0), s);
                 if (result.areMet()) {
                     //todo add handling condition manager
@@ -109,16 +109,16 @@ public class ShapeFinder {
 
         List<Segment> possibleSegments = graph.getSegmentsForNode(startNode);
         SegmentSoul segmentToMap = shape.get(position);
-//        log.info(String.format("New call\n\t[Position: %s]\n\t\t[Start node: %s]\n\t\t[Segment to map: %s]",position, startNode, segmentToMap));
+        log.info(String.format("New call\n\t[Position: %s]\n\t\t[Start node: %s]\n\t\t[Segment to map: %s]",position, startNode, segmentToMap));
 
         for (Segment s: possibleSegments){
-//            log.info(String.format("\t[Checking Segment: %s]\n\t\t[Comparing to recently added: %s]\n\t\t[Added list size: %s]",s, s.compareTo(onMapSegments.get(onMapSegments.size()-1)), onMapSegments.size()));
+            log.info(String.format("\t[Checking Segment: %s]\n\t\t[Comparing to recently added: %s]\n\t\t[Added list size: %s]",s, s.compareTo(onMapSegments.get(onMapSegments.size()-1)), onMapSegments.size()));
             if(((onMapSegments.size() == 0) || (s.compareTo(onMapSegments.get(onMapSegments.size()-1)) != 0))) {
                 ConditionsResult conditionsResult = conditionManager.checkConditions(segmentToMap, s);
                 if (conditionsResult.areMet()) {
                     onMapSegments.add(s);
                     segmentToMap.changeLengthToFind(-s.getLength());
-//                    log.info(String.format("[Adding new segment to result: %s]", s));
+                    log.info(String.format("[Adding new segment to result: %s]", s));
                     if (conditionsResult.isEnoughSpaceForAnotherSegment())
                         if (findNextSegment(s.getNeighbour(startNode), position, false))
                             return true;
@@ -147,12 +147,12 @@ public class ShapeFinder {
 
         SegmentSoul shapeSegment = shape.get(0);
 
-//        log.info(String.format("\t\tCurrent slope: %f real Slope: %f", shapeSegment.getSlope(), firstOriginalAngleSegment.getSlope()));
+        log.info(String.format("\t\tCurrent slope: %f real Slope: %f", shapeSegment.getSlope(), firstOriginalAngleSegment.getSlope()));
         if(Math.abs(shapeSegment.getSlope() - firstOriginalAngleSegment.getSlope()) >= 0.1){
             this.shape = referenceRotator.rotateShapeToFit(shape,firstOriginalAngleSegment.getVector1(), shapeSegment.getVector1());
-//            log.info("New Shape angle --------------------------------------------");
-//            shape.forEach(seg -> log.info(seg.toString()));
-//            log.info("------------------------------------------------------------");
+            log.info("New Shape angle --------------------------------------------");
+            shape.forEach(seg -> log.info(seg.toString()));
+            log.info("------------------------------------------------------------");
         }
 
     }

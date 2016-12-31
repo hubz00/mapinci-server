@@ -77,6 +77,10 @@ public class ConcurrentShapeFinderTest {
         shapeNodes.add(3,5);
         shapeNodes.add(4,5);
         shapeNodes.add(5,2);
+        StringBuilder builder = new StringBuilder();
+        builder.append("shapeNodes: ");
+        shapeNodes.forEach(node -> builder.append(node).append(" - "));
+        System.out.println(builder.toString());
 
         List<Double> percentLengthList = new LinkedList<>();
         percentLengthList.add(0,0.29325513196480938416422287390029);
@@ -92,7 +96,9 @@ public class ConcurrentShapeFinderTest {
         cm.addCondition(conditionFactory.newLengthCondition(0.05));
 
         ShapeFinderManager manager = new ShapeFinderManager(graph, 3, 75950.0);
-        manager.findShapeConcurrent(shape,startNode,cm, 0.05).forEach(System.out::println);
+        List<List<Segment>> result = manager.findShapeConcurrent(shape,startNode,cm, 0.05);
+        System.out.println("found");
+        result.forEach(System.out::println);
     }
 
 

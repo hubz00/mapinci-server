@@ -2,6 +2,7 @@ package computation.graphElements.segments;
 
 import computation.graphElements.Node;
 import computation.graphElements.Vector;
+import computation.graphElements.VectorContainer;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,12 +14,12 @@ public class Segment implements SegmentSoul{
     private final Node n1;
     private final Node n2;
     private final Double length;
+    private Double percentLength;
     private Double slope;
     private HashMap<Long, Vector> vectors;
-    private Double percentLength;
 
 
-    protected Segment(Long id, Node n1, Node n2, Double percentLength){
+    public Segment(Long id, Node n1, Node n2, Double percentLength){
         this.id = id;
         this.n1 = n1;
         this.n2 = n2;
@@ -35,6 +36,15 @@ public class Segment implements SegmentSoul{
         this.vectors = new HashMap<>();
         this.length = calculateLength();
         setVectorsAndSlope();
+    }
+
+    public Segment(long id, Node n1, Node n2, Double length, Double percentLength, Double slope) {
+        this.id = id;
+        this.n1 = n1;
+        this.n2 = n2;
+        this.length = length;
+        this.percentLength = percentLength;
+        this.slope = slope;
     }
 
     private void setVectorsAndSlope() {
@@ -89,6 +99,10 @@ public class Segment implements SegmentSoul{
         return vectors.get(n.getId());
     }
 
+    public void setVectors(HashMap<Long, Vector> vectors) {
+        this.vectors = vectors;
+    }
+
     @Override public String toString() {
         return String.format("[%s - %s] [Slope: %s] [Length: %s]",n1 ,n2, slope, Math.round(length));
     }
@@ -133,5 +147,19 @@ public class Segment implements SegmentSoul{
 
     public List<Vector> getVectors(){
         return new LinkedList<>(vectors.values());
+    }
+
+
+    public static Segment fromJson(JSONSegment jsonSegment) {
+        Segment segment = new Segment(jsonSegment.getId(), jsonSegment.getN1(), jsonSegment.getN2(),
+                jsonSegment.getLength(), jsonSegment.getPercentLength(), jsonSegment.getSlope());
+
+        HashMap<Long, Vector> map = new HashMap<>();
+        for (VectorContainer vectorContainer : jsonSegment.getVectors() ) {
+            map.put(vectorContainer.getId(), vectorContainer.getVector());
+        }
+
+        segment.setVectors(map);
+        return segment;
     }
 }
