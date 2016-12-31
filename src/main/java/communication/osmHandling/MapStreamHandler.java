@@ -44,7 +44,7 @@ public class MapStreamHandler implements MapDataHandler {
 
     @Override
     public void handle(Way way) {
-        this.ways.add(way);
+             this.ways.add(way);
     }
 
     @Override

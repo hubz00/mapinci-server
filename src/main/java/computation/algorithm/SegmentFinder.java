@@ -31,9 +31,15 @@ public class SegmentFinder {
         this.shapeSegment = shapeSegment;
         this.firstSegment = firstSegment;
         this.shapeVector = shapeVector;
-        onMapSegments.add(firstSegment);
-        executeSearch(firstSegment.getNeighbour(startNode), null);
-        return endNodes;
+        if(conditionManager.checkConditions(shapeSegment, firstSegment,shapeVector ,firstSegment.getVectorFromNode(startNode)).areMet()) {
+            onMapSegments.add(firstSegment);
+            shapeSegment.changeLengthToFind(-firstSegment.getLength());
+            executeSearch(firstSegment.getNeighbour(startNode), null);
+            return endNodes;
+        }
+        else {
+            return new HashMap<>();
+        }
     }
 
     private boolean executeSearch(Node startNode, Segment previouslyAdded){

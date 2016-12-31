@@ -1,6 +1,6 @@
 import communication.osmHandling.MapFetcher;
 import communication.osmHandling.MapFragment;
-import computation.DataSculptor;
+import communication.osmHandling.DataSculptor;
 import computation.algorithm.conditions.ConditionFactory;
 import computation.algorithm.conditions.ConditionManager;
 import computation.graphElements.Graph;

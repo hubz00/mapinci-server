@@ -1,5 +1,5 @@
 
-import computation.DataSculptor;
+import communication.osmHandling.DataSculptor;
 import computation.graphElements.Graph;
 import computation.graphElements.NodeFactory;
 import communication.osmHandling.MapFetcher;

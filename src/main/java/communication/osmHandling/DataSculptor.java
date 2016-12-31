@@ -1,4 +1,4 @@
-package computation;
+package communication.osmHandling;
 
 import com.sun.media.sound.InvalidDataException;
 import de.westnordost.osmapi.map.data.Node;
