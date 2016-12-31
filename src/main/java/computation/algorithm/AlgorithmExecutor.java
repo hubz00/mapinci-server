@@ -35,20 +35,19 @@ public class AlgorithmExecutor implements Runnable{
 
     @Override
     public void run() {
-        //todo initialize new call for next segment
         ExecutorService executorService = ComputationDispatcher.executorService;
         Map<Node,List<Segment>> foundSegments = new HashMap<>();
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
         if(shape.size() == 0){
-            log.info("Null will be thrown");
+            log.info("Null would be thrown");
+            return;
         }
 
-
         AlgorithmExecutionResult currentAlgorithmResult = new AlgorithmExecutionResult(startNode);
-
         SegmentSoul segmentToMap = shape.remove(0);
         List<Segment> potentialSegments = graph.getSegmentsForNode(startNode);
+
         potentialSegments.forEach(segment -> {
             SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
             Map<Node, List<Segment>> potentialNodes = segmentFinder.getNodes(startNode,segment,segmentToMap, segmentToMap.getVector1());

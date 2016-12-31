@@ -31,16 +31,20 @@ public class ShapeFinderManager {
     public List<List<Segment>> findShapeConcurrent(List<Segment> shapeToFind, Node startNode, ConditionManager conditionManager, Double startPointRange) {
         int simplifyIndex = 0;
         List<List<Segment>> result = new LinkedList<>();
+
         while(simplifyIndex <= simplifyingIterations) {
             this.shape = new LinkedList<>();
             result = new LinkedList<>();
             Double minSearchEpsilon = 0.0;
             migrateShapeToInterfaceShape(shapeToFind);
+
             while (minSearchEpsilon <= startPointRange) {
                 Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
+
                 if (ShapeStateChecker.isClosedShape(shapeToFind)) {
                     List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
                     nodesWithinRadius.forEach(startN -> {
+
                         for (int i = 0; i < shape.size(); i++) {
                             ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
                             SegmentSoul tmp = shape.remove(0);
@@ -59,20 +63,24 @@ public class ShapeFinderManager {
                 minSearchEpsilon = maxSearchEpsilon;
             }
 
-            while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            int successfulIterations = 0;
+            //todo check with better connection
+            while(successfulIterations < 1) {
+                while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    result = checkIfFinished();
                 }
-                result = checkIfFinished();
-            }
-            if(result.isEmpty()){
-               conditionManager.simplifyConditions();
-                simplifyIndex++;
-            }
-            else {
-                simplifyIndex = simplifyingIterations + 1;
+                if (result.isEmpty()) {
+                    conditionManager.simplifyConditions();
+                    simplifyIndex++;
+                } else {
+                    successfulIterations++;
+                    simplifyIndex = simplifyingIterations + 1;
+                }
             }
         }
 

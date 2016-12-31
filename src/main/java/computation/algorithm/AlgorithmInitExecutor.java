@@ -37,12 +37,14 @@ public class AlgorithmInitExecutor implements Runnable{
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
         if(shape.size() == 0){
-            log.info("Null will be thrown");
+            log.info("Null would be thrown");
+            return;
         }
+
         AlgorithmExecutionResult algorithmResult = new AlgorithmExecutionResult(startNode);
         ComputationDispatcher.addNewAlgorithmResult(startNode, algorithmResult);
-
         List<Segment> initialSegmentsFromMap = graph.getSegmentsForNode(startNode);
+
         initialSegmentsFromMap.forEach(segment -> {
             Vector shapeVector = shape.get(0).getVector1();
             this.shape = referenceRotor.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
