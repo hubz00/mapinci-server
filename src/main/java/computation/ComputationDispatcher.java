@@ -51,12 +51,15 @@ public class ComputationDispatcher {
     }
 
     public static boolean allRunnableFinished(Integer key){
-        for(Future f: futuresForGraph.get(key)){
-            if(!f.isCancelled() && !f.isDone()){
-                return false;
+        if(futuresForGraph.containsKey(key)) {
+            for (Future f : futuresForGraph.get(key)) {
+                if (!f.isCancelled() && !f.isDone()) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static void addFuture(Integer graphHashCode, Future f){

@@ -64,7 +64,6 @@ public class ShapeFinderManager {
             }
 
             int successfulIterations = 0;
-            //todo check with better connection
             while(successfulIterations < 1) {
                 while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
                     try {
