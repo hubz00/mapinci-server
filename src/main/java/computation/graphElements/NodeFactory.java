@@ -12,42 +12,42 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class NodeFactory {
 
-    private final Map<Long, String> ids;
-    private final Graph graph;
+    private final Map<Long, String> IDS;
+    private final Graph GRAPH;
 
     public NodeFactory(Graph graph){
-        this.graph = graph;
-        this.ids = new ConcurrentHashMap<>();
+        this.GRAPH = graph;
+        this.IDS = new ConcurrentHashMap<>();
     }
 
     public NodeFactory(){
-        this.graph = null;
-        this.ids = new ConcurrentHashMap<>();
+        this.GRAPH = null;
+        this.IDS = new ConcurrentHashMap<>();
     }
 
 
     public synchronized Node newNodeFromLibNode(de.westnordost.osmapi.map.data.Node n) throws InvalidDataException {
-        if(ids.containsKey(n.getId())){
+        if(IDS.containsKey(n.getId())){
             throw new InvalidDataException("Duplicated node");
         }
-        ids.put(n.getId(), "");
+        IDS.put(n.getId(), "");
         Node createdNode = new Node(n.getId(), n);
-        if(graph != null)
-            graph.addNode(createdNode);
+        if(GRAPH != null)
+            GRAPH.addNode(createdNode);
         return createdNode;
     }
 
     public synchronized Node newNode(Double longitude, Double latitude){
         Random r = new Random();
         Long id = r.nextLong();
-        while (ids.containsKey(id)){
+        while (IDS.containsKey(id)){
             id = r.nextLong();
         }
 
         Node createdNode = new Node(id,longitude, latitude);
-        ids.put(id,"");
-        if(graph != null)
-            graph.addNode(createdNode);
+        IDS.put(id,"");
+        if(GRAPH != null)
+            GRAPH.addNode(createdNode);
         return createdNode;
     }
 

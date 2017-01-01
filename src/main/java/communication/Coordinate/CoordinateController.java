@@ -1,5 +1,6 @@
 package communication.Coordinate;
 
+import computation.graphElements.JSONShape;
 import computation.graphElements.Node;
 import computation.graphElements.Shape;
 import computation.graphElements.segments.Nodes;
@@ -28,12 +29,11 @@ public class CoordinateController {
     }
 
     @RequestMapping(value ="/coordinate", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public Nodes postShape (@RequestBody Shape shape) {
+    public Nodes postShape (@RequestBody JSONShape jsonShape) {
         logger.info("Request for some fresh nodes");
-            List<Node> nodes = service.startAlgo(shape);
-            logger.info("Returning nodes: {}", nodes.size());
-            return new Nodes(nodes);
-
+        List<Node> nodes = service.startAlgo(Shape.fromJson(jsonShape));
+        logger.info("Returning nodes: {}", nodes.size());
+        return new Nodes(nodes);
     }
     @RequestMapping(method = RequestMethod.GET)
     public String snoop() {
