@@ -67,7 +67,7 @@ public class ShapeFinderManager {
             while(successfulIterations < 1) {
                 while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(400);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

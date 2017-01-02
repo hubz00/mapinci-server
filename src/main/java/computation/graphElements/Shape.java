@@ -1,6 +1,7 @@
 package computation.graphElements;
 import computation.graphElements.segments.JSONSegment;
 import computation.graphElements.segments.Segment;
+import computation.graphElements.segments.SegmentFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,8 +64,10 @@ public class Shape {
         shape.setRadius(jsonShape.getRadius());
         shape.setStartPoint(jsonShape.getStartPoint());
         List<Segment> segments = new LinkedList<>();
+
+        SegmentFactory sf = new SegmentFactory();
         for (JSONSegment jsonSegment : jsonShape.getSegments()) {
-            segments.add(Segment.fromJson(jsonSegment));
+            segments.add(sf.JSONSegment(jsonSegment));
         }
         shape.setSegments(segments);
         return shape;

@@ -7,6 +7,7 @@ import computation.graphElements.VectorContainer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Segment implements SegmentSoul{
 
@@ -38,7 +39,7 @@ public class Segment implements SegmentSoul{
         setVectorsAndSlope();
     }
 
-    public Segment(long id, Node n1, Node n2, Double length, Double percentLength, Double slope) {
+    protected Segment(long id, Node n1, Node n2, Double length, Double percentLength, Double slope) {
         this.id = id;
         this.n1 = n1;
         this.n2 = n2;
@@ -92,7 +93,10 @@ public class Segment implements SegmentSoul{
     }
 
     public Node getNeighbour(Node n){
-        return n.equals(n1)? n2 : n1;
+        if(n.getId() == n1.getId())
+            return n2;
+        else
+            return n1;
     }
 
     public Vector getVectorFromNode(Node n){
@@ -149,8 +153,13 @@ public class Segment implements SegmentSoul{
         return new LinkedList<>(vectors.values());
     }
 
+    public Map<Long, Vector> getMapVectors(){
+        return vectors;
+    }
+
 
     public static Segment fromJson(JSONSegment jsonSegment) {
+
         Segment segment = new Segment(jsonSegment.getId(), jsonSegment.getN1(), jsonSegment.getN2(),
                 jsonSegment.getLength(), jsonSegment.getPercentLength(), jsonSegment.getSlope());
 

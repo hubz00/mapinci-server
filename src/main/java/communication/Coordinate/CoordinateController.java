@@ -5,6 +5,7 @@ import computation.graphElements.Node;
 import computation.graphElements.Shape;
 import computation.graphElements.segments.Nodes;
 import communication.CoordinatingService;
+import computation.graphElements.segments.SegmentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

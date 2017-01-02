@@ -56,6 +56,6 @@ public class Vector{
     }
 
     public String toString(){
-        return String.format("X: %f    Y: %f",x,y);
+        return String.format("X: %f\tY: %f",x,y);
     }
 }
