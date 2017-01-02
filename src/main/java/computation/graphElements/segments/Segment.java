@@ -89,7 +89,7 @@ public class Segment implements SegmentSoul{
     }
 
     public boolean contains(Node n){
-        return (n1.equals(n) || n2.equals(n));
+        return (n1.getId() == n.getId() || n2.getId() == n.getId());
     }
 
     public Node getNeighbour(Node n){

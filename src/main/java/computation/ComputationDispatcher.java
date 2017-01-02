@@ -51,7 +51,7 @@ public class ComputationDispatcher {
     }
 
     public static boolean allRunnableFinished(Integer key){
-        if(futuresForGraph.containsKey(key)) {
+        if(futuresForGraph.containsKey(key) && !futuresForGraph.get(key).isEmpty()) {
             for (Future f : futuresForGraph.get(key)) {
                 if (!f.isCancelled() && !f.isDone()) {
                     return false;

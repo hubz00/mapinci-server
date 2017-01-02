@@ -83,7 +83,7 @@ public class DataSculptor {
         return result;
     }
 
-    private computation.graphElements.Node getNodeOrCreate(Node tmpNode) {
+    private synchronized computation.graphElements.Node getNodeOrCreate(Node tmpNode) {
         computation.graphElements.Node nn = this.graph.getNodeById(tmpNode.getId());
         if (nn != null)
             return nn;
@@ -92,8 +92,8 @@ public class DataSculptor {
             try {
                 result =  nodeFactory.newNodeFromLibNode(tmpNode);
             } catch (InvalidDataException e) {
-                //todo
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println("NODE: " + tmpNode);
+                e.printStackTrace();
             }
             return result;
         }

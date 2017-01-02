@@ -49,7 +49,6 @@ public final class SegmentFactory {
         for (VectorContainer vectorContainer : jsonSegment.getVectors() ) {
             map.put(vectorContainer.getId(), vectorContainer.getVector());
         }
-        System.out.println(String.format("JSON Segment, vector IDs %s\nMAP VECTORS: %s", Arrays.toString(jsonSegment.getVectors()), map.toString()));
 
         segment.setVectors(map);
         return segment;

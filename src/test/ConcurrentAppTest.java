@@ -25,7 +25,7 @@ public class ConcurrentAppTest {
 
         MapFetcher fetcher = new MapFetcher();
         NodeFactory nodeFactory = new NodeFactory();
-        MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(19.9203659,50.0679934),2000.0);
+        MapFragment mapFragment = fetcher.fetch(nodeFactory.newNode(19.917539320886, 50.068482239588),5000.0);
         DataSculptor ds = new DataSculptor();
 
         Graph g = ds.rebuildGraph(mapFragment);

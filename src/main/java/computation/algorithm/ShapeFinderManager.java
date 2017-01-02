@@ -75,6 +75,7 @@ public class ShapeFinderManager {
                 }
                 if (result.isEmpty()) {
                     conditionManager.simplifyConditions();
+                    successfulIterations++;
                     simplifyIndex++;
                 } else {
                     successfulIterations++;
@@ -108,12 +109,13 @@ public class ShapeFinderManager {
 
     private List<List<Segment>> checkIfFinished(){
         Map<Node, List<AlgorithmExecutionResult>> map = ComputationDispatcher.getResultsStartingFromNode();
-
-        for(List<AlgorithmExecutionResult> startNodeList: map.values()){
-            for(AlgorithmExecutionResult firstNodeResult: startNodeList){
-                List<List<Segment>> tmp = checkNthSegment(1,firstNodeResult);
-                if(!tmp.isEmpty())
-                    return tmp;
+        if(!map.isEmpty()) {
+            for (List<AlgorithmExecutionResult> startNodeList : map.values()) {
+                for (AlgorithmExecutionResult firstNodeResult : startNodeList) {
+                    List<List<Segment>> tmp = checkNthSegment(1, firstNodeResult);
+                    if (!tmp.isEmpty())
+                        return tmp;
+                }
             }
         }
         return new LinkedList<>();

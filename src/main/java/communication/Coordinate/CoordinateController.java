@@ -34,6 +34,7 @@ public class CoordinateController {
         logger.info("Request for some fresh nodes");
         List<Node> nodes = service.startAlgo(Shape.fromJson(jsonShape));
         logger.info("Returning nodes: {}", nodes.size());
+        logger.info("Returning nodes: {}", nodes);
         return new Nodes(nodes);
     }
     @RequestMapping(method = RequestMethod.GET)
