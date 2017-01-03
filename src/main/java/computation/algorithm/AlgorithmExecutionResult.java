@@ -12,11 +12,13 @@ public class AlgorithmExecutionResult {
 
     private Map<Node, List<Segment>> pathsToEndNodes;
     private Node startNode;
+    private boolean finished;
     private Map<Node, AlgorithmExecutionResult> nextSegmentResults;
 
     public AlgorithmExecutionResult(Node startNode) {
         this.pathsToEndNodes = new ConcurrentHashMap<>();
         this.startNode = startNode;
+        this.finished = false;
         this.nextSegmentResults = new ConcurrentHashMap<>();
     }
 
@@ -60,5 +62,13 @@ public class AlgorithmExecutionResult {
 
     public List<Segment> getPathforEndNode(Node n){
         return pathsToEndNodes.get(n);
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 }

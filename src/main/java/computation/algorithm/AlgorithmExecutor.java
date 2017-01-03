@@ -59,13 +59,14 @@ public class AlgorithmExecutor implements Runnable{
                 });
 
                 if (!shape.isEmpty())
-                    potentialNodes.keySet().forEach(n -> ComputationDispatcher.addFuture(graph.hashCode(), executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, currentAlgorithmResult))));
+                    potentialNodes.keySet().forEach(n -> ComputationDispatcher.addFuture(this.graphKey, executorService.submit(new AlgorithmExecutor(new LinkedList<>(shape), n, conditionManager, graphKey, currentAlgorithmResult))));
             }
         });
 
         if(!foundSegments.isEmpty()){
             currentAlgorithmResult.setPathsToEndNodes(foundSegments);
             parentAlgorithmResult.addResultForNode(startNode, currentAlgorithmResult);
+            currentAlgorithmResult.setFinished(true);
         }
     }
 }

@@ -6,7 +6,8 @@ import computation.graphElements.Graph;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
-import communication.osmHandling.MapFragment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ public class DataSculptor {
     private NodeFactory nodeFactory;
     private Map<Long, List<Long>> addedSegments;
     private Graph graph;
+    private Logger logger = LoggerFactory.getLogger(DataSculptor.class);
 
 
     public DataSculptor(){
@@ -44,6 +46,7 @@ public class DataSculptor {
                                 }
                             })
                 );
+        logger.info("Built graph: \nNodes: {}\nSegments: {}", graph.getNodes().size(), graph.getSegments().size());
         return graph;
     }
 

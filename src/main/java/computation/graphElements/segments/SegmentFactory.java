@@ -4,6 +4,8 @@ import computation.graphElements.Node;
 import computation.graphElements.NodeFactory;
 import computation.graphElements.Vector;
 import computation.graphElements.VectorContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 public final class SegmentFactory {
 
     private static long id;
+    private Logger logger = LoggerFactory.getLogger(SegmentFactory.class);
 
     public SegmentFactory(){
         SegmentFactory.id = 1L;
@@ -51,6 +54,7 @@ public final class SegmentFactory {
         }
 
         segment.setVectors(map);
+        logger.info("New shape segment: {}", segment);
         return segment;
     }
 

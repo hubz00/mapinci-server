@@ -20,8 +20,7 @@ public class ConditionManager {
     private List<PrimaryCondition> basePrimaryConditions;
     private List<PrimaryCondition> primaryConditions;
     private ConditionFactory conditionFactory;
-    private Logger log = Logger.getLogger("Condition Manager");
-
+    private Double lengthEpsilon;
 
     public ConditionManager(){
         conditionFactory = new ConditionFactory();
@@ -65,8 +64,12 @@ public class ConditionManager {
     }
 
     public void simplifyConditions(){
+        if(lengthEpsilon != null)
+            lengthEpsilon *= 1.3;
         baseConditions.parallelStream().forEach(Condition::simplify);
         basePrimaryConditions.parallelStream().forEach(PrimaryCondition::simplify);
+        this.conditions = this.baseConditions;
+        this.primaryConditions = this.basePrimaryConditions;
     }
 
     public List<Condition> getBaseConditions() {
@@ -75,5 +78,13 @@ public class ConditionManager {
 
     public List<PrimaryCondition> getPrimaryConditions(){
         return basePrimaryConditions;
+    }
+
+    public Double getLengthEpsilon() {
+        return lengthEpsilon;
+    }
+
+    public void setLengthEpsilon(Double lengthEpsilon) {
+        this.lengthEpsilon = lengthEpsilon;
     }
 }

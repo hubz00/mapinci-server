@@ -65,9 +65,9 @@ public class ShapeFinderManager {
 
             int successfulIterations = 0;
             while(successfulIterations < 1) {
-                while (result.isEmpty() && !ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
+                while (!ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
                     try {
-                        Thread.sleep(400);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -78,6 +78,11 @@ public class ShapeFinderManager {
                     successfulIterations++;
                     simplifyIndex++;
                 } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     successfulIterations++;
                     simplifyIndex = simplifyingIterations + 1;
                 }
@@ -109,14 +114,19 @@ public class ShapeFinderManager {
 
     private List<List<Segment>> checkIfFinished(){
         Map<Node, List<AlgorithmExecutionResult>> map = ComputationDispatcher.getResultsStartingFromNode();
-        if(!map.isEmpty()) {
-            for (List<AlgorithmExecutionResult> startNodeList : map.values()) {
-                for (AlgorithmExecutionResult firstNodeResult : startNodeList) {
-                    List<List<Segment>> tmp = checkNthSegment(1, firstNodeResult);
-                    if (!tmp.isEmpty())
-                        return tmp;
+        try {
+                for (List<AlgorithmExecutionResult> startNodeList : map.values()) {
+                        for (AlgorithmExecutionResult firstNodeResult : startNodeList) {
+                            if(firstNodeResult.isFinished()) {
+                                List<List<Segment>> tmp = checkNthSegment(1, firstNodeResult);
+                                if (!tmp.isEmpty())
+                                    return tmp;
+                            }
+                        }
+
                 }
-            }
+
+        } catch(NullPointerException e){
         }
         return new LinkedList<>();
     }
@@ -130,18 +140,21 @@ public class ShapeFinderManager {
                 }
                 return result;
             }
+            int newDepth = depth + 1;
 
             List<List<Segment>> result = new LinkedList<>();
 
             for(Map.Entry<Node, AlgorithmExecutionResult> currentAlgoResult: algoResult.getResultsForNextSegments().entrySet()){
-                List<List<Segment>> tmpResults = checkNthSegment(depth+1, currentAlgoResult.getValue());
-                if(tmpResults != null && !tmpResults.isEmpty()){
-                    List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
-                    tmpResults.forEach(list -> {
-                        List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
-                        tmp.addAll(list);
-                        result.add(tmp);
-                    });
+                if(currentAlgoResult.getValue().isFinished()) {
+                    List<List<Segment>> tmpResults = checkNthSegment(newDepth, currentAlgoResult.getValue());
+                    if (tmpResults != null && !tmpResults.isEmpty()) {
+                        List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
+                        tmpResults.forEach(list -> {
+                            List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
+                            tmp.addAll(list);
+                            result.add(tmp);
+                        });
+                    }
                 }
             }
             return result;

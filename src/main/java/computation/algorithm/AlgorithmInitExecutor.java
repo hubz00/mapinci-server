@@ -36,13 +36,7 @@ public class AlgorithmInitExecutor implements Runnable{
         Map<Node,List<Segment>> foundSegments = new HashMap<>();
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
-        if(shape.size() == 0){
-            log.info("Null would be thrown");
-            return;
-        }
-
         AlgorithmExecutionResult algorithmResult = new AlgorithmExecutionResult(startNode);
-        ComputationDispatcher.addNewAlgorithmResult(startNode, algorithmResult);
         List<Segment> initialSegmentsFromMap = graph.getSegmentsForNode(startNode);
 
         initialSegmentsFromMap.forEach(segment -> {
@@ -61,13 +55,15 @@ public class AlgorithmInitExecutor implements Runnable{
                 if (!shape.subList(1, shape.size()).isEmpty())
                     potentialNodes.keySet().forEach(n -> {
                         List<SegmentSoul> tmp = referenceRotor.rotateShapeToFit(shape, new Vector(startNode, n), shapeVector);
-                        ComputationDispatcher.addFuture(graph.hashCode(), executorService.submit(new AlgorithmExecutor(new LinkedList<>(tmp.subList(1, shape.size())), n, conditionManager, graphKey, algorithmResult)));
+                        ComputationDispatcher.addFuture(this.graphKey, executorService.submit(new AlgorithmExecutor(new LinkedList<>(tmp.subList(1, shape.size())), n, conditionManager, graphKey, algorithmResult)));
                     });
             }
         });
 
         if(!foundSegments.isEmpty()){
+            ComputationDispatcher.addNewAlgorithmResult(startNode, algorithmResult);
             algorithmResult.setPathsToEndNodes(foundSegments);
+            algorithmResult.setFinished(true);
         }
     }
 }

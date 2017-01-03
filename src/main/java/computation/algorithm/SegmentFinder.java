@@ -17,24 +17,24 @@ public class SegmentFinder {
     private List<Segment> onMapSegments;
     private final ConditionManager conditionManager;
     private SegmentSoul shapeSegment;
-    private Segment firstSegment;
     private Vector shapeVector;
+    private final Double lengthEpsilon;
 
     public SegmentFinder(Graph g, ConditionManager conditionManager){
         this.graph = g;
         this.conditionManager = new ConditionManager(conditionManager);
         this.endNodes = new HashMap<>();
         this.onMapSegments = new LinkedList<>();
+        this.lengthEpsilon = (conditionManager.getLengthEpsilon() == null) ? 0.2 : conditionManager.getLengthEpsilon();
     }
 
     public Map<Node, List<Segment>> getNodes(Node startNode, Segment firstSegment, SegmentSoul shapeSegment, Vector shapeVector) {
         this.shapeSegment = shapeSegment;
-        this.firstSegment = firstSegment;
         this.shapeVector = shapeVector;
         if(conditionManager.checkConditions(shapeSegment, firstSegment,shapeVector ,firstSegment.getVectorFromNode(startNode)).areMet()) {
             onMapSegments.add(firstSegment);
             shapeSegment.changeLengthToFind(-firstSegment.getLength());
-            executeSearch(firstSegment.getNeighbour(startNode), null);
+            executeSearch(firstSegment.getNeighbour(startNode), firstSegment);
             return endNodes;
         }
         else {
@@ -43,7 +43,7 @@ public class SegmentFinder {
     }
 
     private boolean executeSearch(Node startNode, Segment previouslyAdded){
-        if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*0.3){
+        if(shapeSegment.getLengthToFind() < -shapeSegment.getLength()*lengthEpsilon){
             return false;
         }
 
@@ -55,7 +55,7 @@ public class SegmentFinder {
                 if (conditionsResult.areMet()) {
                     onMapSegments.add(segment);
                     shapeSegment.changeLengthToFind(-segment.getLength());
-                    if(shapeSegment.getLengthToFind() < shapeSegment.getLength() * 0.3){
+                    if(shapeSegment.getLengthToFind() < shapeSegment.getLength() * lengthEpsilon){
                         if(!endNodes.containsKey(segment.getNeighbour(startNode)) || endNodes.containsKey(segment.getNeighbour(startNode)) && endNodes.get(segment.getNeighbour(startNode)).size() > onMapSegments.size())
                             endNodes.put(segment.getNeighbour(startNode), new LinkedList<>(onMapSegments));
                     }
