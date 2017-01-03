@@ -37,6 +37,7 @@ public class ShapeFinderManager {
             result = new LinkedList<>();
             Double minSearchEpsilon = 0.0;
             migrateShapeToInterfaceShape(shapeToFind);
+            ComputationDispatcher.removeResults();
 
             while (minSearchEpsilon <= startPointRange) {
                 Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
@@ -63,11 +64,9 @@ public class ShapeFinderManager {
                 minSearchEpsilon = maxSearchEpsilon;
             }
 
-            int successfulIterations = 0;
-            while(successfulIterations < 1) {
                 while (!ComputationDispatcher.allRunnableFinished(graph.hashCode())) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(300);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -75,7 +74,6 @@ public class ShapeFinderManager {
                 }
                 if (result.isEmpty()) {
                     conditionManager.simplifyConditions();
-                    successfulIterations++;
                     simplifyIndex++;
                 } else {
                     try {
@@ -83,10 +81,8 @@ public class ShapeFinderManager {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    successfulIterations++;
                     simplifyIndex = simplifyingIterations + 1;
                 }
-            }
         }
 
         ComputationDispatcher.removeGraph(graph.hashCode());

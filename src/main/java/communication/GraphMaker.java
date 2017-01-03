@@ -31,16 +31,16 @@ public class GraphMaker {
         ConditionFactory factory = new ConditionFactory();
         cm.addPrimaryCondition(factory.newPrimaryCondition(15.0, 5*Math.PI/12));
         cm.addCondition(factory.newDirectionCondition(Math.PI/8));
-        cm.addCondition(factory.newLengthCondition(0.15));
+        cm.addCondition(factory.newLengthCondition(0.25));
         cm.setLengthEpsilon(0.2);
         LengthConverter lengthConverter = new LengthConverter();
         Double radius = lengthConverter.metersToCoordinatesDifference(shape.getRadius());
-        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, 560.0);
+        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, 540.0);
         List<List<Segment>> foundShapes = manager.findShapeConcurrent(shape.getSegments(),shape.getStartPoint(),cm,radius);
         if(!foundShapes.isEmpty()) {
             List<Segment> shortest = foundShapes.get(0);
             for (List<Segment> tmp : foundShapes) {
-                if (tmp.size() > shortest.size())
+                if (tmp.size() < shortest.size())
                     shortest = tmp;
             }
             return segmentsToNodeList(shortest);

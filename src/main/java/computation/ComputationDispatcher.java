@@ -17,7 +17,7 @@ public class ComputationDispatcher {
 
     public final static ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private static final Map<Integer, Graph> graphs  = new ConcurrentHashMap<>();
-    private static final Map<Node, List<AlgorithmExecutionResult>> resultsStartingFromNode = new ConcurrentHashMap<>();
+    private static  Map<Node, List<AlgorithmExecutionResult>> resultsStartingFromNode = new ConcurrentHashMap<>();
     private static final Map<Integer, List<Future<?>>> futuresForGraph = new ConcurrentHashMap<>();
     private Logger logger = LoggerFactory.getLogger(ComputationDispatcher.class);
 
@@ -57,7 +57,7 @@ public class ComputationDispatcher {
     }
 
     public static boolean allRunnableFinished(Integer key){
-        if(futuresForGraph.containsKey(key) && futuresForGraph.get(key) != null) {
+        if((futuresForGraph.containsKey(key) && futuresForGraph.get(key) != null) ||futuresForGraph.isEmpty()) {
             try {
                 synchronized (futuresForGraph.get(key)) {
                     int index = 0;
@@ -89,5 +89,9 @@ public class ComputationDispatcher {
                 futuresForGraph.put(graphHashCode, tmp);
             }
         }
+    }
+
+    public static void cleanResults(){
+        resultsStartingFromNode = new ConcurrentHashMap<>();
     }
 }
