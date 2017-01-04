@@ -123,6 +123,7 @@ public class ShapeFinderManager {
                 }
 
         } catch(NullPointerException e){
+            e.printStackTrace();
         }
         return new LinkedList<>();
     }
@@ -132,7 +133,9 @@ public class ShapeFinderManager {
             if(depth == shape.size()){
                 List<List<Segment>> result = new LinkedList<>();
                 for (List<Segment> tmpList : algoResult.getPathsToEndNodes().values()){
-                    result.add(tmpList);
+                    if(!tmpList.isEmpty()) {
+                        result.add(tmpList);
+                    }
                 }
                 return result;
             }

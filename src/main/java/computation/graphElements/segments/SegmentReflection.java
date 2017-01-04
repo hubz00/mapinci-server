@@ -79,7 +79,7 @@ public class SegmentReflection implements SegmentSoul{
         this.slope = segmentSoul.getVector1().getY()/segmentSoul.getVector1().getX();
         this.percentLength = segmentSoul.getPercentLength();
         this.length = segmentSoul.getLength();
-        this.lengthToFind = segmentSoul.getLengthToFind();
+        this.lengthToFind = segmentSoul.getLength();
     }
 
     public long getCorrespondingSegmentId(){

@@ -60,9 +60,7 @@ public class ComputationDispatcher {
         if((futuresForGraph.containsKey(key) && futuresForGraph.get(key) != null) ||futuresForGraph.isEmpty()) {
             try {
                 synchronized (futuresForGraph.get(key)) {
-                    int index = 0;
                     for (Future f : futuresForGraph.get(key)) {
-                        index++;
                         if (!f.isCancelled() && !f.isDone()) {
                             return false;
                         }
