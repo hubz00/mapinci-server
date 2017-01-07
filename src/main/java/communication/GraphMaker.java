@@ -12,12 +12,15 @@ import computation.graphElements.segments.Segment;
 import communication.osmHandling.MapFetcher;
 import communication.osmHandling.MapFragment;
 import computation.utils.LengthConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class GraphMaker {
 
+    private Logger logger = LoggerFactory.getLogger(GraphMaker.class);
 
     public List<Node> runApp (Shape shape) {
 
@@ -29,14 +32,16 @@ public class GraphMaker {
 
         ConditionManager cm = new ConditionManager();
         ConditionFactory factory = new ConditionFactory();
-        cm.addPrimaryCondition(factory.newPrimaryCondition(15.0, 5*Math.PI/12));
+        cm.addPrimaryCondition(factory.newPrimaryCondition(15.0, Math.PI/2));
         cm.addCondition(factory.newDirectionCondition(Math.PI/8));
         cm.addCondition(factory.newLengthCondition(0.25));
         cm.setLengthEpsilon(0.2);
         LengthConverter lengthConverter = new LengthConverter();
         Double radius = lengthConverter.metersToCoordinatesDifference(shape.getRadius());
-        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, 540.0);
+        ShapeFinderManager manager = new ShapeFinderManager(mapGraph,3, shape.getLength());
         List<List<Segment>> foundShapes = manager.findShapeConcurrent(shape.getSegments(),shape.getStartPoint(),cm,radius);
+        logger.info("Found paths");
+        foundShapes.forEach(l -> logger.info(segmentsToNodeList(l).toString()));
         if(!foundShapes.isEmpty()) {
             List<Segment> shortest = foundShapes.get(0);
             for (List<Segment> tmp : foundShapes) {

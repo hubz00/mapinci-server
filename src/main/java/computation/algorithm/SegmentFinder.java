@@ -37,7 +37,12 @@ public class SegmentFinder {
         this.shapeVector = shapeVector;
         if(conditionManager.checkConditions(this.shapeSegment, firstSegment,shapeVector ,firstSegment.getVectorFromNode(startNode)).areMet()) {
             onMapSegments.add(firstSegment);
+            if(firstSegment.getLength() > 15)
+                normalSegmentCounter++;
             this.shapeSegment.changeLengthToFind(-firstSegment.getLength());
+            if(this.shapeSegment.getLengthToFind() < this.shapeSegment.getLength() * lengthEpsilon && normalSegmentCounter > 0){
+                    endNodes.put(firstSegment.getNeighbour(startNode), new LinkedList<>(onMapSegments));
+            }
             executeSearch(firstSegment.getNeighbour(startNode), firstSegment);
             return endNodes;
         }

@@ -8,16 +8,18 @@ import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentFactory;
 import computation.graphElements.segments.SegmentSoul;
 import computation.utils.ShapeStateChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ShapeFinderManager {
 
     private Graph graph;
     private int simplifyingIterations;
     private List<SegmentSoul> shape;
-    private Logger log = Logger.getLogger("ShapeFinderManager");
+    private Logger logger = LoggerFactory.getLogger(ShapeFinderManager.class);
     private Double overallLength;
 
 
@@ -41,16 +43,15 @@ public class ShapeFinderManager {
 
             while (minSearchEpsilon <= startPointRange) {
                 Double maxSearchEpsilon = minSearchEpsilon + 0.0005;
-
                 if (ShapeStateChecker.isClosedShape(shapeToFind)) {
                     List<Node> nodesWithinRadius = graph.getNodesWithinRadius(startNode.getLongitude(), startNode.getLatitude(), maxSearchEpsilon, minSearchEpsilon);
                     nodesWithinRadius.forEach(startN -> {
-
                         for (int i = 0; i < shape.size(); i++) {
                             ComputationDispatcher.addFuture(graph.hashCode(), ComputationDispatcher.executorService.submit(new AlgorithmInitExecutor(new LinkedList<>(shape), startN, new ConditionManager(conditionManager), graph.hashCode())));
                             SegmentSoul tmp = shape.remove(0);
                             shape.add(tmp);
                         }
+
                     });
 
                 } else {
@@ -70,25 +71,54 @@ public class ShapeFinderManager {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    result = checkIfFinished();
+                    result.addAll(checkIfFinished());
                 }
                 if (result.isEmpty()) {
                     conditionManager.simplifyConditions();
                     simplifyIndex++;
                 } else {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     simplifyIndex = simplifyingIterations + 1;
                 }
         }
 
+        ComputationDispatcher.removeFutures(graph.hashCode());
         ComputationDispatcher.removeGraph(graph.hashCode());
         ComputationDispatcher.removeResults();
-        log.info(String.format("Found paths: %s", result.size()));
+        logger.info(String.format("Found paths: %s", result.size()));
+        if(!result.isEmpty()){
+            List<List<Segment>> tmp = ifShapeClosedFilterForOne(shapeToFind, result);
+            if(tmp.isEmpty())
+                return result;
+            else
+                return tmp;
+        }
         return result;
+    }
+
+    private List<List<Segment>> ifShapeClosedFilterForOne(List<Segment> shapeToFind, List<List<Segment>> preResult) {
+        if(ShapeStateChecker.isClosedShape(shapeToFind)){
+            return preResult.parallelStream()
+                    .filter(list -> {
+                        if(list.size() > 2){
+                            Node first;
+                            Node last;
+                            if(list.get(1).contains(list.get(0).getNode1()))
+                                first = list.get(0).getNode2();
+                            else
+                                first = list.get(0).getNode1();
+
+                            if(list.get(list.size()-1).contains(list.get(list.size()-2).getNode1()))
+                                last = list.get(list.size()-1).getNode2();
+                            else
+                                last = list.get(list.size()-1).getNode1();
+
+                            return first.compareTo(last) == 0;
+                        }
+                        else
+                            return false;
+                    }).collect(Collectors.toList());
+        }
+        return preResult;
     }
 
     private void migrateShapeToInterfaceShape(List<Segment> preShape) {
@@ -110,18 +140,19 @@ public class ShapeFinderManager {
 
     private List<List<Segment>> checkIfFinished(){
         Map<Node, List<AlgorithmExecutionResult>> map = ComputationDispatcher.getResultsStartingFromNode();
+        List<List<Segment>> result = new LinkedList<>();
         try {
                 for (List<AlgorithmExecutionResult> startNodeList : map.values()) {
                         for (AlgorithmExecutionResult firstNodeResult : startNodeList) {
                             if(firstNodeResult.isFinished()) {
                                 List<List<Segment>> tmp = checkNthSegment(1, firstNodeResult);
                                 if (!tmp.isEmpty())
-                                    return tmp;
+                                    result.addAll(tmp);
                             }
                         }
 
                 }
-
+                return result;
         } catch(NullPointerException e){
             e.printStackTrace();
         }
@@ -143,16 +174,18 @@ public class ShapeFinderManager {
 
             List<List<Segment>> result = new LinkedList<>();
 
-            for(Map.Entry<Node, AlgorithmExecutionResult> currentAlgoResult: algoResult.getResultsForNextSegments().entrySet()){
-                if(currentAlgoResult.getValue().isFinished()) {
-                    List<List<Segment>> tmpResults = checkNthSegment(newDepth, currentAlgoResult.getValue());
-                    if (tmpResults != null && !tmpResults.isEmpty()) {
-                        List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
-                        tmpResults.forEach(list -> {
-                            List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
-                            tmp.addAll(list);
-                            result.add(tmp);
-                        });
+            for(Map.Entry<Node, List<AlgorithmExecutionResult>> currentAlgoResult: algoResult.getResultsForNextSegments().entrySet()){
+                for(AlgorithmExecutionResult algorithmExecutionResult: currentAlgoResult.getValue()) {
+                    if (algorithmExecutionResult.isFinished()) {
+                        List<List<Segment>> tmpResults = checkNthSegment(newDepth, algorithmExecutionResult);
+                        if (tmpResults != null && !tmpResults.isEmpty()) {
+                            List<Segment> matchedCurrentRoute = algoResult.getPathforEndNode(currentAlgoResult.getKey());
+                            tmpResults.forEach(list -> {
+                                List<Segment> tmp = new LinkedList<>(matchedCurrentRoute);
+                                tmp.addAll(list);
+                                result.add(tmp);
+                            });
+                        }
                     }
                 }
             }

@@ -19,7 +19,7 @@ public class ComputationDispatcher {
     private static final Map<Integer, Graph> graphs  = new ConcurrentHashMap<>();
     private static  Map<Node, List<AlgorithmExecutionResult>> resultsStartingFromNode = new ConcurrentHashMap<>();
     private static final Map<Integer, List<Future<?>>> futuresForGraph = new ConcurrentHashMap<>();
-    private Logger logger = LoggerFactory.getLogger(ComputationDispatcher.class);
+    private static Logger logger = LoggerFactory.getLogger(ComputationDispatcher.class);
 
     public static Graph getGraph(int key){
         return graphs.get(key);
@@ -83,6 +83,7 @@ public class ComputationDispatcher {
         else {
             List<Future<?>> tmp = Collections.synchronizedList(new LinkedList<>());
             synchronized (tmp) {
+                logger.info("Creating new Futures List");
                 tmp.add(f);
                 futuresForGraph.put(graphHashCode, tmp);
             }
@@ -91,5 +92,9 @@ public class ComputationDispatcher {
 
     public static void cleanResults(){
         resultsStartingFromNode = new ConcurrentHashMap<>();
+    }
+
+    public static void removeFutures(int key) {
+        futuresForGraph.remove(key);
     }
 }

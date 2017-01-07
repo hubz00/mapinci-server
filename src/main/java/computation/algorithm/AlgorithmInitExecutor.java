@@ -40,21 +40,20 @@ public class AlgorithmInitExecutor implements Runnable{
         List<Segment> initialSegmentsFromMap = graph.getSegmentsForNode(startNode);
 
         initialSegmentsFromMap.forEach(segment -> {
-            Vector shapeVector = shape.get(0).getVector1();
-            this.shape = referenceRotor.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shapeVector );
-            SegmentFinder segmentFinder = new SegmentFinder(graph,conditionManager);
-            Map<Node, List<Segment>> potentialNodes = segmentFinder.getNodes(startNode,segment,shape.get(0), shapeVector);
+            shape = referenceRotor.rotateShapeToFit(shape, segment.getVectorFromNode(startNode), shape.get(0).getVector1());
+            SegmentFinder segmentFinder = new SegmentFinder(graph, conditionManager);
+            Map<Node, List<Segment>> potentialNodes = segmentFinder.getNodes(startNode, segment, shape.get(0), shape.get(0).getVector1());
 
-            if(!potentialNodes.isEmpty()) {
+            if (!potentialNodes.isEmpty()) {
 
                 potentialNodes.entrySet().forEach(entry -> {
-                    if(!foundSegments.containsKey(entry.getKey()) || foundSegments.containsKey(entry.getKey()) && foundSegments.get(entry.getKey()).size() > entry.getValue().size())
+                    if (!foundSegments.containsKey(entry.getKey()) || foundSegments.containsKey(entry.getKey()) && foundSegments.get(entry.getKey()).size() > entry.getValue().size())
                         foundSegments.put(entry.getKey(), entry.getValue());
-                    });
+                });
 
                 if (!shape.subList(1, shape.size()).isEmpty())
                     potentialNodes.keySet().forEach(n -> {
-                        List<SegmentSoul> tmp = referenceRotor.rotateShapeToFit(shape, new Vector(startNode, n), shapeVector);
+                        List<SegmentSoul> tmp = referenceRotor.rotateShapeToFit(shape, new Vector(startNode, n), shape.get(0).getVector1());
                         ComputationDispatcher.addFuture(this.graphKey, executorService.submit(new AlgorithmExecutor(new LinkedList<>(tmp.subList(1, shape.size())), n, conditionManager, graphKey, algorithmResult)));
                     });
             }

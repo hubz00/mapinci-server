@@ -3,7 +3,11 @@ package computation.algorithm;
 
 import computation.graphElements.Node;
 import computation.graphElements.segments.Segment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +17,8 @@ public class AlgorithmExecutionResult {
     private Map<Node, List<Segment>> pathsToEndNodes;
     private Node startNode;
     private boolean finished;
-    private Map<Node, AlgorithmExecutionResult> nextSegmentResults;
+    private Map<Node, List<AlgorithmExecutionResult>> nextSegmentResults;
+    private Logger logger = LoggerFactory.getLogger(AlgorithmExecutionResult.class);
 
     public AlgorithmExecutionResult(Node startNode) {
         this.pathsToEndNodes = new ConcurrentHashMap<>();
@@ -30,11 +35,11 @@ public class AlgorithmExecutionResult {
         return startNode;
     }
 
-    public Map<Node, AlgorithmExecutionResult> getResultsForNextSegments() {
+    public Map<Node, List<AlgorithmExecutionResult>> getResultsForNextSegments() {
         return nextSegmentResults;
     }
 
-    public AlgorithmExecutionResult getResultsForNextSegments(Node n){
+    public List<AlgorithmExecutionResult> getResultsForNextSegments(Node n){
         return nextSegmentResults.get(n);
     }
 
@@ -53,7 +58,19 @@ public class AlgorithmExecutionResult {
         this.pathsToEndNodes = new ConcurrentHashMap<>(map);
     }
     public void addResultForNode(Node n, AlgorithmExecutionResult result){
-        this.nextSegmentResults.put(n,result);
+        if(nextSegmentResults.containsKey(n)){
+            synchronized (nextSegmentResults.get(n)) {
+                this.nextSegmentResults.get(n).add(result);
+            }
+        }
+        else {
+            List<AlgorithmExecutionResult> tmp = Collections.synchronizedList(new LinkedList<>());
+            synchronized (tmp) {
+                tmp.add(result);
+                this.nextSegmentResults.put(n, tmp);
+            }
+        }
+
     }
 
     public void removeResultForNode(Node n){

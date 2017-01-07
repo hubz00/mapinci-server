@@ -6,13 +6,14 @@ import computation.graphElements.Graph;
 import computation.graphElements.Node;
 import computation.graphElements.segments.Segment;
 import computation.graphElements.segments.SegmentSoul;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Logger;
 
 public class AlgorithmExecutor implements Runnable{
 
@@ -20,7 +21,7 @@ public class AlgorithmExecutor implements Runnable{
     private Node startNode;
     private ConditionManager conditionManager;
     private int graphKey;
-    private Logger log;
+    private Logger logger;
     private AlgorithmExecutionResult parentAlgorithmResult;
 
 
@@ -30,7 +31,7 @@ public class AlgorithmExecutor implements Runnable{
         this.conditionManager = conditionManager;
         this.graphKey = graphKey;
         this.parentAlgorithmResult = result;
-        this.log = Logger.getLogger(this.toString() + this.hashCode());
+        this.logger = LoggerFactory.getLogger(AlgorithmExecutor.class);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class AlgorithmExecutor implements Runnable{
         Graph graph = ComputationDispatcher.getGraph(graphKey);
 
         if(shape.size() == 0){
-            log.info("Null would be thrown");
+            logger.warn("Checking Empty Shape!");
             return;
         }
 
